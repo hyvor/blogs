@@ -9,6 +9,7 @@ use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\ApiKey\CreateApiKeyInput;
 use App\Api\Console\Object\ApiKeyObject;
 use App\Entity\ApiKey;
+use App\Entity\Enum\ApiKeyType;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\Limit;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,7 +48,31 @@ class ApiKeyController extends AbstractController
             );
         }
 
-        $apiKey = $this->apiKeyService->createApiKey($blog, $input->name, $input->type);
+        $scopes = [];
+        if ($input->type === ApiKeyType::CONSOLE) {
+            // de-duplicate, keeping the request order
+            $uniqueScopes = [];
+            foreach ($input->scopes as $scope) {
+                $uniqueScopes[$scope->value] = $scope;
+            }
+            $scopes = array_values($uniqueScopes);
+
+            if (count($scopes) === 0) {
+                throw new UnprocessableEntityHttpException('At least one scope is required');
+            }
+
+            // an API key cannot have more permissions than its creator (user or API key)
+            $allowedScopes = $this->blogAuthListener->getScopes();
+            foreach ($scopes as $scope) {
+                if (!in_array($scope, $allowedScopes, true)) {
+                    throw new UnprocessableEntityHttpException(
+                        "You cannot grant the scope '{$scope->value}' as you do not have it"
+                    );
+                }
+            }
+        }
+
+        $apiKey = $this->apiKeyService->createApiKey($blog, $input->name, $input->type, $scopes);
 
         return new JsonResponse(new ApiKeyObject($apiKey), 201);
     }
