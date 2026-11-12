@@ -273,7 +273,7 @@ class PostService
             $params['end'] = date('Y-m-d H:i:s', $endTimestamp);
         }
 
-        if ($search !== null && $search !== '') {
+        if ($search !== null && trim($search) !== '') {
             $searchQuery = $this->fullTextSearchService->getSearchQuery($search);
             $where .= " AND pv.calculated_ts @@ to_tsquery(pv.ts_language, :search)";
             $params['search'] = $searchQuery;
