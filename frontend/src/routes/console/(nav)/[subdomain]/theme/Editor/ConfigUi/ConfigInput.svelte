@@ -57,7 +57,7 @@
 		block
 	/>
 {:else if type === 'checkbox'}
-	<Switch bind:checked={value} on:change={dispatch} />
+	<Switch bind:checked={value} on:change={dispatchChange} />
 {:else if type === 'radio'}
 	{#each Object.entries(configDef.$options) as [key, label]}
 		<Radio name={configDef.$name} value={key} bind:group={value} on:change={dispatchChange}>

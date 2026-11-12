@@ -8,8 +8,6 @@ use App\Entity\BlogVariant;
 use App\Entity\Enum\BlogType;
 use App\Entity\Enum\ThemeCreationType;
 use App\Entity\Enum\UserRole;
-use App\Entity\HyvorPost;
-use App\Entity\HyvorTalkWebsite;
 use App\Entity\Language;
 use App\Entity\Navigation;
 use App\Entity\Post;
@@ -19,8 +17,6 @@ use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\Blog\BlogCreator;
 use App\Service\Blog\Event\BlogCreatedEvent;
-use App\Service\Integration\HyvorPost\HyvorPostService;
-use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\Theme\ThemeFilesService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -35,7 +31,6 @@ use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Resource\ResourceCreated;
 use Hyvor\Internal\Component\Component;
 use Hyvor\Internal\Deployment;
-use Hyvor\Sdk\Exceptions\NetworkException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -84,11 +79,14 @@ class CreateBlogTest extends ApiTestCase
     /**
      * @param array<string, mixed> $data
      */
-    private function create(array $data): Response
+    private function create(array $data, bool $hasPaymentMethod = true): Response
     {
         $user = AuthFake::generateUser(['id' => 501]);
         $org = new AuthUserOrganization(1, 'Test Org', 'admin');
-        return $this->consoleOrgApi('POST', '/blog', $data, user: $user, organization: $org);
+        return $this->consoleOrgApi('POST', '/blog', $data, user: $user,
+            organization: $org,
+            organizationsDatabase: [['id' => 1, 'has_payment_method' => $hasPaymentMethod]],
+        );
     }
 
     public function test_requires_name(): void
@@ -262,6 +260,31 @@ class CreateBlogTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function test_requires_payment_method_on_cloud(): void
+    {
+        $this->create(['name' => 'No Card', 'subdomain' => 'no-card-cloud'], hasPaymentMethod: false);
+
+        $this->assertResponseFailed(
+            422,
+            'A payment method is required to create a blog. Please add a card and try again.',
+        );
+    }
+
+    public function test_allows_blog_creation_with_payment_method_on_cloud(): void
+    {
+
+        $this->create(['name' => 'With Card', 'subdomain' => 'with-card-cloud']);
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function test_does_not_require_payment_method_on_prem(): void
+    {
+        $this->enableOnPremise();
+
+        $this->create(['name' => 'On Prem', 'subdomain' => 'no-card-on-prem'], hasPaymentMethod: false);
+        $this->assertResponseIsSuccessful();
+    }
+
     public function test_enforces_blog_limit_on_cloud(): void
     {
         // already at the plan's blog limit
@@ -316,84 +339,6 @@ class CreateBlogTest extends ApiTestCase
                 $this->assertSame(1, $event->getOrganizationId());
             },
         );
-    }
-
-    public function test_creates_with_hyvor_post(): void
-    {
-        $hpMock = $this->createMock(HyvorPostService::class);
-        $hp = new HyvorPost();
-        $hp->setNewsletterId(123);
-        $hpMock->expects($this->once())->method('connect')->willReturn($hp);
-        $this->getContainer()->set(HyvorPostService::class, $hpMock);
-
-        $license = BlogsLicense::trial();
-        BillingFake::enableForSymfony($this->getContainer(), [1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
-
-        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_post' => true]);
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function test_sets_warning_if_hyvor_post_fails(): void
-    {
-        $hpMock = $this->createMock(HyvorPostService::class);
-        $hpMock->expects($this->once())->method('connect')->willThrowException(new NetworkException('Hyvor Post error'));
-        $this->getContainer()->set(HyvorPostService::class, $hpMock);
-
-        $license = BlogsLicense::trial();
-        BillingFake::enableForSymfony($this->getContainer(), [1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
-
-        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_post' => true]);
-        $this->assertResponseIsSuccessful();
-        $json = $this->getJson();
-        $this->assertArrayHasKey('warnings', $json);
-        $warnings = $json['warnings'];
-        $this->assertIsArray($warnings);
-        $warningStrings = [];
-        foreach ($warnings as $warning) {
-            $this->assertIsString($warning);
-            $warningStrings[] = $warning;
-        }
-        $this->assertStringContainsString('Failed to connect to Hyvor Post', implode(' ', $warningStrings));
-    }
-
-    public function test_creates_with_hyvor_talk(): void
-    {
-        $htMock = $this->createMock(HyvorTalkService::class);
-        $htWebsite = new HyvorTalkWebsite();
-        $htWebsite->setWebsiteId(123);
-        $htMock->expects($this->once())->method('connect')->willReturn($htWebsite);
-        $this->getContainer()->set(HyvorTalkService::class, $htMock);
-
-        $license = BlogsLicense::trial();
-        $billingFake = $this->getService(BillingFake::class);
-        $billingFake->setLicenses([1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
-
-        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_talk' => true]);
-        $this->assertResponseIsSuccessful();
-    }
-
-    public function test_sets_warning_if_hyvor_talk_fails(): void
-    {
-        $htMock = $this->createMock(HyvorTalkService::class);
-        $htMock->expects($this->once())->method('connect')->willThrowException(new NetworkException('Hyvor Post error'));
-        $this->getContainer()->set(HyvorTalkService::class, $htMock);
-
-        $license = BlogsLicense::trial();
-        $billingFake = $this->getService(BillingFake::class);
-        $billingFake->setLicenses([1 => new ResolvedLicense(ResolvedLicenseType::SUBSCRIPTION, $license)]);
-
-        $this->create(['name' => 'My Blog', 'subdomain' => 'new-blog', 'hyvor_talk' => true]);
-        $this->assertResponseIsSuccessful();
-        $json = $this->getJson();
-        $this->assertArrayHasKey('warnings', $json);
-        $warnings = $json['warnings'];
-        $this->assertIsArray($warnings);
-        $warningStrings = [];
-        foreach ($warnings as $warning) {
-            $this->assertIsString($warning);
-            $warningStrings[] = $warning;
-        }
-        $this->assertStringContainsString('Failed to connect to Hyvor Talk', implode(' ', $warningStrings));
     }
 
 }

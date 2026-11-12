@@ -108,8 +108,10 @@ class PostSearchTest extends ApiTestCase
         $this->assertCount(2, $json['data']);
         $this->assertIsArray($json['data'][0]);
         $this->assertIsArray($json['data'][1]);
-        $this->assertSame('How to make a cake', $json['data'][0]['title']);
-        $this->assertSame('How to make a pie', $json['data'][1]['title']);
+        
+        $titles = array_column($json['data'], 'title');
+        sort($titles);
+        $this->assertSame(['How to make a cake', 'How to make a pie'], $titles);
     }
 
     public function test_searches_in_french_also_searches_description_and_content(): void

@@ -6,8 +6,10 @@ use App\Entity\Enum\BlogType;
 use App\Entity\Theme;
 use App\Entity\ThemeVersion;
 use App\Service\Blog\BlogCreator;
+use App\Service\Theme\Exception\ThemeImportException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 
 class ThemeVersionCreator {
 
@@ -19,6 +21,10 @@ class ThemeVersionCreator {
         private ThemeFilesService $themeFilesService,
     ) {}
 
+    /**
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
+     */
     public function create(
         Theme $theme,
         string $version,
