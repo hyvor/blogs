@@ -56,7 +56,10 @@ if [ "$MERCURE_INTERNAL" = "true" ]; then
 
     export MERCURE_URL="http://localhost:8081/.well-known/mercure"
     export MERCURE_PUBLIC_URL="${APP_SCHEME}://${DOMAIN_APP}/.well-known/mercure"
+    # https://github.com/dunglas/mercure/releases/tag/v1.0.0
     export MERCURE_DIRECTIVE="mercure {
+    name default
+    protocol_version_compatibility 8
     publisher_jwt ${MERCURE_JWT_SECRET}
     subscriber_jwt ${MERCURE_JWT_SECRET}
 }"
