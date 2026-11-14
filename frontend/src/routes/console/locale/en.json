@@ -720,6 +720,30 @@
 				"types": {
 					"console": "Console API",
 					"delivery": "Delivery API"
+				},
+				"scopes": "Scopes",
+				"scopesCaption": "What this API key can access. You can only grant scopes you have.",
+				"scopesCount": "{count} {count, plural, one {scope} other {scopes}}",
+				"selectAll": "Select all",
+				"deselectAll": "Deselect all",
+				"scopeGroups": {
+					"blog": "Blog",
+					"posts": "Posts",
+					"users": "Users",
+					"tags": "Tags",
+					"languages": "Languages",
+					"media": "Media",
+					"navigations": "Navigations",
+					"routes": "Routes",
+					"redirects": "Redirects",
+					"webhooks": "Webhooks",
+					"api_keys": "API Keys",
+					"themes": "Themes",
+					"import": "Import",
+					"export": "Export",
+					"link_analysis": "Link Analysis",
+					"integrations": "Integrations",
+					"ai": "AI"
 				}
 			},
 			"webhooks": {

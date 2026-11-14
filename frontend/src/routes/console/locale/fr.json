@@ -720,6 +720,30 @@
 				"types": {
 					"console": "API Console",
 					"delivery": "API Delivery"
+				},
+				"scopes": "Portées",
+				"scopesCaption": "Ce à quoi cette clé API peut accéder. Vous ne pouvez accorder que les portées que vous possédez.",
+				"scopesCount": "{count} {count, plural, one {portée} other {portées}}",
+				"selectAll": "Tout sélectionner",
+				"deselectAll": "Tout désélectionner",
+				"scopeGroups": {
+					"blog": "Blog",
+					"posts": "Articles",
+					"users": "Utilisateurs",
+					"tags": "Tags",
+					"languages": "Langues",
+					"media": "Médias",
+					"navigations": "Navigations",
+					"routes": "Routes",
+					"redirects": "Redirections",
+					"webhooks": "Webhooks",
+					"api_keys": "Clés API",
+					"themes": "Thèmes",
+					"import": "Importation",
+					"export": "Exportation",
+					"link_analysis": "Analyse des liens",
+					"integrations": "Intégrations",
+					"ai": "IA"
 				}
 			},
 			"webhooks": {
