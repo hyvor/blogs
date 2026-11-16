@@ -94,6 +94,41 @@ HTML);
         $this->assertResponseFailed(422, 'Unable to scrape link. HTTP status code: 404');
     }
 
+    public function test_link_with_metadata_longer_than_255_chars(): void
+    {
+        $title = str_repeat('T', 300);
+        $description = str_repeat('D', 600);
+        $image = 'https://hyvor.com/image.jpg?' . str_repeat('q', 400);
+
+        $mockResponse = new MockResponse(<<<HTML
+<html>
+<head>
+    <title>$title</title>
+    <meta name="description" content="$description">
+    <meta name="og:image" content="$image">
+</head>
+</html>
+HTML);
+        static::getContainer()->set(HttpClientInterface::class, new MockHttpClient($mockResponse));
+
+        [$blog, $user] = BlogFactory::createOneWithUser(['subdomain' => 'url-data-long']);
+
+        $url = 'https://hyvor.com/?' . str_repeat('u', 400);
+        $this->consoleBlogApi(
+            'GET',
+            $blog,
+            '/url-data?url=' . urlencode($url) . '&type=link',
+            user: $user,
+        );
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertSame($url, $json['url']);
+        $this->assertSame($title, $json['title']);
+        $this->assertSame($description, $json['description']);
+        $this->assertSame($image, $json['thumbnail_url']);
+    }
+
     public function test_validates_input(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'url-data-invalid']);

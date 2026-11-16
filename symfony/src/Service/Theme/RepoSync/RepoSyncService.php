@@ -10,6 +10,8 @@ use App\Service\Theme\ThemeVersionCreator;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use ZipArchive;
+use App\Service\Theme\Exception\ThemeImportException;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 
 /**
  * Downloads all themes from the GitHub repo and syncs them to the database.
@@ -30,6 +32,8 @@ class RepoSyncService
 
     /**
      * @throws RepoSyncException
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
      */
     public function downloadAndSync(bool $createPreviewBlogs = true): void
     {
@@ -72,6 +76,8 @@ class RepoSyncService
 
     /**
      * @throws RepoSyncException
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
      */
     public function syncFromFile(string $zipFilePath, bool $createPreviewBlogs): void
     {
@@ -147,6 +153,8 @@ class RepoSyncService
 
     /**
      * @throws RepoSyncException
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
      */
     private function saveThemes(bool $createPreviewBlogs): void
     {

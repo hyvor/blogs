@@ -22,7 +22,4 @@ class CreateBlogInput
 
     public bool $is_dev = false;
 
-    public bool $hyvor_post = false;
-    public bool $hyvor_talk = false;
-
 }

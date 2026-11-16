@@ -10,6 +10,7 @@ use App\Entity\PostVariant;
 use App\Service\LinkAnalysis\LinkAnalysisReportMailer;
 use App\Service\LinkAnalysis\Message\LinkAnalysisCheckMessage;
 use App\Service\LinkAnalysis\PostVariantLinkAnalyzerFactory;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -27,6 +28,7 @@ class LinkAnalysisCheckMessageHandler
         private PostVariantLinkAnalyzerFactory $postVariantLinkAnalyzerFactory,
         private LinkAnalysisReportMailer $reportMailer,
         private LoggerInterface $logger,
+        private ManagerRegistry $managerRegistry,
     ) {}
 
     public function __invoke(LinkAnalysisCheckMessage $message): void
@@ -41,6 +43,16 @@ class LinkAnalysisCheckMessageHandler
             $this->runCheck($check);
         } catch (\Throwable $e) {
             $this->logger->error('Link analysis check failed', ['error' => $e->getMessage()]);
+
+            if (!$this->em->isOpen()) {
+                // a failed flush closes the EntityManager; reset it so the worker keeps running
+                $this->managerRegistry->resetManager();
+                $check = $this->em->find(LinkAnalyzerCheck::class, $message->checkId);
+
+                if ($check === null) {
+                    return;
+                }
+            }
 
             $check->setStatus(JobStatus::FAILED);
             $check->setError(mb_substr($e->getMessage(), 0, 255) ?: 'Unknown error');

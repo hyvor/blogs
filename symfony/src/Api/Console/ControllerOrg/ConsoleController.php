@@ -14,6 +14,7 @@ use App\Service\CodeHighlight\Highlighter;
 use App\Service\Ai\AiModel;
 use App\Service\Limit;
 use App\Service\User\UserService;
+use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
@@ -41,6 +42,7 @@ class ConsoleController
         private ConsoleSubrequest $consoleSubrequest,
         private InstanceUrlResolver $instanceUrlResolver,
         private HubInterface $mercureHub,
+        private AuthInterface $auth,
     ) {}
 
     #[Route('/init', methods: ['GET'])]
@@ -92,9 +94,20 @@ class ConsoleController
             }
         }
 
+        $hasPaymentMethod = null;
+        if ($this->internalConfig->getDeployment()->isCloud() && $org) {
+            try {
+                $hasPaymentMethod = ($this->auth->organizations([$org->id], includeBillingInfo: true)[$org->id] ?? null)
+                    ?->hasPaymentMethod() ?? false;
+            } catch (CommsApiFailedException) {
+                throw new UnprocessableEntityHttpException('unable to fetch the organization. please try again later');
+            }
+        }
+
         return new JsonResponse([
             'user' => new AuthUserObject($user),
             'organization' => $org,
+            'has_payment_method' => $hasPaymentMethod,
             'blogs' => $blogListObjects,
             'config' => [
                 'deployment' => $this->internalConfig->getDeployment()->value,

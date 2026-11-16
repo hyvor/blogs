@@ -40,12 +40,7 @@ class BlogCreator
 
     private const int RANDOM_POSTS_COUNT = 15;
 
-    /**
-     * TODO: self-hosted deployments should not depend on Cloudinary
-     *       With the media domain update, change this so that filler images are served from it
-     *       We can fetch those images from cloudinary in themes:sync
-     */
-    private const string IMAGE_URL_BASE = 'https://res.cloudinary.com/dqabfne6s/image/upload/v1689824633/blogs.hyvor.com/filler-images';
+    private const string IMAGE_URL_BASE = 'https://media.hyvor.com/blogs.hyvor.com/filler-images';
 
     /**
      * @var array<array{type: string, slug: string, title: string, file: string, description?: string}>
@@ -109,6 +104,8 @@ class BlogCreator
 
     /**
      * @return array{blog: Blog, primaryLanguage: Language, primaryUser: User}
+     * @throws ThemeImportException
+     * @throws HyvorUserNotFoundException
      */
     public function create(
         ?AuthUser $authUser,

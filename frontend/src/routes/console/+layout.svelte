@@ -7,7 +7,8 @@
 		authUserStore,
 		blogListStore,
 		blogSelectorOpenStore,
-		resolvedLicenseStore
+		resolvedLicenseStore,
+		hasPaymentMethodStore
 	} from './lib/stores';
 	import {
 		ConsoleLoader,
@@ -38,6 +39,7 @@
 	interface InitResponse {
 		user: CloudContextUser;
 		organization: CloudContextOrganization;
+		has_payment_method: boolean | null;
 		resolved_license: ResolvedLicense | null;
 		blogs: BlogList[];
 		temp_unique_id?: string;
@@ -81,6 +83,7 @@
 
 				authUserStore.set(res.user);
 				authOrganizationStore.set(res.organization);
+				hasPaymentMethodStore.set(res.has_payment_method);
 				resolvedLicenseStore.set(res.resolved_license);
 				blogListStore.set(res.blogs);
 

@@ -9,6 +9,7 @@ import type {
 // Currently logged in user
 export const authUserStore = writable<CloudContextUser>();
 export const authOrganizationStore = writable<CloudContextOrganization>();
+export const hasPaymentMethodStore = writable<boolean | null>(null);
 export const resolvedLicenseStore = writable<ResolvedLicense | null>();
 // List of blogs of the current user (all roles)
 export const blogListStore = writable<BlogList[]>([]);

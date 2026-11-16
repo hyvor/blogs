@@ -7,9 +7,13 @@ use App\Entity\User as BlogUser;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUser;
 use Hyvor\Internal\Auth\AuthUserOrganization;
+use Hyvor\Internal\Auth\Dto\Organization;
 use Hyvor\Internal\Bundle\Entity\SudoUser;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @phpstan-import-type OrganizationArrayPartial from Organization
+ */
 class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
 {
     /**
@@ -75,6 +79,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
     /**
      * @param array<string, mixed> $data
      * @param array<string, string> $server
+     * @param ?array<Organization|OrganizationArrayPartial> $organizationsDatabase
      */
     public function consoleOrgApi(
         string $method,
@@ -84,6 +89,7 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         AuthUser|int|null $user = null,
         ?AuthUserOrganization $organization = null,
         bool $setOrgHeader = true,
+        ?array $organizationsDatabase = null,
     ): Response {
         $authUser = null;
         if ($user instanceof AuthUser) {
@@ -91,7 +97,12 @@ class ApiTestCase extends \Hyvor\Internal\Bundle\Testing\ApiTestCase
         } elseif (is_int($user)) {
             $authUser = AuthFake::generateUser(['id' => $user]);
         }
-        AuthFake::enableForSymfony($this->getContainer(), $authUser, $organization);
+        AuthFake::enableForSymfony(
+            $this->getContainer(),
+            $authUser,
+            $organization,
+            organizationsDatabase: $organizationsDatabase,
+        );
 
         $endpoint = ltrim($endpoint, '/');
 

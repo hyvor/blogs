@@ -7,6 +7,7 @@ use App\Entity\Enum\JobStatus;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserRole;
 use App\Entity\LinkAnalyzerCheck;
+use App\Entity\LinkAnalyzerLink;
 use App\Service\LinkAnalysis\Message\LinkAnalysisCheckMessage;
 use App\Service\LinkAnalysis\MessageHandler\LinkAnalysisCheckMessageHandler;
 use App\Tests\Factory\BlogFactory;
@@ -169,5 +170,37 @@ class LinkAnalysisCheckMessageHandlerTest extends KernelTestCase
         // should not throw
         $handler(new LinkAnalysisCheckMessage(999999999));
         $this->addToAssertionCount(1);
+    }
+
+    public function test_handles_same_url_appearing_multiple_times_in_a_post(): void
+    {
+        $this->mockHttpClient();
+        $this->mockMailer();
+
+        $blog = BlogFactory::createOne(['subdomain' => 'link-analysis-handler-duplicate']);
+
+        $language = LanguageFactory::createOnePrimaryFor($blog);
+        $post = PostFactory::createOne(['blog' => $blog]);
+        PostVariantFactory::createOne([
+            'post' => $post,
+            'language' => $language,
+            'status' => PostVariantStatus::PUBLISHED,
+            'content' => PostContentGenerator::withLinks([
+                'https://hyvor.com/blogs/docs',
+                'https://hyvor.com/blogs/docs',
+            ]),
+        ]);
+
+        $check = LinkAnalyzerCheckFactory::createOne(['blog' => $blog, 'status' => JobStatus::PENDING]);
+
+        $handler = $this->getService(LinkAnalysisCheckMessageHandler::class);
+        $handler(new LinkAnalysisCheckMessage($check->getId()));
+
+        $check = $this->getEm()->find(LinkAnalyzerCheck::class, $check->getId());
+        $this->assertNotNull($check);
+        $this->assertSame(JobStatus::COMPLETED, $check->getStatus());
+        $this->assertSame(1, $check->getLinksTotalCount());
+        $this->assertSame(1, $check->getLinksOkCount());
+        $this->assertCount(1, $this->getEm()->getRepository(LinkAnalyzerLink::class)->findAll());
     }
 }

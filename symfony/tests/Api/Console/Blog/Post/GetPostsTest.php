@@ -216,6 +216,37 @@ class GetPostsTest extends ApiTestCase
         $this->assertEquals($post1->getId(), $json[0]['id']);
     }
 
+    public function test_searches_posts_with_trailing_space(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser();
+        LanguageFactory::createOnePrimaryFor($blog);
+
+        $post1 = PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'Famous Post']);
+        PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'Second Post']);
+
+        $this->consoleBlogApi('GET', $blog, '/posts?search=' . urlencode('famous '), user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertCount(1, $json);
+        $this->assertIsArray($json[0]);
+        $this->assertEquals($post1->getId(), $json[0]['id']);
+    }
+
+    public function test_search_with_only_spaces_returns_all_posts(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser();
+        LanguageFactory::createOnePrimaryFor($blog);
+
+        PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'First Post']);
+        PostFactory::createOneForWithVariants($blog, variantAttributes: ['title' => 'Second Post']);
+
+        $this->consoleBlogApi('GET', $blog, '/posts?search=' . urlencode('   '), user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(2, $this->getJson());
+    }
+
     public function test_searches_with_language(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser();
