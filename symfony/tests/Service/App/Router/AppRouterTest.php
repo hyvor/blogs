@@ -94,6 +94,17 @@ class AppRouterTest extends TestCase
     // CADDY_ROUTER = local
     // -----------------------------------------------------------------------
 
+    public function test_routes_to_media(): void
+    {
+        $appRouter = $this->appRouter('media');
+
+        $this->assertTrue($appRouter->isMedia());
+        $this->assertFalse($appRouter->isApp());
+        $this->assertFalse($appRouter->isSubdomain());
+        $this->assertFalse($appRouter->isCustomDomain());
+        $this->assertFalse($appRouter->isLocal());
+    }
+
     public function test_routes_to_local(): void
     {
         $appRouter = $this->appRouter('local');

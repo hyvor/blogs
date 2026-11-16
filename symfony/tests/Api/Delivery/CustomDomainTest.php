@@ -136,6 +136,15 @@ class CustomDomainTest extends ApiTestCase
         $this->assertResponseRedirects('https://blogs.hyvor.com/console/10?tab=posts', 308);
     }
 
+    public function test_redirects_http_media_domain_to_https(): void
+    {
+        $this->setEnvVar('MEDIA_DOMAIN', 'media.hyvorblogs.io');
+
+        $this->call('media.hyvorblogs.io', '/AQ/image.png', https: false);
+
+        $this->assertResponseRedirects('https://media.hyvorblogs.io/AQ/image.png', 308);
+    }
+
     public function test_does_not_redirect_app_domain_to_https_when_tls_disabled(): void
     {
         $this->setEnvVar('TLS_MODE', 'disabled');

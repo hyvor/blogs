@@ -64,7 +64,7 @@ class CustomDomainController
 
         // this happens on port 80 only
         if (
-            $host === $this->appConfig->getDomainApp() &&
+            ($host === $this->appConfig->getDomainApp() || $host === $this->appConfig->getMediaDomain()) &&
             !$request->isSecure() &&
             $this->appConfig->getTlsMode() !== TlsMode::DISABLED
         ) {

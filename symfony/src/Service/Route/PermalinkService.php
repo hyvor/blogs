@@ -10,6 +10,7 @@ use App\Entity\PostVariant;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\AppConfig;
+use App\Service\Media\BlogIdEncoder;
 
 /**
  * Manages permalinks of the blog
@@ -187,10 +188,63 @@ class PermalinkService
         return $this->getBlogUrlWithLanguageAndPath($blog, $language, $path, $onlyPath);
     }
 
-    public function getMediaPermalink(Media $media, Blog $blog, bool $onlyPath = false): string
+    /**
+     * Media is served independently of the blog's hosting, so its URL never changes when hosting changes
+     * and works in headless setups:
+     * - https://{MEDIA_DOMAIN}/{blogIdEncoded}/{mediaName} if MEDIA_DOMAIN is set
+     * - https://{DOMAIN_APP}/media/{blogIdEncoded}/{mediaName} otherwise
+     */
+    public function getMediaPermalink(Media $media, Blog $blog): string
     {
-        $path = '/media/' . $media->getName();
-        return $onlyPath ? $path : $this->getBlogUrlWithPath($blog, $path);
+        return $this->getMediaBlogBaseUrl($blog) . '/' . $media->getName();
+    }
+
+    /**
+     * Base URL of all media (no trailing slash)
+     */
+    public function getMediaBaseUrl(): string
+    {
+        $scheme = $this->appConfig->getTlsMode()->getScheme();
+        $mediaDomain = $this->appConfig->getMediaDomain();
+
+        return $mediaDomain !== null
+            ? $scheme . '://' . $mediaDomain
+            : $scheme . '://' . $this->appConfig->getDomainApp() . '/media';
+    }
+
+    /**
+     * Base URL of the blog's media (no trailing slash)
+     */
+    public function getMediaBlogBaseUrl(Blog $blog): string
+    {
+        return $this->getMediaBaseUrl() . '/' . BlogIdEncoder::encode($blog->getId());
+    }
+
+    /**
+     * Returns the media name if the URL is a media URL of the blog, null otherwise.
+     * Supports both the current format ({mediaBlogBaseUrl}/{name}) and the legacy format
+     * that was served from the blog's host ({blogUrl}/media/{name} or /media/{name}).
+     * Any trailing segments (ex: /500w), query, or fragment are ignored.
+     */
+    public function getMediaNameFromUrl(Blog $blog, string $url): ?string
+    {
+        $prefixes = [
+            $this->getMediaBlogBaseUrl($blog) . '/',
+            $this->getBlogUrl($blog) . '/media/',
+            '/media/',
+        ];
+
+        foreach ($prefixes as $prefix) {
+            if (!str_starts_with($url, $prefix)) {
+                continue;
+            }
+
+            $rest = substr($url, strlen($prefix));
+            $name = substr($rest, 0, strcspn($rest, '/?#'));
+            return $name !== '' ? $name : null;
+        }
+
+        return null;
     }
 
 

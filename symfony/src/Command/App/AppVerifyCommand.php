@@ -68,6 +68,7 @@ class AppVerifyCommand
             ['App Environment', $this->environment],
             ['App Domain (DOMAIN_APP)', $this->appConfig->getDomainApp()],
             ['Delivery URL', $this->appConfig->getDeliveryUrl() ?? 'not set'],
+            ['Media Domain', $this->appConfig->getMediaDomain() ?? 'not set'],
             ['FileSystem', $this->filesystemAdapter],
             ['Trusted Proxies', $this->trustedProxies],
             ['Log Level', $this->logLevel],

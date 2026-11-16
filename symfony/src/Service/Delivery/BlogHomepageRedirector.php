@@ -46,19 +46,30 @@ class BlogHomepageRedirector
      */
     public function redirectIfUnavailable(Blog $blog, string $via, string $host): ?RedirectResponse
     {
+        $status = $this->getUnavailableStatus($blog);
+        return $status !== null ? $this->redirect($via, $host, $status) : null;
+    }
+
+    /**
+     * Returns why the (existing) blog should not be served, null if it is available.
+     *
+     * @return 'deleted'|'blocked'|'license_expired'|null
+     */
+    public function getUnavailableStatus(Blog $blog): ?string
+    {
         if ($blog->getDeletedAt()) {
-            return $this->redirect($via, $host, 'deleted');
+            return 'deleted';
         }
 
         if ($blog->getBlockedAt() !== null) {
-            return $this->redirect($via, $host, 'blocked');
+            return 'blocked';
         }
 
         if ($this->internalConfig->getDeployment()->isCloud()) {
             try {
                 $license = $this->licenseService->getCachedLicenseForBlog($blog);
                 if ($license->license === null) {
-                    return $this->redirect($via, $host, 'license_expired');
+                    return 'license_expired';
                 }
             } catch (FailedToGetLicenseException) {
                 // fail open: do not take blogs down when the license cannot be resolved

@@ -68,6 +68,12 @@ export async function getSections(lang: string): Promise<NavSectionConfig[]> {
           name: s.pages.deliveryDomain,
           content: await getComponent("DeliveryDomain"),
         },
+        {
+          type: "page",
+          slug: "media-domain",
+          name: s.pages.mediaDomain,
+          content: await getComponent("MediaDomain"),
+        },
       ],
     },
   ];

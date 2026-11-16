@@ -6,6 +6,7 @@ use App\Domains\Route\PermalinkRepository;
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
 use App\Entity\Enum\BlogHostingAt;
+use App\Service\Media\BlogIdEncoder;
 use App\Service\Route\PermalinkService;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -439,13 +440,8 @@ class PermalinkServiceTest extends KernelTestCase {
         $media->setName('image.png');
 
         $this->assertSame(
-            'https://supun.hyvorblogs.io/media/image.png',
+            'https://blogs.hyvor.com/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.png',
             $this->getPermalinkService()->getMediaPermalink($media, $blog)
-        );
-
-        $this->assertSame(
-            '/media/image.png',
-            $this->getPermalinkService()->getMediaPermalink($media, $blog, onlyPath: true)
         );
 
         $this->assertSame(
@@ -457,6 +453,80 @@ class PermalinkServiceTest extends KernelTestCase {
             '/assets/image.png',
             $this->getPermalinkService()->getAssetPermalink('image.png', $blog, onlyPath: true)
         );
+    }
+
+    // media ==========
+
+    private function createMedia(Blog $blog, string $name = 'image.png'): \App\Entity\Media
+    {
+        $media = new \App\Entity\Media();
+        $media->setBlog($blog);
+        $media->setName($name);
+        return $media;
+    }
+
+    public function test_media_permalink_does_not_depend_on_blog_hosting(): void
+    {
+        $blog = BlogFactory::createOne([
+            'hosting_at' => BlogHostingAt::SELF,
+            'hosting_url' => 'https://example.com/blog',
+        ]);
+        $encoded = BlogIdEncoder::encode($blog->getId());
+
+        $this->assertSame('https://blogs.hyvor.com/media', $this->getPermalinkService()->getMediaBaseUrl());
+        $this->assertSame("https://blogs.hyvor.com/media/$encoded", $this->getPermalinkService()->getMediaBlogBaseUrl($blog));
+        $this->assertSame(
+            "https://blogs.hyvor.com/media/$encoded/image.png",
+            $this->getPermalinkService()->getMediaPermalink($this->createMedia($blog), $blog)
+        );
+    }
+
+    public function test_media_permalink_with_media_domain(): void
+    {
+        $this->setEnvVar('MEDIA_DOMAIN', 'media.hyvorblogs.io');
+        $blog = BlogFactory::createOne();
+        $encoded = BlogIdEncoder::encode($blog->getId());
+
+        $this->assertSame('https://media.hyvorblogs.io', $this->getPermalinkService()->getMediaBaseUrl());
+        $this->assertSame(
+            "https://media.hyvorblogs.io/$encoded/image.png",
+            $this->getPermalinkService()->getMediaPermalink($this->createMedia($blog), $blog)
+        );
+    }
+
+    public function test_media_permalink_tls_disabled(): void
+    {
+        $this->setEnvVar('TLS_MODE', 'disabled');
+        $blog = BlogFactory::createOne();
+
+        $this->assertSame(
+            'http://blogs.hyvor.com/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.png',
+            $this->getPermalinkService()->getMediaPermalink($this->createMedia($blog), $blog)
+        );
+    }
+
+    public function test_get_media_name_from_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $otherBlog = BlogFactory::createOne();
+        $encoded = BlogIdEncoder::encode($blog->getId());
+        $service = $this->getPermalinkService();
+
+        // current format
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/image.png"));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/image.png/500w"));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/image.png?v=1"));
+
+        // legacy format
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, 'https://supun.hyvorblogs.io/media/image.png'));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, 'https://supun.hyvorblogs.io/media/image.png/500w'));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, '/media/image.png'));
+
+        // not a media URL of the blog
+        $this->assertNull($service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/"));
+        $this->assertNull($service->getMediaNameFromUrl($blog, 'https://blogs.hyvor.com/media/' . BlogIdEncoder::encode($otherBlog->getId()) . '/image.png'));
+        $this->assertNull($service->getMediaNameFromUrl($blog, 'https://supun.hyvorblogs.io/image.png'));
+        $this->assertNull($service->getMediaNameFromUrl($blog, 'https://example.com/media/image.png'));
     }
 
     // validatePostPermalink ==========

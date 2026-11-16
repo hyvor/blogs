@@ -43,6 +43,28 @@ esac
 export APP_ADDRESS
 export APP_TLS_DIRECTIVE
 
+# Configure the media domain's Caddy address (same TLS handling as the app domain)
+# If MEDIA_DOMAIN is not set, media is served from DOMAIN_APP/media, and the media site block
+# listens on an unused local address (Caddy does not allow an empty site address)
+if [ -n "$MEDIA_DOMAIN" ]; then
+    case "$TLS_MODE" in
+        auto|manual)
+            MEDIA_ADDRESS="$MEDIA_DOMAIN"
+            MEDIA_TLS_DIRECTIVE="$APP_TLS_DIRECTIVE"
+            ;;
+        *)
+            MEDIA_ADDRESS="$MEDIA_DOMAIN:80"
+            MEDIA_TLS_DIRECTIVE=""
+            ;;
+    esac
+else
+    MEDIA_ADDRESS="http://localhost:8082"
+    MEDIA_TLS_DIRECTIVE=""
+fi
+
+export MEDIA_ADDRESS
+export MEDIA_TLS_DIRECTIVE
+
 # Configure FrankenPHP's built-in Mercure hub (if MERCURE_INTERNAL=true)
 # https://frankenphp.dev/docs/mercure
 MERCURE_INTERNAL="${MERCURE_INTERNAL:-true}"

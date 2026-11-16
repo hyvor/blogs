@@ -168,6 +168,41 @@ class ImageTest extends KernelTestCase
         );
     }
 
+    public function test_adds_srcset_for_images_with_media_url(): void
+    {
+        $blog = BlogFactory::createOne();
+        $permalinkService = $this->getService(PermalinkService::class);
+
+        $name = 'image.png';
+        $media = MediaFactory::createOne([
+            'blog' => $blog,
+            'name' => $name,
+            'original_name' => $name,
+            'extension' => 'png',
+        ]);
+        $this->storeFile($blog->getId(), $name, $this->pngContent(600));
+
+        $src = $permalinkService->getMediaPermalink($media, $blog);
+        $this->assertStringNotContainsString($permalinkService->getBlogUrl($blog), $src);
+
+        $json = json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'image',
+                    'attrs' => ['src' => $src],
+                ],
+            ],
+        ], JSON_THROW_ON_ERROR);
+
+        $html = $this->service()->getHtml($json, $blog);
+
+        $this->assertSame(
+            "<img src=\"$src\" loading=\"lazy\" srcset=\"$src 600w, $src/500w 500w\">",
+            $html
+        );
+    }
+
     public function test_doesnt_add_larger_widths_to_srcset(): void
     {
         $blog = BlogFactory::createOne();

@@ -7,6 +7,7 @@ use App\Entity\Enum\PostVariantStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
 use App\Service\Blog\Event\BlogVariantUpdatedEvent;
+use App\Service\Delivery\Processor\MediaProcessor;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Language\LanguageService;
 use App\Service\Media\Event\MediaCreatedEvent;
@@ -272,8 +273,7 @@ class ClearCacheListener
     {
         $media = $event->media;
         $blog = $media->getBlog();
-        $path = $this->permalinkService->getMediaPermalink($media, $blog, true);
-        $this->cacheService->clearSingleCache($blog, $path);
+        $this->cacheService->clearSingleCache($blog, MediaProcessor::getCachePath($media->getName()));
     }
 
     #[AsEventListener]
@@ -281,8 +281,7 @@ class ClearCacheListener
     {
         $media = $event->media;
         $blog = $media->getBlog();
-        $path = $this->permalinkService->getMediaPermalink($media, $blog, true);
-        $this->cacheService->clearSingleCache($blog, $path);
+        $this->cacheService->clearSingleCache($blog, MediaProcessor::getCachePath($media->getName()));
     }
 
     /**

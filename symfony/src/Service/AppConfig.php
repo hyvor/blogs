@@ -16,6 +16,8 @@ readonly class AppConfig
         private string $domainApp,
         #[Autowire('%env(default::DELIVERY_URL)%')]
         private ?string $deliveryUrl = null,
+        #[Autowire('%env(default::MEDIA_DOMAIN)%')]
+        private ?string $mediaDomain = null,
 
         #[Autowire('%env(string:TLS_MODE)%')]
         private string $tlsMode = 'auto',
@@ -61,6 +63,15 @@ readonly class AppConfig
         }
         $host = parse_url($this->deliveryUrl, PHP_URL_HOST);
         return $host !== false ? strval($host) : null;
+    }
+
+    /**
+     * Dedicated domain to serve media from (ex: media.yourcompany.com).
+     * If null, media is served from DOMAIN_APP/media
+     */
+    public function getMediaDomain(): ?string
+    {
+        return $this->mediaDomain;
     }
 
     public function getTlsMode(): TlsMode

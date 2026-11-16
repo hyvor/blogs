@@ -81,6 +81,7 @@
 	@backend {
 		path /api/*
 		path /blog/*
+		path /media/*
 	}
 
 	handle @backend {
@@ -111,6 +112,13 @@
 		header Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
 		rewrite * /fallback.html
 	}
+}
+
+# media domain (if MEDIA_DOMAIN is set)
+# see run script for MEDIA_ADDRESS / MEDIA_TLS_DIRECTIVE
+{$MEDIA_ADDRESS} {
+	{$MEDIA_TLS_DIRECTIVE}
+	import handle_php media
 }
 
 # local endpoints

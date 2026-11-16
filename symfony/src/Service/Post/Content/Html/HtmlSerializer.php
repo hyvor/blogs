@@ -336,7 +336,7 @@ class HtmlSerializer
         $heightAttr = $node->attr('height') ?? '';
 
         $srcset = null;
-        $mediaName = $blog ? $this->getMediaNameFromPermalink($blog, $src) : null;
+        $mediaName = $blog ? $this->permalinkService->getMediaNameFromUrl($blog, $src) : null;
 
         if (
             $blog &&
@@ -377,20 +377,6 @@ class HtmlSerializer
             ($heightAttr ? " height=\"$heightAttr\"" : '') .
             ($srcset ? " srcset=\"$srcset\"" : '') .
             '>';
-    }
-
-    private function getMediaNameFromPermalink(Blog $blog, string $permalink): ?string
-    {
-        $blogUrl = $this->permalinkService->getBlogUrl($blog);
-        $path = str_replace($blogUrl, '', $permalink);
-        $path = trim($path, '/');
-        $split = explode('/', $path);
-
-        if ($split[0] !== 'media') {
-            return null;
-        }
-
-        return $split[1] ?? null;
     }
 
     private function tableCellToHtml(Node $node, string $children): string
