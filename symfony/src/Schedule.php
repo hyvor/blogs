@@ -31,11 +31,11 @@ class Schedule implements ScheduleProviderInterface
             ->lock($this->lockFactory->createLock('default-schedule')) // only run on one server
 
             ->add(RecurringMessage::cron('0 0 * * *', new RepoSyncMessage()))
-            ->add(RecurringMessage::every('1 day', new RegenerateExpiringTlsCertificatesMessage()))
-            ->add(RecurringMessage::every('1 day', new HardDeleteBlogsMessage()))
-            ->add(RecurringMessage::every('1 day', new DeleteOldAiConversationsMessage()))
-            ->add(RecurringMessage::every('1 day', new DispatchAllLinkAnalysisChecksMessage()))
-            ->add(RecurringMessage::every('1 day', new ClearStepsMessage()))
+            ->add(RecurringMessage::cron('0 0 * * *', new RegenerateExpiringTlsCertificatesMessage()))
+            ->add(RecurringMessage::cron('0 0 * * *', new HardDeleteBlogsMessage()))
+            ->add(RecurringMessage::cron('0 0 * * *', new DeleteOldAiConversationsMessage()))
+            ->add(RecurringMessage::cron('0 0 * * *', new DispatchAllLinkAnalysisChecksMessage()))
+            ->add(RecurringMessage::cron('0 0 * * *', new ClearStepsMessage()))
             ->add(RecurringMessage::every('1 minute', new PublishScheduledPostVariantsMessage()))
 
             // add your own tasks here

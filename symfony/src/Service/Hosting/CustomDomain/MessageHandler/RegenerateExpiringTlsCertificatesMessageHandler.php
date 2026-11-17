@@ -41,6 +41,11 @@ class RegenerateExpiringTlsCertificatesMessageHandler
 
         foreach ($expiringCerts as $customDomain) {
             try {
+                $this->logger->info('Regenerating TLS certificate for custom domain', [
+                    'customDomainId' => $customDomain->getId(),
+                    'domain' => $customDomain->getDomain(),
+                ]);
+
                 $this->tlsService->generateCertificate($customDomain);
             } catch (AcmeException $e) {
                 $this->logger->error('Failed to regenerate TLS certificate for custom domain', [
