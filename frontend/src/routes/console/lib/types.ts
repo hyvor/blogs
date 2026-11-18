@@ -10,40 +10,44 @@ export interface License {
 	noBranding: boolean;
 }
 
-export type Scope =
-	| 'blog.read'
-	| 'blog.write'
-	| 'blog.delete'
-	| 'posts.read'
-	| 'posts.write'
-	| 'posts.publish.own'
-	| 'posts.publish.all'
-	| 'users.read'
-	| 'users.add'
-	| 'users.write'
-	| 'tags.read'
-	| 'tags.write'
-	| 'languages.read'
-	| 'languages.write'
-	| 'media.upload'
-	| 'media.manage'
-	| 'navigations.read'
-	| 'navigations.write'
-	| 'routes.read'
-	| 'routes.write'
-	| 'redirects.read'
-	| 'redirects.write'
-	| 'webhooks.read'
-	| 'webhooks.write'
-	| 'api_keys.read'
-	| 'api_keys.write'
-	| 'themes.read'
-	| 'themes.write'
-	| 'import.manage'
-	| 'export.manage'
-	| 'link_analysis.manage'
-	| 'integrations.manage'
-	| 'ai.use';
+// keep in sync with symfony/src/Api/Console/Authorization/Scope.php
+export const SCOPES = [
+	'blog.read',
+	'blog.write',
+	'blog.delete',
+	'posts.read',
+	'posts.write',
+	'posts.publish.own',
+	'posts.publish.all',
+	'users.read',
+	'users.add',
+	'users.write',
+	'tags.read',
+	'tags.write',
+	'languages.read',
+	'languages.write',
+	'media.upload',
+	'media.manage',
+	'navigations.read',
+	'navigations.write',
+	'routes.read',
+	'routes.write',
+	'redirects.read',
+	'redirects.write',
+	'webhooks.read',
+	'webhooks.write',
+	'api_keys.read',
+	'api_keys.write',
+	'themes.read',
+	'themes.write',
+	'import.manage',
+	'export.manage',
+	'link_analysis.manage',
+	'integrations.manage',
+	'ai.use'
+] as const;
+
+export type Scope = (typeof SCOPES)[number];
 
 export type UserRole = 'owner' | 'admin' | 'editor' | 'writer' | 'contributor';
 
@@ -455,6 +459,7 @@ export interface ApiKey {
 	name: string;
 	type: ApiKeyType;
 	api_key: string;
+	scopes: Scope[];
 }
 
 // WEBHOOK
