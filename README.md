@@ -1,6 +1,6 @@
 # Hyvor Blogs
 
-[Hyvor Blogs](https://hyvor.com/blogs) is a self-hosted, open-source blogging platform designed to make creating and managing a blog simple. It’s built for speed and simplicity, while remaining flexible enough to support everything from straightforward personal blogs to more complex publishing workflows.
+[Hyvor Blogs](https://hyvor.com/blogs) is a self-hosted, open-source publishing CMS designed to make creating and managing a blog simple. It’s built for speed and simplicity, while remaining flexible enough to support everything from straightforward personal blogs to more complex publishing workflows.
 
 <p align="center">
   <a href="https://hyvor.com/blogs">
@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://hyvor.com/blogs">
-    Open-Source Blogging Platform
+    Open-Source Publishing CMS
   </a>
     <span> | </span>
     <a href="https://hyvor.com/blogs/hosting">
