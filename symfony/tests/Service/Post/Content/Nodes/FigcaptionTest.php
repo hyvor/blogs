@@ -24,7 +24,7 @@ class FigcaptionTest extends KernelTestCase
 
     private function blog(): Blog
     {
-        return (new Blog())->setSubdomain('test');
+        return (new Blog())->setId(1)->setSubdomain('test');
     }
 
     public function test_json_to_html_standalone(): void

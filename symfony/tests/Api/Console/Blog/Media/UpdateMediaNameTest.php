@@ -3,7 +3,6 @@
 namespace App\Tests\Api\Console\Blog\Media;
 
 use App\Api\Console\Controller\MediaController;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserStatus;
 use App\Service\App\Messenger\MessageTransport;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlLock;
@@ -40,7 +39,7 @@ class UpdateMediaNameTest extends ApiTestCase
 
     public function test_updates_name_and_moves_file(): void
     {
-        $blog = BlogFactory::createOne(['subdomain' => 'update-media', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['subdomain' => 'update-media']);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $this->filesystem->write('blog/' . $blog->getId() . '/test.png', 'content');
         $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);

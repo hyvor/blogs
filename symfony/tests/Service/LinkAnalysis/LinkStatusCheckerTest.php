@@ -3,7 +3,6 @@
 namespace App\Tests\Service\LinkAnalysis;
 
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\LinkAnalysis\LinkStatusChecker;
 use App\Service\Route\PermalinkService;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -34,7 +33,6 @@ class LinkStatusCheckerTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne([
             'subdomain' => 'link-check-sep',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
         ]);
 
         $blogUrl = $this->getService(PermalinkService::class)->getBlogUrl($blog);

@@ -9,9 +9,6 @@ export function getHostingUrl(blog: Blog): string {
 	if (blog.hosting_url) {
 		return blog.hosting_url;
 	}
-	if (blog.hosting_at === 'domain') {
-		return 'https://' + blog.hosting_domain;
-	}
 
 	const deliveryUrl = new URL(config.app.delivery_url);
 

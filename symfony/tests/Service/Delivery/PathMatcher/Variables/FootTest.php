@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Variables;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Meta\BlogMeta;
 use App\Entity\Post;
 use App\Service\Delivery\PathMatcher;
@@ -62,7 +61,7 @@ class FootTest extends KernelTestCase
 
     public function test_sets_flashload_basepath_for_subdomain_hosting(): void
     {
-        $blog = BlogFactory::createOneWithLanguageAndRoutes(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([]);
         ThemeFileFactory::createIndexTwig($blog, '{{ _foot | template }}');
 
         $response = $this->pathMatcher()->match($blog, '/');
@@ -73,7 +72,6 @@ class FootTest extends KernelTestCase
     public function test_sets_flashload_basepath_for_self_hosting(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://hyvor.com/blog',
         ]);
         ThemeFileFactory::createIndexTwig($blog, '{{ _foot | template }}');
@@ -86,7 +84,6 @@ class FootTest extends KernelTestCase
     public function test_sets_flashload_basepath_with_nested_path_for_self_hosting(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://hyvor.com/blog/page',
         ]);
         ThemeFileFactory::createIndexTwig($blog, '{{ _foot | template }}');

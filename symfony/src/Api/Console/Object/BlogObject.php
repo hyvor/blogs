@@ -7,7 +7,6 @@ use App\Entity\Enum\Blog\ColorMode;
 use App\Entity\Enum\Blog\ColorModeDefault;
 use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
 use App\Entity\Enum\Blog\SeoExternalLinksFollow;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
 use App\Service\Ai\AiModel;
 
@@ -22,8 +21,6 @@ class BlogObject
     public string $subdomain;
 
     public BlogType $type;
-
-    public BlogHostingAt $hosting_at;
 
     public ?string $hosting_domain;
 
@@ -93,7 +90,6 @@ class BlogObject
 
         $this->subdomain = $blog->getSubdomain();
         $this->type = $blog->getType();
-        $this->hosting_at = $blog->getHostingAt();
         $this->hosting_domain = $blog->getCustomDomain()?->getDomain();
         $this->hosting_url = $blog->getHostingUrl();
         $this->hosting_redirect_subdomain = $blog->getHostingRedirectSubdomain();

@@ -3,7 +3,6 @@
 namespace App\Tests\Api\Delivery;
 
 use App\Api\Delivery\AppDeliveryController;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -18,7 +17,6 @@ class BlogOnSubdirectoryTest extends ApiTestCase
         $this->setEnvVar('DELIVERY_URL', '');
 
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN
         ]);
         ThemeFileFactory::createOne([
             'blog' => $blog,
@@ -41,7 +39,7 @@ class BlogOnSubdirectoryTest extends ApiTestCase
 
     public function test_redirects_to_subdomain_if_delivery_url_is_set(): void
     {
-        $blog = BlogFactory::createOneWithLanguageAndRoutes(['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOneWithLanguageAndRoutes(['subdomain' => 'supun']);
         $this->client->request('GET', '/blog/' . $blog->getSubdomain());
         $this->assertResponseRedirects('https://supun.hyvorblogs.io', 302);
     }
@@ -51,7 +49,6 @@ class BlogOnSubdirectoryTest extends ApiTestCase
         $this->setEnvVar('DELIVERY_URL', '');
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
             'subdomain' => 'supun',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://example.com/blog',
         ]);
 
@@ -64,7 +61,6 @@ class BlogOnSubdirectoryTest extends ApiTestCase
     {
         $this->setEnvVar('DELIVERY_URL', '');
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://example.com/blog',
             'hosting_redirect_subdomain' => false,
         ]);
@@ -85,7 +81,6 @@ class BlogOnSubdirectoryTest extends ApiTestCase
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
             'subdomain' => 'supun',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://example.com/blog',
         ]);
 

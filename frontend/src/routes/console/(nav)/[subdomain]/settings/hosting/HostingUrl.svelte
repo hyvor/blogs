@@ -9,7 +9,7 @@
 	} from '@hyvor/design/components';
 	import { isValidUrl } from '../../../../lib/helper/is-valid-url';
 	import { updateBlog } from '../../../../lib/actions/blogActions';
-	import { blogStore, updateBlogStore } from '../../../../lib/stores/blogStore';
+	import { blogStore, hostingInfoStore, updateBlogStore } from '../../../../lib/stores/blogStore';
 	import { getI18n } from '../../../../lib/i18n';
 
 	const i18n = getI18n();
@@ -36,6 +36,7 @@
 			// the store is updated from the response, as the URL is normalized by the server
 			const res = await updateBlog({ hosting_url: value }, false);
 			updateBlogStore({ hosting_url: res.hosting_url, url: res.url }, true);
+			hostingInfoStore.update((info) => ({ ...info, hosting_url: res.hosting_url, url: res.url }));
 			url = res.hosting_url ?? '';
 			toast.success(i18n.t('console.settings.hosting.hostingUrlSaved'), { id: toastId });
 		} catch (err: any) {
@@ -47,6 +48,7 @@
 </script>
 
 <SplitControl
+	column
 	label={i18n.t('console.settings.hosting.hostingUrl')}
 	caption={i18n.t('console.settings.hosting.hostingUrlCaption')}
 >

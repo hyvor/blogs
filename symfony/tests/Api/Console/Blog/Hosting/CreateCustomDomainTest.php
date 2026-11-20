@@ -7,18 +7,14 @@ use App\Api\Console\Object\CustomDomainIntentObject;
 use App\Api\Console\Object\CustomDomainObject;
 use App\Entity\CustomDomain;
 use App\Entity\CustomDomainIntent;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Entity\Enum\UserStatus;
-use App\Entity\HostingChange;
+use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
-use App\Service\Hosting\HostingChangeService;
-use App\Service\Hosting\Message\HostingChangeMessage;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\CustomDomainIntentFactory;
-use App\Tests\Factory\HostingChangeFactory;
 use App\Tests\Helper\SelfSignedCertificate;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -26,7 +22,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(CustomDomainObject::class)]
 #[CoversClass(CustomDomainIntentObject::class)]
 #[CoversClass(CustomDomainService::class)]
-#[CoversClass(HostingChangeService::class)]
 class CreateCustomDomainTest extends ApiTestCase
 {
 
@@ -80,24 +75,6 @@ class CreateCustomDomainTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
-    public function test_fails_when_blog_has_pending_hosting_change(): void
-    {
-        [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-cd-create-has-change'],
-            ['status' => UserStatus::ACTIVE],
-        );
-
-        HostingChangeFactory::createOne([
-            'blog' => $blog,
-        ]);
-
-        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
-            'domain' => 'mysite.com',
-        ], user: $user);
-
-        $this->assertResponseFailed(400, 'A hosting change is already in progress for this blog');
-    }
-
     public function test_fails_when_domain_is_not_a_valid_hostname(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
@@ -130,22 +107,20 @@ class CreateCustomDomainTest extends ApiTestCase
         $this->assertSame('mysite.com', $json['custom_domain_intent']['domain']);
         $this->assertSame('auto', $json['custom_domain_intent']['tls_provider']);
         $this->assertNull($json['custom_domain_intent']['certificate']);
-        $this->assertNull($json['change']);
 
         $intent = $this->getEm()->getRepository(CustomDomainIntent::class)->findOneBy(['domain' => 'mysite.com']);
         $this->assertNotNull($intent);
         $this->assertNull($this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'mysite.com']));
-        $hostingChange = $this->getEm()->getRepository(HostingChange::class)->findOneBy(['blog' => $blog]);
-        $this->assertNull($hostingChange);
+        $this->getEd()->assertNotDispatched(BlogHostingChangedEvent::class);
 
         $t = $this->transport('async');
         $t->queue()->assertEmpty();
     }
 
-    public function test_creates_intent_with_custom_tls_and_starts_hosting_change(): void
+    public function test_connects_custom_tls_domain_right_away(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-cd-create-custom-tls', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'hosting-cd-create-custom-tls'],
             ['status' => UserStatus::ACTIVE],
         );
 
@@ -160,24 +135,53 @@ class CreateCustomDomainTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertNull($json['custom_domain']);
-        $this->assertIsArray($json['custom_domain_intent']);
-        $this->assertSame('byo.com', $json['custom_domain_intent']['domain']);
-        $this->assertSame('custom', $json['custom_domain_intent']['tls_provider']);
-        $this->assertTrue($json['custom_domain_intent']['has_certificate']);
-        $this->assertIsArray($json['change']);
-        $this->assertSame('changing', $json['change']['status']);
-        $this->assertSame('domain', $json['change']['to_at']);
+        $this->assertIsArray($json['custom_domain']);
+        $this->assertSame('byo.com', $json['custom_domain']['domain']);
+        $this->assertSame('custom', $json['custom_domain']['tls_provider']);
+        $this->assertNull($json['custom_domain_intent']);
 
-        $this->assertNull($this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'byo.com']));
+        $this->assertNull($this->getEm()->getRepository(CustomDomainIntent::class)->findOneBy(['domain' => 'byo.com']));
 
-        $intent = $this->getEm()->getRepository(CustomDomainIntent::class)->findOneBy(['domain' => 'byo.com']);
-        $this->assertNotNull($intent);
-        $this->assertSame(CustomDomainTlsProvider::CUSTOM, $intent->getTlsProvider());
-        $this->assertNotNull($intent->getPrivateKeyEncrypted());
+        $customDomain = $this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'byo.com']);
+        $this->assertNotNull($customDomain);
+        $this->assertSame(CustomDomainTlsProvider::CUSTOM, $customDomain->getTlsProvider());
+        $this->assertNotNull($customDomain->getPrivateKeyEncrypted());
+        $this->assertSame($certPair['certificatePem'], $customDomain->getCertificate());
+        $this->assertSame($blog->getId(), $customDomain->getBlog()->getId());
 
-        $transport = $this->transport('async');
-        $transport->queue()->assertContains(HostingChangeMessage::class);
+        $this->getEm()->refresh($blog);
+        $this->assertSame($customDomain->getId(), $blog->getCustomDomain()?->getId());
+
+        $this->getEd()->assertDispatched(BlogHostingChangedEvent::class);
+    }
+
+    public function test_replaces_active_domain_with_custom_tls_domain(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'hosting-cd-create-custom-tls-replace'],
+            ['status' => UserStatus::ACTIVE],
+        );
+        $existing = CustomDomainFactory::createActiveFor($blog, 'old-byo.com');
+        $existingId = $existing->getId();
+
+        $certPair = SelfSignedCertificate::generate('new-byo.com');
+
+        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
+            'domain' => 'new-byo.com',
+            'tls_provider' => 'custom',
+            'tls_private_key' => $certPair['privateKeyPem'],
+            'tls_certificate' => $certPair['certificatePem'],
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertIsArray($json['custom_domain']);
+        $this->assertSame('new-byo.com', $json['custom_domain']['domain']);
+
+        $this->assertNull($this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'old-byo.com']));
+        $customDomain = $this->getEm()->getRepository(CustomDomain::class)->findOneBy(['domain' => 'new-byo.com']);
+        $this->assertNotNull($customDomain);
+        $this->assertSame($existingId, $customDomain->getId());
     }
 
     public function test_fails_creating_custom_tls_domain_without_key_and_cert(): void
@@ -214,37 +218,4 @@ class CreateCustomDomainTest extends ApiTestCase
 
         $this->assertResponseFailed(400, 'The provided private key does not match the certificate.');
     }
-
-    // couldn't make it work with mocking - retry later
-
-//    public function test_reverts_intent_on_pending_error_custom_tls(): void
-//    {
-//        $hostingChangeService = $this->createPartialMock(HostingChangeService::class, ['startHostingChange']);
-//        $hostingChangeService->method('startHostingChange')
-//            ->willThrowException(new PendingHostingChangeException(new Blog()->setId(0)));
-//        $this->getContainer()->set(HostingChangeService::class, $hostingChangeService);
-//
-//        [$blog, $user] = BlogFactory::createOneWithUser(
-//            ['subdomain' => 'hosting-cd-create-custom-tls-pending'],
-//            ['status' => UserStatus::ACTIVE],
-//        );
-//
-//        $certPair = SelfSignedCertificate::generate('byo-pending.com');
-//
-//        HostingChangeFactory::createOne([
-//            'blog' => $blog,
-//        ]);
-//
-//        $this->consoleBlogApi('POST', $blog, '/hosting/custom-domain', [
-//            'domain' => 'byo-pending.com',
-//            'tls_provider' => 'custom',
-//            'tls_private_key' => $certPair['privateKeyPem'],
-//            'tls_certificate' => $certPair['certificatePem'],
-//        ], user: $user);
-//
-//        $this->assertResponseFailed(400, 'A hosting change is already in progress for this blog');
-//
-//        $intent = $this->getEm()->getRepository(CustomDomainIntent::class)->findOneBy(['domain' => 'byo-pending.com']);
-//        $this->assertNull($intent);
-//    }
 }

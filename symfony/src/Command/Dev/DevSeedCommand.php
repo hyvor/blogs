@@ -7,7 +7,6 @@ use App\Entity\Blog;
 use App\Entity\Enum\AiMessageEventDocumentChangeStatus;
 use App\Entity\Enum\AiMessageEventType;
 use App\Entity\Enum\AiMessageRole;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\UserRole;
@@ -65,10 +64,10 @@ class DevSeedCommand
         $this->sudoUserService->create(1, 'sudo');
 
         $blogConfigs = [
-            ['subdomain' => 'test', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
-            ['subdomain' => 'custom', 'hosting_at' => BlogHostingAt::DOMAIN, 'custom_domain' => CustomDomainFactory::createOne()],
-            ['subdomain' => 'self', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'hosting_url' => 'https://blogs.hyvor.test/blog'],
-            ['subdomain' => 'dev', 'type' => BlogType::DEV, 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'hosting_url' => 'http://127.0.0.1:8885'],
+            ['subdomain' => 'test'],
+            ['subdomain' => 'custom', 'custom_domain' => CustomDomainFactory::createOne()],
+            ['subdomain' => 'self', 'hosting_url' => 'https://blogs.hyvor.test/blog'],
+            ['subdomain' => 'dev', 'type' => BlogType::DEV, 'hosting_url' => 'http://127.0.0.1:8885'],
         ];
 
         $postStatuses = [PostVariantStatus::DRAFT, PostVariantStatus::PUBLISHED, PostVariantStatus::SCHEDULED];

@@ -3,7 +3,6 @@
 namespace App\Tests\Api\Console\Blog\LinkAnalysis;
 
 use App\Api\Console\Controller\LinkAnalysisController;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserRole;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -23,7 +22,7 @@ class IgnoreLinkTest extends ApiTestCase
      */
     private function setupBlog(string $subdomain): array
     {
-        $blog = BlogFactory::createOne(['subdomain' => $subdomain, 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['subdomain' => $subdomain]);
         $user = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         $post = PostFactory::createOne(['blog' => $blog]);

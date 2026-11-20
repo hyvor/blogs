@@ -10,6 +10,7 @@
 	} from '@hyvor/design/components';
 	import { deleteCustomDomainIntent, verifyCustomDomainSetup } from './hostingActions';
 	import { hostingInfoStore, updateHostingInfoStore } from '../../../../lib/stores/blogStore';
+	import { getI18n } from '../../../../lib/i18n';
 	import DnsInstructions from './DnsInstructions.svelte';
 	import IconChevronDown from '@hyvor/icons/IconChevronDown';
 
@@ -18,6 +19,8 @@
 	}
 
 	let { show = $bindable() }: Props = $props();
+
+	const i18n = getI18n();
 
 	let loading = $state(false as boolean | string);
 
@@ -39,8 +42,7 @@
 		}
 	});
 
-	// background verification (e.g. the hosting change completing) can clear the
-	// intent while this modal is open
+	// the intent is cleared once the domain is connected (or the setup is aborted)
 	$effect(() => {
 		if (show && !intent) {
 			show = false;
@@ -55,7 +57,7 @@
 		try {
 			const result = await verifyCustomDomainSetup();
 			updateHostingInfoStore(result);
-			toast.success('Domain verified! Applying the certificate now...');
+			toast.success(i18n.t('console.settings.hosting.customDomainVerified'));
 		} catch (err: any) {
 			verifyError = {
 				message:
@@ -82,8 +84,8 @@
 		loading = 'Aborting...';
 
 		try {
-			await deleteCustomDomainIntent();
-			hostingInfoStore.update((info) => ({ ...info, custom_domain_intent: null }));
+			const result = await deleteCustomDomainIntent();
+			updateHostingInfoStore(result);
 			toast.success('Custom domain setup aborted');
 		} catch (err: any) {
 			toast.error(err.message || 'Failed to abort custom domain setup');
@@ -95,7 +97,7 @@
 </script>
 
 <Modal title="Complete Custom Domain Setup" {loading} bind:show>
-	{#if intent && !intent.has_certificate}
+	{#if intent}
 		<div class="section">
 			<div class="section-header">
 				<span class="section-domain">{intent.domain}</span>
@@ -106,14 +108,6 @@
 				the setup.
 			</p>
 			<DnsInstructions domain={intent.domain} />
-		</div>
-	{:else if intent}
-		<div class="section">
-			<div class="section-header">
-				<span class="section-domain">{intent.domain}</span>
-				<Tag color="blue" size="small">Applying</Tag>
-			</div>
-			<p>The certificate has been generated. The hosting change is now in progress.</p>
 		</div>
 	{/if}
 
@@ -143,7 +137,7 @@
 
 	{#snippet footer()}
 		<ButtonGroup>
-			{#if intent && !intent.has_certificate}
+			{#if intent}
 				<Button variant="fill-light" color="red" on:click={handleAbortIntent} disabled={loading}>
 					Abort
 				</Button>

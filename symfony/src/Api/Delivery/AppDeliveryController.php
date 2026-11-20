@@ -3,7 +3,6 @@
 namespace App\Api\Delivery;
 
 use App\Entity\Enum\ApiKeyType;
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
@@ -68,7 +67,7 @@ class AppDeliveryController extends AbstractController
 
         if (
             $this->appConfig->getDeliveryUrl() !== null ||
-            $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN
+            $blog->getCustomDomain() !== null
         ) {
             // to the subdomain/custom domain (which then redirects to the hosting URL, if needed)
             return new RedirectResponse(

@@ -4,7 +4,6 @@ namespace App\Tests\Command\Migration;
 
 use App\Command\Migration\MigrateMediaUrlsCommand;
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Entity\PostVariant;
@@ -29,7 +28,6 @@ class MigrateMediaUrlsCommandTest extends KernelTestCase
     {
         return BlogFactory::createOne([
             'subdomain' => $subdomain,
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
         ]);
     }
 

@@ -81,8 +81,11 @@ class ClearCacheListener
     #[AsEventListener]
     public function onBlogUpdated(BlogUpdatedEvent $event): void
     {
-        // the hosting URL changes all generated URLs (including sitemaps, feeds, etc.)
-        if ($event->blog->getHostingUrl() !== $event->blogOld->getHostingUrl()) {
+        // the subdomain and the hosting URL change all generated URLs (including sitemaps, feeds, etc.)
+        if (
+            $event->blog->getSubdomain() !== $event->blogOld->getSubdomain() ||
+            $event->blog->getHostingUrl() !== $event->blogOld->getHostingUrl()
+        ) {
             $this->cacheService->clearAllCache($event->blog);
             return;
         }
@@ -93,7 +96,7 @@ class ClearCacheListener
     #[AsEventListener]
     public function onBlogHostingChanged(BlogHostingChangedEvent $event): void
     {
-        $this->cacheService->clearAllCache($event->hostingChange->getBlog());
+        $this->cacheService->clearAllCache($event->blog);
     }
 
     #[AsEventListener]

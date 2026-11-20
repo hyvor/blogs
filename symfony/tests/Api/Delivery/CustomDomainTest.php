@@ -3,7 +3,6 @@
 namespace App\Tests\Api\Delivery;
 
 use App\Api\Delivery\CustomDomainController;
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -70,7 +69,6 @@ class CustomDomainTest extends ApiTestCase
     public function test_redirects_when_blog_deleted(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'deleted_at' => new \DateTimeImmutable(),
         ]);
         $customDomain = CustomDomainFactory::createActiveFor($blog, 'deleted.customdomain.com');
@@ -88,7 +86,6 @@ class CustomDomainTest extends ApiTestCase
     public function test_redirects_when_blog_blocked(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'blocked_at' => new \DateTimeImmutable(),
         ]);
         $customDomain = CustomDomainFactory::createActiveFor($blog, 'blocked.customdomain.com');
@@ -106,7 +103,6 @@ class CustomDomainTest extends ApiTestCase
     public function test_redirects_when_license_expired(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'organization_id' => 1,
         ]);
         $customDomain = CustomDomainFactory::createActiveFor($blog, 'expired.customdomain.com');
@@ -173,7 +169,6 @@ class CustomDomainTest extends ApiTestCase
     public function test_returns_response_when_blog_found(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
         ]);
         $customDomain = CustomDomainFactory::createActiveFor($blog, 'ishini.io');
         $blog->setCustomDomain($customDomain);

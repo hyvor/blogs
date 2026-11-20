@@ -38,7 +38,7 @@ class ImageTest extends KernelTestCase
 
     private function blog(): Blog
     {
-        return (new Blog())->setSubdomain('test');
+        return (new Blog())->setId(1)->setSubdomain('test');
     }
 
     private function storeFile(int $blogId, string $name, string $content): void

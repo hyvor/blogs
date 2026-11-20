@@ -5,7 +5,6 @@ namespace App\Tests\Service\Route;
 use App\Domains\Route\PermalinkRepository;
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\Media\BlogIdEncoder;
 use App\Service\Route\PermalinkService;
 use App\Tests\Factory\BlogFactory;
@@ -32,7 +31,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_url_subdomain(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -45,7 +43,6 @@ class PermalinkServiceTest extends KernelTestCase {
     {
         $this->setEnvVar('DELIVERY_URL', '');
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -57,7 +54,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_url_custom_domain(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::DOMAIN);
         $blog->setCustomDomain(new CustomDomain()->setDomain('supun.io'));
 
         $this->assertSame(
@@ -72,7 +68,6 @@ class PermalinkServiceTest extends KernelTestCase {
         $this->setEnvVar('TLS_MODE', 'disabled');
 
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::DOMAIN);
         $blog->setCustomDomain(new CustomDomain()->setDomain('supun.io'));
 
         $this->assertSame(
@@ -87,7 +82,6 @@ class PermalinkServiceTest extends KernelTestCase {
         $this->setEnvVar('TLS_MODE', 'disabled');
 
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -100,7 +94,6 @@ class PermalinkServiceTest extends KernelTestCase {
     {
         $blog = new Blog();
         $blog->setSubdomain('supun');
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setHostingUrl('https://supun.io/blog');
 
         $this->assertSame('https://supun.io/blog', $this->getPermalinkService()->getBlogUrl($blog));
@@ -111,12 +104,13 @@ class PermalinkServiceTest extends KernelTestCase {
 
     public function test_blog_url_uses_hosting_url_with_custom_domain(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::DOMAIN, 'hosting_url' => 'https://supun.io/blog']);
+        $blog = BlogFactory::createOne(['subdomain' => 'supun', 'hosting_url' => 'https://supun.io/blog']);
         $customDomain = CustomDomainFactory::createActiveFor($blog, 'blog.supun.io');
         $blog->setCustomDomain($customDomain);
 
         $this->assertSame('https://supun.io/blog', $this->getPermalinkService()->getBlogUrl($blog));
         $this->assertSame('https://blog.supun.io', $this->getPermalinkService()->getBlogDeliveryUrl($blog));
+        $this->assertSame('https://supun.hyvorblogs.io', $this->getPermalinkService()->getBlogSubdomainUrl($blog));
     }
 
     // isLinkInBlog ============
@@ -124,7 +118,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_is_link_in_blog(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertTrue(
@@ -141,7 +134,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_url_with_path(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -170,7 +162,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_permalink_primary_language(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $language = new \App\Entity\Language();
@@ -186,7 +177,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_permalink_non_primary_language(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $language = new \App\Entity\Language();
@@ -219,7 +209,6 @@ class PermalinkServiceTest extends KernelTestCase {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
             [
                 'subdomain' => 'supun',
-                'hosting_at' => BlogHostingAt::SUBDOMAIN
             ],
             routes: [
                 [
@@ -268,7 +257,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_post_variant_permalink_uses_page_route_for_pages(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'post',
@@ -310,7 +299,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_tag_permalink_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'tag',
@@ -342,7 +331,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_tag_permalink_non_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'tag',
@@ -377,7 +366,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_author_permalink_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'author',
@@ -409,7 +398,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_author_permalink_non_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'author',
@@ -443,7 +432,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_media_asserts_permalinks(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: []
         );
 
@@ -480,7 +469,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_media_permalink_does_not_depend_on_blog_hosting(): void
     {
         $blog = BlogFactory::createOne([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://example.com/blog',
         ]);
         $encoded = BlogIdEncoder::encode($blog->getId());
@@ -531,7 +519,7 @@ class PermalinkServiceTest extends KernelTestCase {
 
     public function test_get_media_name_from_url(): void
     {
-        $blog = BlogFactory::createOne(['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['subdomain' => 'supun']);
         $otherBlog = BlogFactory::createOne();
         $encoded = BlogIdEncoder::encode($blog->getId());
         $service = $this->getPermalinkService();

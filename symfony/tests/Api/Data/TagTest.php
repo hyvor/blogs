@@ -5,7 +5,6 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Controller\TagsController;
 use App\Api\Data\Factory\TagObjectFactory;
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
 use App\Entity\Tag;
 use App\Tests\Case\ApiTestCase;
@@ -29,7 +28,7 @@ class TagTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $this->blog = BlogFactory::createOne();
         $this->lang1 = LanguageFactory::createOnePrimaryFor($this->blog, ['code' => 'en']);
         $this->lang2 = LanguageFactory::createOneFor($this->blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'tag', 'match' => '/tag/{slug}', 'template' => 'tag', 'is_enabled' => true]);

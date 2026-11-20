@@ -96,6 +96,16 @@ class BlogController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
+        if ($input->subdomain !== null && $input->subdomain !== $blog->getSubdomain()) {
+            if ($this->blogService->isSubdomainReserved($input->subdomain)) {
+                throw new UnprocessableEntityHttpException('subdomain is reserved');
+            }
+
+            if ($this->blogService->getBlogBySubdomain($input->subdomain) !== null) {
+                throw new UnprocessableEntityHttpException('subdomain is already taken');
+            }
+        }
+
         $blog = $this->blogService->updateBlog($blog, $input);
 
         return new JsonResponse($this->blogObjectFactory->create($blog));

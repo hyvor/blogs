@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Cache;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Blog\Event\BlogUpdatedEvent;
@@ -12,8 +11,6 @@ use App\Service\Cache\ClearCacheListener;
 use App\Service\Cache\Event\CacheClearAllEvent;
 use App\Service\Cache\Event\CacheClearSingleEvent;
 use App\Service\Cache\Event\CacheClearTemplatesEvent;
-use App\Service\Hosting\Exception\PendingHostingChangeException;
-use App\Service\Hosting\HostingChangeService;
 use App\Service\Language\Event\LanguageChangedEvent;
 use App\Service\Media\Event\MediaCreatedEvent;
 use App\Service\Media\Event\MediaDeletedEvent;
@@ -65,7 +62,6 @@ use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(ClearCacheListener::class)]
 #[UsesClass(BlogCacheService::class)]
-#[UsesClass(HostingChangeService::class)]
 class ClearCacheListenerTest extends KernelTestCase
 {
     private function dispatch(object $event): void
@@ -150,7 +146,7 @@ class ClearCacheListenerTest extends KernelTestCase
 
     public function test_blog_updated_clears_template_cache(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $blogOld = clone $blog;
 
         $this->dispatch(new BlogUpdatedEvent($blog, $blogOld));
@@ -161,7 +157,7 @@ class ClearCacheListenerTest extends KernelTestCase
 
     public function test_blog_hosting_url_updated_clears_all_cache(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $blogOld = clone $blog;
         $blog->setHostingUrl('https://example.com/blog');
 
@@ -171,14 +167,23 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
     }
 
-    /** @throws PendingHostingChangeException */
+    public function test_blog_subdomain_updated_clears_all_cache(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'old-subdomain']);
+        $blogOld = clone $blog;
+        $blog->setSubdomain('new-subdomain');
+
+        $this->dispatch(new BlogUpdatedEvent($blog, $blogOld));
+
+        $this->getEd()->assertDispatched(CacheClearAllEvent::class);
+        $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
+    }
+
     public function test_blog_hosting_changed_clears_all_cache(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $hostingChangeService = $this->getService(HostingChangeService::class);
-        $hostingChange = $hostingChangeService->startHostingChange($blog, BlogHostingAt::SUBDOMAIN, toSubdomain: 'new-subdomain');
+        $blog = BlogFactory::createOne();
 
-        $this->dispatch(new BlogHostingChangedEvent($hostingChange));
+        $this->dispatch(new BlogHostingChangedEvent($blog));
 
         $this->getEd()->assertDispatched(CacheClearAllEvent::class);
         $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);

@@ -3,7 +3,6 @@
 namespace App\Service\Route;
 
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
 use App\Entity\Media;
 use App\Entity\PostVariant;
@@ -45,8 +44,9 @@ class PermalinkService
 
     /**
      * The base URL of the blog, used for all URL generation (permalinks, Data API, sitemaps, feeds, etc.)
-     * This is the hosting URL if set (where the blog is finally served, ex: a reverse proxy or a headless frontend),
-     * otherwise, the URL where Hyvor Blogs serves the blog (subdomain or custom domain).
+     * 1. the hosting URL, if set (where the blog is finally served, ex: a reverse proxy or a headless frontend)
+     * 2. the custom domain, if connected
+     * 3. the default subdomain URL
      */
     public function getBlogUrl(Blog $blog): string
     {
@@ -54,39 +54,33 @@ class PermalinkService
     }
 
     /**
-     * The URL where Hyvor Blogs serves the blog (subdomain or custom domain), ignoring the hosting URL
+     * The URL where Hyvor Blogs serves the blog (custom domain if connected, otherwise the subdomain),
+     * ignoring the hosting URL
      */
     public function getBlogDeliveryUrl(Blog $blog): string
     {
-        $hostingAt = $blog->getHostingAt();
+        $customDomain = $blog->getCustomDomain();
 
-        return $this->buildUrlForHosting(
-            $hostingAt,
-            $hostingAt === BlogHostingAt::SUBDOMAIN ? $blog->getSubdomain() : null,
-            $blog->getCustomDomain()?->getDomain()
-        );
+        if ($customDomain !== null) {
+            return 'https://' . $customDomain->getDomain();
+        }
+
+        return $this->getBlogSubdomainUrl($blog);
+    }
+
+    /**
+     * The default URL of the blog on Hyvor Blogs (subdomain or app subdirectory),
+     * ignoring the custom domain and the hosting URL
+     */
+    public function getBlogSubdomainUrl(Blog $blog): string
+    {
+        return $this->buildSubdomainUrl($blog->getSubdomain());
     }
 
     // homepage URL, with language prefix if not primary
     public function getBlogPermalink(Blog $blog, Language $language): string
     {
         return $this->getBlogUrlWithPath($blog, $language->isPrimary() ? '/' : '/' . $language->getCode());
-    }
-
-    /**
-     * Computes the URL where Hyvor Blogs would serve a blog under a given (possibly not-yet-applied)
-     * hosting configuration, without mutating the blog. The blog's hosting URL is not considered.
-     */
-    public function buildUrlForHosting(
-        BlogHostingAt $hostingAt,
-        ?string $subdomain,
-        ?string $domain
-    ): string
-    {
-        return match ($hostingAt) {
-            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain ?? ''),
-            BlogHostingAt::DOMAIN => 'https://' . $domain,
-        };
     }
 
     /**
