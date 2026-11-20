@@ -102,24 +102,12 @@ class HostingController extends AbstractController
             throw new BadRequestHttpException('Use custom domain endpoints to set hosting at domain');
         }
 
-        if ($hostingAt === BlogHostingAt::SELF && $input->hosting_url === null) {
-            throw new BadRequestHttpException('Hosting URL is required when self-hosting');
-        }
-
+        // only subdomain is left here
         if (
-            $blog->getHostingAt() === $hostingAt &&
-            $hostingAt === BlogHostingAt::SUBDOMAIN &&
+            $blog->getHostingAt() === BlogHostingAt::SUBDOMAIN &&
             $blog->getSubdomain() === $inputSubdomain
         ) {
             throw new BadRequestHttpException('You are already hosting at subdomain: ' . $inputSubdomain);
-        }
-
-        if (
-            $blog->getHostingAt() === $hostingAt &&
-            $hostingAt === BlogHostingAt::SELF &&
-            $blog->getHostingUrl() === $input->hosting_url
-        ) {
-            throw new BadRequestHttpException('You are already hosting at self-hosted URL: ' . $blog->getHostingUrl());
         }
 
         if ($this->hostingChangeService->hasPendingChange($blog)) {
@@ -131,7 +119,6 @@ class HostingController extends AbstractController
                 $blog,
                 $hostingAt,
                 toSubdomain: $inputSubdomain,
-                toHostingUrl: $input->hosting_url
             );
         } catch (PendingHostingChangeException) {
             throw new BadRequestHttpException('A hosting change is already in progress for this blog');

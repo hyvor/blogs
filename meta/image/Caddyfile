@@ -114,7 +114,7 @@
 	}
 }
 
-# media domain (if MEDIA_DOMAIN is set)
+# media domain (if MEDIA_URL is set)
 # see run script for MEDIA_ADDRESS / MEDIA_TLS_DIRECTIVE
 {$MEDIA_ADDRESS} {
 	{$MEDIA_TLS_DIRECTIVE}

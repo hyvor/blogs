@@ -14,21 +14,14 @@ export function getHostingHistory(limit: number = 20, offset: number = 0) {
 	});
 }
 
-export function updateHostedAt(
-	hostingAt: 'subdomain' | 'self',
-	hostingUrl?: string,
-	subdomain?: string
-) {
+/**
+ * Switches hosting to the subdomain (optionally, changing the subdomain).
+ * Custom domains are set up with the custom domain endpoints.
+ */
+export function updateHostedAt(subdomain?: string) {
 	const data: Record<string, string> = {
-		hosting_at: hostingAt
+		hosting_at: 'subdomain'
 	};
-
-	if (hostingAt === 'self') {
-		if (!hostingUrl) {
-			throw new Error('Hosting URL is required when self-hosting');
-		}
-		data['hosting_url'] = hostingUrl;
-	}
 
 	if (subdomain) {
 		data['subdomain'] = subdomain;

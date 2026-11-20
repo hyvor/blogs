@@ -14,7 +14,4 @@ class UpdateHostingInput
     #[Assert\Regex(BlogService::SUBDOMAIN_REGEX)]
     public ?string $subdomain = null;
 
-    #[Assert\Url]
-    public ?string $hosting_url = null;
-
 }

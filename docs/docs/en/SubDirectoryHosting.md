@@ -7,6 +7,8 @@
 
 According to most SEO experts, a subdirectory like `/blog` is the best place to host your blog. Hyvor Blogs supports multiple methods to host your blog in a subdirectory.
 
+Whichever method you use, set the **Hosting URL** (e.g. `https://example.com/blog`) in Console &rarr; Settings &rarr; Hosting. Hyvor Blogs then uses it for all links, sitemaps, feeds, and canonical URLs, and (optionally) redirects visitors of your subdomain to it.
+
 <h2 id="docker">1. Docker</h2>
 
 If you are already using Docker within your website, you can use our official Docker image to host your Hyvor Blog in a subdirectory. You can use a reverse proxy like Caddy, Nginx or Traefik to route blog traffic to the Docker container.

@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Media was previously served from the blog's host ({blogUrl}/media/{name}).
- * It is now served from the media URL ({DOMAIN_APP}/media/{blogIdEncoded}/{name} or {MEDIA_DOMAIN}/{blogIdEncoded}/{name}).
+ * It is now served from the media URL ({DOMAIN_APP}/media/{blogIdEncoded}/{name} or {MEDIA_URL}/{blogIdEncoded}/{name}).
  * This rewrites the legacy URLs saved in blog meta, posts, and users to the new format.
  *
  * Legacy URLs keep working (the blog-host /media/ route is still served), so this can be run anytime after deploying.

@@ -35,9 +35,6 @@ class HostingChange
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $from_domain = null;
 
-    #[ORM\Column(length: 1024, nullable: true)]
-    private ?string $from_hosting_url = null;
-
     #[ORM\Column(length: 1024)]
     private string $from_url;
 
@@ -49,9 +46,6 @@ class HostingChange
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $to_domain = null;
-
-    #[ORM\Column(length: 1024, nullable: true)]
-    private ?string $to_hosting_url = null;
 
     #[ORM\Column(length: 1024)]
     private string $to_url;
@@ -142,17 +136,6 @@ class HostingChange
         return $this;
     }
 
-    public function getFromHostingUrl(): ?string
-    {
-        return $this->from_hosting_url;
-    }
-
-    public function setFromHostingUrl(?string $from_hosting_url): static
-    {
-        $this->from_hosting_url = $from_hosting_url;
-        return $this;
-    }
-
     public function getFromUrl(): string
     {
         return $this->from_url;
@@ -194,17 +177,6 @@ class HostingChange
     public function setToDomain(?string $to_domain): static
     {
         $this->to_domain = $to_domain;
-        return $this;
-    }
-
-    public function getToHostingUrl(): ?string
-    {
-        return $this->to_hosting_url;
-    }
-
-    public function setToHostingUrl(?string $to_hosting_url): static
-    {
-        $this->to_hosting_url = $to_hosting_url;
         return $this;
     }
 

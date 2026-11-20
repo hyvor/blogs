@@ -73,7 +73,7 @@ class FootTest extends KernelTestCase
     public function test_sets_flashload_basepath_for_self_hosting(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
-            'hosting_at' => BlogHostingAt::SELF,
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://hyvor.com/blog',
         ]);
         ThemeFileFactory::createIndexTwig($blog, '{{ _foot | template }}');
@@ -86,7 +86,7 @@ class FootTest extends KernelTestCase
     public function test_sets_flashload_basepath_with_nested_path_for_self_hosting(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
-            'hosting_at' => BlogHostingAt::SELF,
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hosting_url' => 'https://hyvor.com/blog/page',
         ]);
         ThemeFileFactory::createIndexTwig($blog, '{{ _foot | template }}');

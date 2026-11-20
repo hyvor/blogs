@@ -6,11 +6,11 @@ use App\Api\Console\Controller\MediaController;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserStatus;
 use App\Service\App\Messenger\MessageTransport;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlLock;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
 use App\Service\Media\Event\MediaNameUpdatedEvent;
 use App\Service\Media\MediaService;
+use App\Service\Route\PermalinkService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\MediaFactory;
@@ -44,6 +44,7 @@ class UpdateMediaNameTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $this->filesystem->write('blog/' . $blog->getId() . '/test.png', 'content');
         $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
+        $mediaBaseUrl = $this->getService(PermalinkService::class)->getMediaBlogBaseUrl($blog);
 
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOneFor($post, [
@@ -56,7 +57,7 @@ class UpdateMediaNameTest extends ApiTestCase
                             [
                                 'type' => 'image',
                                 'attrs' => [
-                                    'src' => 'https://update-media.hyvorblogs.io/media/' . $media->getName(),
+                                    'src' => $mediaBaseUrl . '/' . $media->getName(),
                                     'alt' => '',
                                 ],
                             ],
@@ -83,11 +84,11 @@ class UpdateMediaNameTest extends ApiTestCase
         $transport->queue()->assertContains(UpdateBlogUrlsMessage::class);
         $message = $transport->queue()->messages(UpdateBlogUrlsMessage::class)[0];
 
-        $this->assertSame(UpdateBlogUrlEvent::MEDIA_URL_CHANGED, $message->event);
         $this->assertSame($blog->getId(), $message->blogId);
-        $this->assertSame('https://update-media.hyvorblogs.io/media/test.png', $message->mediaOldUrl);
-        $this->assertSame('https://update-media.hyvorblogs.io/media/new-name.png', $message->mediaNewUrl);
-        $this->assertCount(2, $message->lockKeys);
+        $this->assertSame($media->getId(), $message->mediaId);
+        $this->assertSame($mediaBaseUrl . '/test.png', $message->mediaOldUrl);
+        $this->assertSame($mediaBaseUrl . '/new-name.png', $message->mediaNewUrl);
+        $this->assertCount(1, $message->lockKeys);
 
         $transport->processOrFail();
 
@@ -106,7 +107,7 @@ class UpdateMediaNameTest extends ApiTestCase
         $this->assertIsArray($image);
         $attrs = $image['attrs'];
         $this->assertIsArray($attrs);
-        $this->assertSame('https://update-media.hyvorblogs.io/media/new-name.png', $attrs['src']);
+        $this->assertSame($mediaBaseUrl . '/new-name.png', $attrs['src']);
     }
 
     public function test_updates_to_kebab_case(): void
@@ -182,27 +183,5 @@ class UpdateMediaNameTest extends ApiTestCase
         refresh($media);
         $this->assertSame('test.png', $media->getName());
     }
-
-    public function test_cannot_update_if_hosting_update_is_in_progress(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'update-media-hosting-lock']);
-        $user = UserFactory::createOne(['blog' => $blog]);
-        $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
-
-        // Simulate another process holding the hosting lock
-        $lock = $this->getService(UpdateBlogUrlLock::class)->hostingChangedLock()[0];
-        $lock->acquire();
-
-        $this->consoleBlogApi('PATCH', $blog, '/media/' . $media->getId(), [
-            'name' => 'new-name.png',
-        ], user: $user);
-
-        $this->assertResponseFailed(422, 'Cannot update media URL because a hosting URL update is in progress.');
-
-        $this->getEm()->clear();
-        refresh($media);
-        $this->assertSame('test.png', $media->getName());
-    }
-
 
 }

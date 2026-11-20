@@ -41,13 +41,13 @@ class GetHostingHistoryTest extends ApiTestCase
         HostingChangeFactory::createOne([
             'blog' => $blog,
             'from_at' => BlogHostingAt::SUBDOMAIN,
-            'to_at' => BlogHostingAt::SELF,
+            'to_at' => BlogHostingAt::DOMAIN,
             'status' => HostingChangeStatus::FAILED,
             'error_message' => 'Something went wrong',
         ]);
         HostingChangeFactory::createOne([
             'blog' => $blog,
-            'from_at' => BlogHostingAt::SELF,
+            'from_at' => BlogHostingAt::DOMAIN,
             'to_at' => BlogHostingAt::SUBDOMAIN,
             'status' => HostingChangeStatus::CHANGING,
         ]);

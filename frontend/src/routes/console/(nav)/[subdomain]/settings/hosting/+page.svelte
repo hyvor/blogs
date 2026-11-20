@@ -22,7 +22,7 @@
 	import { getHostingInfo, updateHostedAt } from './hostingActions';
 	import CreateCustomDomainModal from './CreateCustomDomainModal.svelte';
 	import CustomDomainIntentModal from './CustomDomainIntentModal.svelte';
-	import SetupSelfHostingModal from './SetupSelfHostingModal.svelte';
+	import HostingUrl from './HostingUrl.svelte';
 	import HostingHistoryModal from './HostingHistoryModal.svelte';
 	import HostingOption from './HostingOption.svelte';
 	import CustomDomainOption from './CustomDomainOption.svelte';
@@ -40,7 +40,6 @@
 	let isSavingSubdomain = $state(false);
 	let showCreateCustomDomainModal = $state(false);
 	let showCustomDomainIntentModal = $state(false);
-	let showSelfHostingModal = $state(false);
 	let showHostingHistoryModal = $state(false);
 
 	let isLoading = $state(true);
@@ -90,7 +89,7 @@
 		isSavingSubdomain = true;
 		const toastId = toast.loading('Updating subdomain...');
 		try {
-			const result = await updateHostedAt('subdomain', undefined, val);
+			const result = await updateHostedAt(val);
 			updateHostingInfoStore(result);
 			toast.info('Subdomain change started. It may take a moment to apply.', { id: toastId });
 		} catch (err: any) {
@@ -114,7 +113,7 @@
 
 		const toastId = toast.loading(i18n.t('console.settings.hosting.reverting'));
 		try {
-			const updates = await updateHostedAt('subdomain');
+			const updates = await updateHostedAt();
 			updateHostingInfoStore(updates);
 			toast.info(i18n.t('console.settings.hosting.revertStarted'), {
 				id: toastId
@@ -208,51 +207,22 @@
 					onContinueSetup={() => (showCustomDomainIntentModal = true)}
 					onConfigure={() => (showCreateCustomDomainModal = true)}
 				/>
-				<HostingOption
-					title={i18n.t('console.settings.hosting.selfHosted')}
-					active={$hostingInfoStore.hosting_at === 'self'}
-					buttonLabel={i18n.t('console.settings.hosting.setupSelfHosting')}
-					buttonDisabled={isHostingChangeInProgress}
-					onclick={() => (showSelfHostingModal = true)}
-				>
-					{#snippet subtitle()}
-						Serve your blog from your own server for <a
-							class="hds-link"
-							target="_blank"
-							href="/docs/subdirectory">subdirectory hosting</a
-						>
-						or
-						<a class="hds-link" target="_blank" href="/docs/headless">headless usage</a>.
-					{/snippet}
-					{#snippet activeContent()}
-						<div class="self-hosting-active">
-							<Button
-								size="small"
-								variant="outline"
-								disabled={isHostingChangeInProgress}
-								onclick={() => (showSelfHostingModal = true)}
-							>
-								Change URL
-							</Button>
-							<span class="self-hosting-url">{$blogStore.hosting_url}</span>
-						</div>
-					{/snippet}
-				</HostingOption>
 			</div>
 			{#if $hostingInfoStore.change}
 				<HostingChangeStatus change={$hostingInfoStore.change} />
 			{/if}
 		</SplitControl>
 
-		{#if $blogStore.hosting_at !== 'subdomain'}
+		<HostingUrl />
+
+		{#if $blogStore.hosting_at !== 'subdomain' || $blogStore.hosting_url}
 			<SplitControl
 				label={i18n.t('console.settings.hosting.redirectSubdomain')}
 				caption={i18n.t('console.settings.hosting.redirectSubdomainCaption', {
 					subdomain: $blogStore.subdomain,
-					target:
-						$blogStore.hosting_at === 'domain'
-							? i18n.t('console.settings.hosting.customDomainLower')
-							: i18n.t('console.settings.hosting.selfUrlLower')
+					target: $blogStore.hosting_url
+						? i18n.t('console.settings.hosting.hostingUrlLower')
+						: i18n.t('console.settings.hosting.customDomainLower')
 				})}
 			>
 				<Switch
@@ -268,7 +238,6 @@
 		onSaved={() => (showCustomDomainIntentModal = true)}
 	/>
 	<CustomDomainIntentModal bind:show={showCustomDomainIntentModal} />
-	<SetupSelfHostingModal bind:show={showSelfHostingModal} />
 	<HostingHistoryModal bind:show={showHostingHistoryModal} />
 {/if}
 
@@ -303,19 +272,5 @@
 	}
 	.title {
 		font-weight: 600;
-	}
-	.self-hosting-active {
-		display: flex;
-		align-items: center;
-		justify-content: flex-start;
-		gap: 8px;
-		margin-top: 16px;
-	}
-	.self-hosting-url {
-		font-size: 14px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		min-width: 0;
 	}
 </style>

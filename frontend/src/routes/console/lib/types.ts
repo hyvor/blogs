@@ -86,7 +86,7 @@ export interface Blog {
 	is_blocked: boolean;
 	subdomain: string;
 	type: BlogType;
-	hosting_at: 'subdomain' | 'domain' | 'self';
+	hosting_at: 'subdomain' | 'domain';
 	hosting_domain: string | null;
 	hosting_url: string | null;
 	hosting_redirect_subdomain: boolean;
@@ -150,14 +150,14 @@ export interface BlogCounts {
 }
 
 export interface HostingInfo {
-	hosting_at: 'subdomain' | 'domain' | 'self';
+	hosting_at: 'subdomain' | 'domain';
 	custom_domain?: CustomDomainSetup | null;
 	custom_domain_intent?: CustomDomainIntent | null;
-	hosting_url?: string;
+	hosting_url?: string | null;
 	change?: HostingChange | null;
 }
 
-export type HostingChangeAt = 'subdomain' | 'domain' | 'self';
+export type HostingChangeAt = 'subdomain' | 'domain';
 export type HostingChangeStatus = 'changing' | 'success' | 'failed';
 
 export interface HostingChange {

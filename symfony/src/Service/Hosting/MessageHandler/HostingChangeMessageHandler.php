@@ -41,6 +41,11 @@ class HostingChangeMessageHandler
             throw new UnrecoverableMessageHandlingException("HostingChanges {$message->hostingChangeId} not found");
         }
 
+        // already processed, or failed/cancelled elsewhere (ex: by blogs:migrate-self-hosting)
+        if ($hostingChange->getStatus() !== HostingChangeStatus::CHANGING) {
+            return;
+        }
+
         try {
             $this->hostingChangeService->process($hostingChange);
         } catch (\Throwable $e) {

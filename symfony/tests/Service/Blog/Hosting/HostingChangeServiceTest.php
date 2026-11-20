@@ -6,8 +6,8 @@ use App\Entity\Blog;
 use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessageHandler;
+use App\Entity\Post;
+use App\Service\Blog\Message\ReRenderPostHtmlMessage;
 use App\Entity\CustomDomain;
 use App\Entity\CustomDomainIntent;
 use App\Entity\Enum\CustomDomainTlsProvider;
@@ -21,6 +21,7 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\CustomDomainIntentFactory;
 use App\Tests\Factory\HostingChangeFactory;
+use App\Tests\Factory\PostFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -35,12 +36,14 @@ class HostingChangeServiceTest extends KernelTestCase
     /** @throws PendingHostingChangeException */
     public function test_succeeds_updates_blog_and_dispatches_event(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['subdomain' => 'old-sub', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
 
         $service = $this->getService(HostingChangeService::class);
 
-        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, toHostingUrl: 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SUBDOMAIN, toSubdomain: 'new-sub');
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
+        $this->assertSame('https://old-sub.hyvorblogs.io', $hostingChange->getFromUrl());
+        $this->assertSame('https://new-sub.hyvorblogs.io', $hostingChange->getToUrl());
 
         $service->process($hostingChange);
 
@@ -48,8 +51,8 @@ class HostingChangeServiceTest extends KernelTestCase
 
         $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
         $this->assertNotNull($blog);
-        $this->assertSame(BlogHostingAt::SELF, $blog->getHostingAt());
-        $this->assertSame('https://example.com', $blog->getHostingUrl());
+        $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
+        $this->assertSame('new-sub', $blog->getSubdomain());
 
         // cache is cleared via the dispatched event, not directly by the service
         $this->getEd()->assertDispatched(BlogHostingChangedEvent::class);
@@ -57,15 +60,43 @@ class HostingChangeServiceTest extends KernelTestCase
     }
 
     /** @throws PendingHostingChangeException */
+    public function test_does_not_rewrite_urls_and_keeps_hosting_url(): void
+    {
+        $blog = BlogFactory::createOne([
+            'subdomain' => 'old-sub',
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'hosting_url' => 'https://example.com/blog',
+        ]);
+        $post = PostFactory::createOneFor($blog, ['featured_image_url' => 'https://old-sub.hyvorblogs.io/media/a.png']);
+
+        $service = $this->getService(HostingChangeService::class);
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SUBDOMAIN, toSubdomain: 'new-sub');
+        $service->process($hostingChange);
+
+        $blog = $this->getEm()->getRepository(Blog::class)->find($blog->getId());
+        $this->assertNotNull($blog);
+        $this->assertSame('https://example.com/blog', $blog->getHostingUrl());
+
+        $post = $this->getEm()->getRepository(Post::class)->find($post->getId());
+        $this->assertNotNull($post);
+        $this->assertSame('https://old-sub.hyvorblogs.io/media/a.png', $post->getFeaturedImageUrl());
+
+        $this->transport('async')->queue()->assertNotContains(ReRenderPostHtmlMessage::class);
+    }
+
+    /** @throws PendingHostingChangeException */
     public function test_failure_rolls_back_and_propagates_the_exception_leaving_change_as_changing(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::DOMAIN]);
+        $customDomain = CustomDomainFactory::createActiveFor($blog, 'failing.com');
+        $blog->setCustomDomain($customDomain);
+        $this->getEm()->flush();
 
-        $failingUrlsService = new class extends UpdateBlogUrlsMessageHandler {
+        $failingCustomDomainService = new class extends CustomDomainService {
             public function __construct()
             {
             }
-            public function __invoke(UpdateBlogUrlsMessage $message): void
+            public function deleteCustomDomain(CustomDomain $customDomain, bool $flush = true): void
             {
                 throw new \RuntimeException('boom');
             }
@@ -75,13 +106,12 @@ class HostingChangeServiceTest extends KernelTestCase
             $this->getService(EntityManagerInterface::class),
             $this->getService(MessageBusInterface::class),
             $this->getService(PermalinkService::class),
-            $this->getService(CustomDomainService::class),
+            $failingCustomDomainService,
             $this->getService(CustomDomainIntentService::class),
             $this->getService(EventDispatcherInterface::class),
-            $failingUrlsService,
         );
 
-        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, toHostingUrl: 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SUBDOMAIN, toSubdomain: $blog->getSubdomain());
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('boom');
@@ -92,7 +122,6 @@ class HostingChangeServiceTest extends KernelTestCase
             // wrapInTransaction() closes the EntityManager on failure, so we can only rely
             // on the in-memory state of the objects we already hold, not re-fetch via the EM
             $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
-            $this->assertSame(BlogHostingAt::SUBDOMAIN, $blog->getHostingAt());
         }
     }
 
@@ -107,7 +136,7 @@ class HostingChangeServiceTest extends KernelTestCase
         $this->assertTrue($service->hasPendingChange($blog));
 
         $this->expectException(PendingHostingChangeException::class);
-        $service->startHostingChange($blog, BlogHostingAt::SELF, toHostingUrl: 'https://example.com');
+        $service->startHostingChange($blog, BlogHostingAt::SUBDOMAIN, toSubdomain: 'other-sub');
     }
 
     /** @throws PendingHostingChangeException */
@@ -120,7 +149,7 @@ class HostingChangeServiceTest extends KernelTestCase
 
         $this->assertFalse($service->hasPendingChange($blog));
 
-        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SELF, toHostingUrl: 'https://example.com');
+        $hostingChange = $service->startHostingChange($blog, BlogHostingAt::SUBDOMAIN, toSubdomain: 'other-sub');
         $this->assertSame(HostingChangeStatus::CHANGING, $hostingChange->getStatus());
     }
 

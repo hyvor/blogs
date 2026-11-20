@@ -36,11 +36,11 @@ DOMAIN_APP=
 # voir https://hyvor.com/blogs/hosting/delivery-domain
 DELIVERY_URL=
 
-# Domaine des médias (optionnel)
+# URL des médias (optionnel)
 # Si non défini, les médias (images, fichiers) sont servis depuis https://<DOMAIN_APP>/media/...
-# Si défini, les médias sont servis depuis ce domaine (ex : media.yourcompany.com)
+# Si défini, les médias sont servis depuis cette URL (ex : https://media.yourcompany.com)
 # voir https://hyvor.com/blogs/hosting/media-domain
-MEDIA_DOMAIN=
+MEDIA_URL=
 
 # Système de fichiers pour le stockage des médias
 # l'une des valeurs suivantes : file, s3

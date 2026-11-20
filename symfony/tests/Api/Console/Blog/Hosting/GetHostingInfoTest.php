@@ -51,8 +51,8 @@ class GetHostingInfoTest extends ApiTestCase
         HostingChangeFactory::createOne([
             'blog' => $blog,
             'from_at' => BlogHostingAt::SUBDOMAIN,
-            'to_at' => BlogHostingAt::SELF,
-            'to_hosting_url' => 'https://example.com',
+            'to_at' => BlogHostingAt::DOMAIN,
+            'to_domain' => 'example.com',
             'to_url' => 'https://example.com',
         ]);
 
@@ -63,21 +63,21 @@ class GetHostingInfoTest extends ApiTestCase
         $this->assertIsArray($json['change']);
         $this->assertSame('changing', $json['change']['status']);
         $this->assertSame('subdomain', $json['change']['from_at']);
-        $this->assertSame('self', $json['change']['to_at']);
+        $this->assertSame('domain', $json['change']['to_at']);
         $this->assertSame('https://example.com', $json['change']['to_url']);
     }
 
     public function test_does_not_return_completed_change(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-get-completed-change', 'hosting_at' => BlogHostingAt::SELF],
+            ['subdomain' => 'hosting-get-completed-change', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
             ['status' => UserStatus::ACTIVE],
         );
 
         HostingChangeFactory::createOne([
             'blog' => $blog,
-            'from_at' => BlogHostingAt::SUBDOMAIN,
-            'to_at' => BlogHostingAt::SELF,
+            'from_at' => BlogHostingAt::DOMAIN,
+            'to_at' => BlogHostingAt::SUBDOMAIN,
             'status' => HostingChangeStatus::SUCCESS,
         ]);
 

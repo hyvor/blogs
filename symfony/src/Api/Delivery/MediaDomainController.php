@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * Serves media on MEDIA_DOMAIN (CADDY_ROUTER=media)
+ * Serves media on MEDIA_URL (CADDY_ROUTER=media)
  * See AppDeliveryController::media for the default DOMAIN_APP/media/... URLs
  */
 class MediaDomainController

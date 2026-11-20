@@ -10,8 +10,7 @@
 
 	const hostingAtLabels: Record<HostingChangeAt, string> = {
 		subdomain: 'Subdomain',
-		domain: 'Custom Domain',
-		self: 'Self-Serving'
+		domain: 'Custom Domain'
 	};
 
 	let calloutConfig: {

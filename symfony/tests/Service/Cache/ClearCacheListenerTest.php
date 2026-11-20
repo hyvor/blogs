@@ -159,12 +159,24 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertNotDispatched(CacheClearAllEvent::class);
     }
 
+    public function test_blog_hosting_url_updated_clears_all_cache(): void
+    {
+        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blogOld = clone $blog;
+        $blog->setHostingUrl('https://example.com/blog');
+
+        $this->dispatch(new BlogUpdatedEvent($blog, $blogOld));
+
+        $this->getEd()->assertDispatched(CacheClearAllEvent::class);
+        $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
+    }
+
     /** @throws PendingHostingChangeException */
     public function test_blog_hosting_changed_clears_all_cache(): void
     {
         $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
         $hostingChangeService = $this->getService(HostingChangeService::class);
-        $hostingChange = $hostingChangeService->startHostingChange($blog, BlogHostingAt::SELF, toHostingUrl: 'https://example.com');
+        $hostingChange = $hostingChangeService->startHostingChange($blog, BlogHostingAt::SUBDOMAIN, toSubdomain: 'new-subdomain');
 
         $this->dispatch(new BlogHostingChangedEvent($hostingChange));
 

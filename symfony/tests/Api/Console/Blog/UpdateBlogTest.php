@@ -87,4 +87,54 @@ class UpdateBlogTest extends ApiTestCase
 
         $this->assertResponseFailed(422, 'valid URL');
     }
+
+    public function test_sets_and_unsets_hosting_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-hosting-url']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'hosting_url' => 'https://example.com/blog/',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        // trailing slash is removed
+        $this->assertSame('https://example.com/blog', $json['hosting_url']);
+        $this->assertSame('https://example.com/blog', $json['url']);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'hosting_url' => '',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertNull($json['hosting_url']);
+        $this->assertSame('https://blog-update-hosting-url.hyvorblogs.io', $json['url']);
+    }
+
+    public function test_does_not_change_hosting_url_when_not_given(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-hosting-url-keep', 'hosting_url' => 'https://example.com/blog']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'logo_url' => 'https://example.com/image.png',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('https://example.com/blog', $this->getJson()['hosting_url']);
+    }
+
+    public function test_validates_hosting_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-hosting-url-invalid']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'hosting_url' => 'example.com/blog',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'valid URL');
+    }
 }

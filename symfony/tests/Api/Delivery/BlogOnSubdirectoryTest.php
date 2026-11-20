@@ -46,4 +46,52 @@ class BlogOnSubdirectoryTest extends ApiTestCase
         $this->assertResponseRedirects('https://supun.hyvorblogs.io', 302);
     }
 
+    public function test_redirects_to_hosting_url(): void
+    {
+        $this->setEnvVar('DELIVERY_URL', '');
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([
+            'subdomain' => 'supun',
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'hosting_url' => 'https://example.com/blog',
+        ]);
+
+        $this->client->request('GET', '/blog/' . $blog->getSubdomain() . '/hello');
+
+        $this->assertResponseRedirects('https://example.com/blog/hello', 302);
+    }
+
+    public function test_does_not_redirect_to_hosting_url_when_disabled(): void
+    {
+        $this->setEnvVar('DELIVERY_URL', '');
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'hosting_url' => 'https://example.com/blog',
+            'hosting_redirect_subdomain' => false,
+        ]);
+        ThemeFileFactory::createOne([
+            'blog' => $blog,
+            'folder' => ThemeFileFolder::TEMPLATES,
+            'name' => 'index.twig',
+            'content' => '<body>Testing</body>',
+        ]);
+
+        $this->client->request('GET', '/blog/' . $blog->getSubdomain());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('<body>Testing</body>', (string) $this->client->getResponse()->getContent());
+    }
+
+    public function test_redirects_to_subdomain_not_hosting_url_if_delivery_url_is_set(): void
+    {
+        $blog = BlogFactory::createOneWithLanguageAndRoutes([
+            'subdomain' => 'supun',
+            'hosting_at' => BlogHostingAt::SUBDOMAIN,
+            'hosting_url' => 'https://example.com/blog',
+        ]);
+
+        $this->client->request('GET', '/blog/' . $blog->getSubdomain() . '/hello');
+
+        $this->assertResponseRedirects('https://supun.hyvorblogs.io/hello', 302);
+    }
+
 }

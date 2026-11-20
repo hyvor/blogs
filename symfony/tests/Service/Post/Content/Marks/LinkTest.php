@@ -60,7 +60,7 @@ class LinkTest extends KernelTestCase
     public function test_internal_link(): void
     {
         $blog = (new Blog())->setSubdomain('test');
-        $blog->setHostingAt(BlogHostingAt::SELF);
+        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setHostingUrl('https://example.com');
 
         $result = $this->service()->getHtml(self::DEFAULT_DOC, $blog);

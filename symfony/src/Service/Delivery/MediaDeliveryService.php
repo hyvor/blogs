@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Serves media from the media URL, independent of the blog's hosting:
  * - {DOMAIN_APP}/media/{blogIdEncoded}/{fileName}/{additional}
- * - {MEDIA_DOMAIN}/{blogIdEncoded}/{fileName}/{additional}
+ * - {MEDIA_URL}/{blogIdEncoded}/{fileName}/{additional}
  */
 class MediaDeliveryService
 {

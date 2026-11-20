@@ -70,6 +70,19 @@ class AppDeliveryController extends AbstractController
             $this->appConfig->getDeliveryUrl() !== null ||
             $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN
         ) {
+            // to the subdomain/custom domain (which then redirects to the hosting URL, if needed)
+            return new RedirectResponse(
+                $this->permalinkService->getBlogDeliveryUrl($blog) . ($path === '/' ? '' : $path),
+                302
+            );
+        }
+
+        if (
+            $blog->getHostingUrl() !== null &&
+            $blog->getHostingRedirectSubdomain() &&
+            // legacy media URLs ({blogUrl}/media/...) are always served, as the final host (ex: headless) may not serve them
+            !str_starts_with($path, '/media/')
+        ) {
             return new RedirectResponse($this->permalinkService->getBlogUrlWithPath($blog, $path), 302);
         }
 
@@ -78,7 +91,7 @@ class AppDeliveryController extends AbstractController
 
     /**
      * Default media URL (see PermalinkService::getMediaPermalink)
-     * Redirects to MEDIA_DOMAIN if it is configured.
+     * Redirects to MEDIA_URL if it is configured.
      */
     #[Route(
         '/media/{blogIdEncoded}/{fileName}/{additional}',
@@ -87,7 +100,7 @@ class AppDeliveryController extends AbstractController
     )]
     public function media(string $blogIdEncoded, string $fileName, ?string $additional): Response
     {
-        if ($this->appConfig->getMediaDomain() !== null) {
+        if ($this->appConfig->getMediaUrl() !== null) {
             $url = $this->permalinkService->getMediaBaseUrl() . '/' . $blogIdEncoded . '/' . $fileName;
             if ($additional !== null) {
                 $url .= '/' . $additional;

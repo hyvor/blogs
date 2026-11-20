@@ -65,7 +65,7 @@ class MediaDeliveryTest extends ApiTestCase
 
     private function onMediaDomain(string $path): Response
     {
-        $this->setEnvVar('MEDIA_DOMAIN', 'media.hyvorblogs.io');
+        $this->setEnvVar('MEDIA_URL', 'https://media.hyvorblogs.io');
         $this->setEnvVar('CADDY_ROUTER', 'media');
         $this->client->request('GET', $path, [], [], ['HTTP_HOST' => 'media.hyvorblogs.io']);
         return $this->client->getResponse();
@@ -105,7 +105,7 @@ class MediaDeliveryTest extends ApiTestCase
 
     public function test_redirects_to_media_domain_when_configured(): void
     {
-        $this->setEnvVar('MEDIA_DOMAIN', 'media.hyvorblogs.io');
+        $this->setEnvVar('MEDIA_URL', 'https://media.hyvorblogs.io');
 
         $this->client->request('GET', '/media/AQ/image.png/500w');
 
@@ -182,7 +182,7 @@ class MediaDeliveryTest extends ApiTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-    // media domain: {MEDIA_DOMAIN}/{blogIdEncoded}/{fileName} ================
+    // media domain: {MEDIA_URL}/{blogIdEncoded}/{fileName} ================
 
     public function test_serves_media_from_media_domain(): void
     {

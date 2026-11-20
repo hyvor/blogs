@@ -7,9 +7,6 @@ use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\HostingChange;
 use App\Service\Blog\Event\BlogHostingChangedEvent;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessageHandler;
 use App\Service\Hosting\CustomDomain\CustomDomainIntentService;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
@@ -32,7 +29,6 @@ class HostingChangeService
         private CustomDomainService $customDomainService,
         private CustomDomainIntentService $customDomainIntentService,
         private EventDispatcherInterface $eventDispatcher,
-        private UpdateBlogUrlsMessageHandler $updateBlogUrlsMessageHandler,
     ) {
     }
 
@@ -44,14 +40,12 @@ class HostingChangeService
         Blog $blog,
         BlogHostingAt $toAt,
         ?string $toSubdomain = null,
-        ?string $toHostingUrl = null,
         ?string $toDomain = null
     ): HostingChange
     {
 
         match ($toAt) {
             BlogHostingAt::SUBDOMAIN => assert($toSubdomain !== null, 'toSubdomain must be provided when changing to SUBDOMAIN'),
-            BlogHostingAt::SELF => assert($toHostingUrl !== null, 'toHostingUrl must be provided when changing to SELF'),
             BlogHostingAt::DOMAIN => assert($toDomain !== null, 'toDomain must be provided when changing to DOMAIN'),
         };
 
@@ -69,10 +63,6 @@ class HostingChangeService
         if ($hostingChange->getFromAt() === BlogHostingAt::SUBDOMAIN) {
             assert($blog->getSubdomain());
             $hostingChange->setFromSubdomain($blog->getSubdomain());
-        } elseif ($hostingChange->getFromAt() === BlogHostingAt::SELF) {
-            $fromHostingUrl = $blog->getHostingUrl();
-            assert($fromHostingUrl !== null);
-            $hostingChange->setFromHostingUrl($fromHostingUrl);
         } elseif ($hostingChange->getFromAt() === BlogHostingAt::DOMAIN) {
             $fromCustomDomain = $blog->getCustomDomain();
             assert($fromCustomDomain !== null);
@@ -83,9 +73,6 @@ class HostingChangeService
         if ($toAt === BlogHostingAt::SUBDOMAIN) {
             assert($toSubdomain !== null);
             $hostingChange->setToSubdomain($toSubdomain);
-        } elseif ($toAt === BlogHostingAt::SELF) {
-            assert($toHostingUrl !== null);
-            $hostingChange->setToHostingUrl($toHostingUrl);
         } elseif ($toAt === BlogHostingAt::DOMAIN) {
             assert($toDomain !== null);
             $hostingChange->setToDomain($toDomain);
@@ -94,13 +81,11 @@ class HostingChangeService
         $hostingChange->setFromUrl($this->permalinkService->buildUrlForHosting(
             $hostingChange->getFromAt(),
             $hostingChange->getFromSubdomain(),
-            $hostingChange->getFromHostingUrl(),
             $hostingChange->getFromDomain()
         ));
         $hostingChange->setToUrl($this->permalinkService->buildUrlForHosting(
             $hostingChange->getToAt(),
             $hostingChange->getToSubdomain(),
-            $hostingChange->getToHostingUrl(),
             $hostingChange->getToDomain()
         ));
 
@@ -192,14 +177,9 @@ class HostingChangeService
             $blog = $hostingChange->getBlog();
             $toAt = $hostingChange->getToAt();
 
-            $this->handleUpdateBlogUrls(
-                $blog,
-                $hostingChange->getFromUrl(),
-                $hostingChange->getToUrl()
-            );
-
+            // no URLs in content need to change: media URLs do not depend on hosting
+            // and the blog's hosting URL (if set) is independent of where Hyvor Blogs serves the blog
             $blog->setHostingAt($toAt);
-            $blog->setHostingUrl($toAt === BlogHostingAt::SELF ? $hostingChange->getToHostingUrl() : null);
 
             if ($toAt === BlogHostingAt::SUBDOMAIN) {
                 assert($hostingChange->getToSubdomain() !== null);
@@ -223,23 +203,6 @@ class HostingChangeService
         });
 
         $this->eventDispatcher->dispatch(new BlogHostingChangedEvent($hostingChange));
-    }
-
-    private function handleUpdateBlogUrls(
-        Blog $blog,
-        string $fromUrl,
-        string $toUrl
-    ): void
-    {
-        $message = new UpdateBlogUrlsMessage(
-            $blog->getId(),
-            UpdateBlogUrlEvent::HOSTING_CHANGED,
-            lockKeys: [],
-            blogOldUrl: $fromUrl,
-            blogNewUrl: $toUrl
-        );
-
-        ($this->updateBlogUrlsMessageHandler)($message);
     }
 
 }

@@ -27,10 +27,10 @@ The default is fine for most cases. A media domain is useful if you want to:
 
 ## Configuring a Media Domain
 
-Add the `MEDIA_DOMAIN` environment variable:
+Add the `MEDIA_URL` environment variable (scheme and host only, no path):
 
 ```yaml
-MEDIA_DOMAIN=media.yourcompany.com
+MEDIA_URL=https://media.yourcompany.com
 ```
 
 Then, point the domain to your server:
@@ -39,11 +39,10 @@ Then, point the domain to your server:
 A   media.yourcompany.com   1.2.3.4
 ```
 
-TLS for the media domain is handled the same way as the app domain (see [TLS Mode](/hosting/deploy#tls)):
+TLS depends on the scheme of `MEDIA_URL` (independent of `TLS_MODE`):
 
-- `TLS_MODE=auto`: a certificate is obtained automatically. Ports 80 and 443 must be reachable for the media domain.
-- `TLS_MODE=manual`: the mounted certificate must also be valid for the media domain.
-- `TLS_MODE=external`: your reverse proxy must terminate TLS for the media domain and forward it to port 80, like the app domain (see [Reverse Proxy](/hosting/reverse-proxy)).
+- `https://`: Hyvor Blogs obtains and renews a certificate for the media domain automatically. Ports 80 and 443 must be reachable for the media domain (forward them as TCP, like custom domains, if you use a [reverse proxy](/hosting/reverse-proxy)).
+- `http://`: the media domain is served on port 80 without TLS. Use this if a reverse proxy or a CDN in front terminates TLS. Note that media URLs are generated with `http://`, so only use it if visitors can reach media over plain HTTP, or if the URL is only used internally.
 
 Once the media domain is configured, new media URLs use it, and existing `https://<app-domain>/media/...` URLs redirect to it.
 

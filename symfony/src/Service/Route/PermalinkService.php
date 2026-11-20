@@ -43,15 +43,26 @@ class PermalinkService
         private RouteService $routeService,
     ) {}
 
-    // the base URL
+    /**
+     * The base URL of the blog, used for all URL generation (permalinks, Data API, sitemaps, feeds, etc.)
+     * This is the hosting URL if set (where the blog is finally served, ex: a reverse proxy or a headless frontend),
+     * otherwise, the URL where Hyvor Blogs serves the blog (subdomain or custom domain).
+     */
     public function getBlogUrl(Blog $blog): string
+    {
+        return $blog->getHostingUrl() ?? $this->getBlogDeliveryUrl($blog);
+    }
+
+    /**
+     * The URL where Hyvor Blogs serves the blog (subdomain or custom domain), ignoring the hosting URL
+     */
+    public function getBlogDeliveryUrl(Blog $blog): string
     {
         $hostingAt = $blog->getHostingAt();
 
         return $this->buildUrlForHosting(
             $hostingAt,
             $hostingAt === BlogHostingAt::SUBDOMAIN ? $blog->getSubdomain() : null,
-            $blog->getHostingUrl(),
             $blog->getCustomDomain()?->getDomain()
         );
     }
@@ -63,20 +74,18 @@ class PermalinkService
     }
 
     /**
-     * Computes the URL a blog would have under a given (possibly not-yet-applied)
-     * hosting configuration, without mutating the blog.
+     * Computes the URL where Hyvor Blogs would serve a blog under a given (possibly not-yet-applied)
+     * hosting configuration, without mutating the blog. The blog's hosting URL is not considered.
      */
     public function buildUrlForHosting(
         BlogHostingAt $hostingAt,
         ?string $subdomain,
-        ?string $hostingUrl,
         ?string $domain
     ): string
     {
         return match ($hostingAt) {
             BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain ?? ''),
             BlogHostingAt::DOMAIN => 'https://' . $domain,
-            BlogHostingAt::SELF => $hostingUrl ?? '',
         };
     }
 
@@ -191,7 +200,7 @@ class PermalinkService
     /**
      * Media is served independently of the blog's hosting, so its URL never changes when hosting changes
      * and works in headless setups:
-     * - https://{MEDIA_DOMAIN}/{blogIdEncoded}/{mediaName} if MEDIA_DOMAIN is set
+     * - {MEDIA_URL}/{blogIdEncoded}/{mediaName} if MEDIA_URL is set
      * - https://{DOMAIN_APP}/media/{blogIdEncoded}/{mediaName} otherwise
      */
     public function getMediaPermalink(Media $media, Blog $blog): string
@@ -204,12 +213,8 @@ class PermalinkService
      */
     public function getMediaBaseUrl(): string
     {
-        $scheme = $this->appConfig->getTlsMode()->getScheme();
-        $mediaDomain = $this->appConfig->getMediaDomain();
-
-        return $mediaDomain !== null
-            ? $scheme . '://' . $mediaDomain
-            : $scheme . '://' . $this->appConfig->getDomainApp() . '/media';
+        return $this->appConfig->getMediaUrl()
+            ?? $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/media';
     }
 
     /**

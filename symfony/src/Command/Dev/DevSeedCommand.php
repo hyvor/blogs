@@ -67,8 +67,8 @@ class DevSeedCommand
         $blogConfigs = [
             ['subdomain' => 'test', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
             ['subdomain' => 'custom', 'hosting_at' => BlogHostingAt::DOMAIN, 'custom_domain' => CustomDomainFactory::createOne()],
-            ['subdomain' => 'self', 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'https://blogs.hyvor.test/blog'],
-            ['subdomain' => 'dev', 'type' => BlogType::DEV, 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'http://127.0.0.1:8885'],
+            ['subdomain' => 'self', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'hosting_url' => 'https://blogs.hyvor.test/blog'],
+            ['subdomain' => 'dev', 'type' => BlogType::DEV, 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'hosting_url' => 'http://127.0.0.1:8885'],
         ];
 
         $postStatuses = [PostVariantStatus::DRAFT, PostVariantStatus::PUBLISHED, PostVariantStatus::SCHEDULED];
