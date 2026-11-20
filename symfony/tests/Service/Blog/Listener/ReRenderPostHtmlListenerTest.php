@@ -17,8 +17,8 @@ class ReRenderPostHtmlListenerTest extends KernelTestCase
 
     public function test_does_not_dispatch_message_if_meta_not_changed(): void
     {
-        $blog = new Blog()->setId(1);
-        $oldBlog = new Blog()->setId(1);
+        $blog = new Blog()->setId(1)->setSubdomain('test');
+        $oldBlog = new Blog()->setId(1)->setSubdomain('test');
 
         $event = new BlogUpdatedEvent($blog, $oldBlog);
         $this->getEd()->dispatch($event);
@@ -28,8 +28,8 @@ class ReRenderPostHtmlListenerTest extends KernelTestCase
 
     public function test_when_meta_changes(): void
     {
-        $blog = new Blog()->setId(1);
-        $oldBlog = new Blog()->setId(1);
+        $blog = new Blog()->setId(1)->setSubdomain('test');
+        $oldBlog = new Blog()->setId(1)->setSubdomain('test');
         $meta = new BlogMeta();
         $meta->syntax_on = false;
         $blog->setMeta($meta);

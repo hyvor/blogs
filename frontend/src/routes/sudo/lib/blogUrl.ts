@@ -5,10 +5,8 @@ import { configStore } from './stores/sudoStore';
 export function getHostingUrl(blog: Blog): string {
 	const config = get(configStore);
 
-	if (blog.hosting_at === 'domain') {
-		return 'https://' + blog.hosting_domain;
-	}
-	if (blog.hosting_at === 'self' && blog.hosting_url) {
+	// where the blog is finally served (ex: a reverse proxy or a headless frontend)
+	if (blog.hosting_url) {
 		return blog.hosting_url;
 	}
 

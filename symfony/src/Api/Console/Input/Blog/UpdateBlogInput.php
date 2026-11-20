@@ -17,6 +17,14 @@ class UpdateBlogInput
 
     public ?bool $hosting_redirect_subdomain = null;
 
+    /**
+     * Custom URL where the blog is finally served (ex: a reverse proxy or a headless frontend)
+     * Used for all URL generation instead of the subdomain/custom domain. Empty string to unset.
+     */
+    #[Assert\Url]
+    #[Assert\Length(max: 255)]
+    public ?string $hosting_url = null;
+
     // meta
     public ?bool $embeddable = null;
 

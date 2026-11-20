@@ -4,7 +4,6 @@ namespace App\Service\Hosting\CustomDomain\Command;
 
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\CustomDomainTlsProvider;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use Doctrine\DBAL\Connection;
@@ -220,11 +219,6 @@ class MigrateCaddyTlsCertificatesCommand
         $blog = $this->em->find(Blog::class, (int) $blogId);
         if ($blog === null) {
             $io->warning("[$domain] Blog #$blogId not found, skipping");
-            return false;
-        }
-
-        if ($blog->getHostingAt() !== BlogHostingAt::DOMAIN) {
-            $io->warning("[$domain] Blog #{$blog->getId()} hosting_at is '{$blog->getHostingAt()->value}', not 'domain', skipping");
             return false;
         }
 

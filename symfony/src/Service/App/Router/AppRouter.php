@@ -9,14 +9,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class AppRouter
 {
 
-    private const array ROUTERS = ['app', 'subdomain', 'customdomain', 'local'];
+    private const array ROUTERS = ['app', 'subdomain', 'customdomain', 'media', 'local'];
 
     public function __construct(
         private RequestStack $requestStack
     ) {}
 
     /**
-     * @return 'app'|'subdomain'|'customdomain'|'local'
+     * @return 'app'|'subdomain'|'customdomain'|'media'|'local'
      */
     private function route(): string
     {
@@ -52,6 +52,11 @@ class AppRouter
     public function isCustomDomain(): bool
     {
         return $this->route() === 'customdomain';
+    }
+
+    public function isMedia(): bool
+    {
+        return $this->route() === 'media';
     }
 
     public function isLocal(): bool

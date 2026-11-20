@@ -39,6 +39,71 @@ class UpdateBlogTest extends ApiTestCase
         $this->assertSame('blog-update', $event->blogOld->getSubdomain());
     }
 
+    public function test_updating_subdomain_changes_blog_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-url']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'subdomain' => 'blog-update-url-new',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('https://blog-update-url-new.hyvorblogs.io', $this->getJson()['url']);
+    }
+
+    public function test_keeping_the_same_subdomain_is_allowed(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-same']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'subdomain' => 'blog-update-same',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('blog-update-same', $this->getJson()['subdomain']);
+    }
+
+    public function test_fails_when_subdomain_is_taken(): void
+    {
+        BlogFactory::createOne(['subdomain' => 'blog-update-taken']);
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-taker']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'subdomain' => 'blog-update-taken',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'subdomain is already taken');
+        $this->getEm()->refresh($blog);
+        $this->assertSame('blog-update-taker', $blog->getSubdomain());
+    }
+
+    public function test_fails_when_subdomain_is_reserved(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-reserved']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'subdomain' => 'billing',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'subdomain is reserved');
+    }
+
+    public function test_fails_when_subdomain_is_invalid(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-invalid']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'subdomain' => '-invalid-',
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(422);
+    }
+
     public function test_update_metadata(): void
     {
         $blog = BlogFactory::createOne(['subdomain' => 'blog-update-meta']);
@@ -83,6 +148,62 @@ class UpdateBlogTest extends ApiTestCase
 
         $this->consoleBlogApi('PATCH', $blog, '/blog', [
             'logo_url' => 'hello',
+        ], user: $user);
+
+        $this->assertResponseFailed(422, 'valid URL');
+    }
+
+    public function test_sets_hosting_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-hosting-url']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'hosting_url' => 'https://example.com/blog/',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        // trailing slash is removed
+        $this->assertSame('https://example.com/blog', $json['hosting_url']);
+        $this->assertSame('https://example.com/blog', $json['url']);
+    }
+
+    public function test_unsets_hosting_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-hosting-url', 'hosting_url' => 'https://example.com/blog']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'hosting_url' => '',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertNull($json['hosting_url']);
+        $this->assertSame('https://blog-update-hosting-url.hyvorblogs.io', $json['url']);
+    }
+
+    public function test_does_not_change_hosting_url_when_not_given(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-hosting-url-keep', 'hosting_url' => 'https://example.com/blog']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'logo_url' => 'https://example.com/image.png',
+        ], user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('https://example.com/blog', $this->getJson()['hosting_url']);
+    }
+
+    public function test_validates_hosting_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-hosting-url-invalid']);
+        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
+
+        $this->consoleBlogApi('PATCH', $blog, '/blog', [
+            'hosting_url' => 'example.com/blog',
         ], user: $user);
 
         $this->assertResponseFailed(422, 'valid URL');

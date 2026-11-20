@@ -3,7 +3,6 @@
 namespace App\Tests\Api\Console\Blog\Post;
 
 use App\Api\Console\Controller\PostController;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\RedirectType;
 use App\Entity\Enum\UserStatus;
@@ -157,7 +156,7 @@ class UpdatePostVariantTest extends ApiTestCase
 
     public function test_creates_redirect_on_slug_change(): void
     {
-        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-redirect', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne(['subdomain' => 'post-variant-redirect']);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $language = LanguageFactory::createOnePrimaryFor($blog);
         RouteFactory::createDefaultsFor($blog);

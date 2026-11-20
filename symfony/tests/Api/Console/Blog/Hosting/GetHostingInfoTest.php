@@ -5,23 +5,18 @@ namespace App\Tests\Api\Console\Blog\Hosting;
 use App\Api\Console\Controller\HostingController;
 use App\Api\Console\Object\CustomDomainIntentObject;
 use App\Api\Console\Object\CustomDomainObject;
-use App\Api\Console\Object\HostingChangeObject;
-use App\Entity\Enum\BlogHostingAt;
-use App\Entity\Enum\HostingChangeStatus;
 use App\Entity\Enum\UserStatus;
 use App\Service\Hosting\CustomDomain\CustomDomainService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\CustomDomainIntentFactory;
-use App\Tests\Factory\HostingChangeFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(HostingController::class)]
 #[CoversClass(CustomDomainObject::class)]
 #[CoversClass(CustomDomainIntentObject::class)]
 #[CoversClass(CustomDomainService::class)]
-#[CoversClass(HostingChangeObject::class)]
 class GetHostingInfoTest extends ApiTestCase
 {
     public function test_returns_hosting_info_without_custom_domain(): void
@@ -35,57 +30,28 @@ class GetHostingInfoTest extends ApiTestCase
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertArrayHasKey('hosting_at', $json);
+        $this->assertSame('https://hosting-get-no-domain.hyvorblogs.io', $json['subdomain_url']);
+        $this->assertSame('https://hosting-get-no-domain.hyvorblogs.io', $json['url']);
+        $this->assertNull($json['hosting_url']);
         $this->assertNull($json['custom_domain']);
         $this->assertNull($json['custom_domain_intent']);
-        $this->assertNull($json['change']);
+        $this->assertArrayNotHasKey('hosting_at', $json);
+        $this->assertArrayNotHasKey('change', $json);
     }
 
-    public function test_returns_ongoing_change(): void
+    public function test_returns_hosting_url(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-get-with-change', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'hosting-get-hosting-url', 'hosting_url' => 'https://example.com/blog'],
             ['status' => UserStatus::ACTIVE],
         );
-
-        HostingChangeFactory::createOne([
-            'blog' => $blog,
-            'from_at' => BlogHostingAt::SUBDOMAIN,
-            'to_at' => BlogHostingAt::SELF,
-            'to_hosting_url' => 'https://example.com',
-            'to_url' => 'https://example.com',
-        ]);
 
         $this->consoleBlogApi('GET', $blog, '/hosting', user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertIsArray($json['change']);
-        $this->assertSame('changing', $json['change']['status']);
-        $this->assertSame('subdomain', $json['change']['from_at']);
-        $this->assertSame('self', $json['change']['to_at']);
-        $this->assertSame('https://example.com', $json['change']['to_url']);
-    }
-
-    public function test_does_not_return_completed_change(): void
-    {
-        [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'hosting-get-completed-change', 'hosting_at' => BlogHostingAt::SELF],
-            ['status' => UserStatus::ACTIVE],
-        );
-
-        HostingChangeFactory::createOne([
-            'blog' => $blog,
-            'from_at' => BlogHostingAt::SUBDOMAIN,
-            'to_at' => BlogHostingAt::SELF,
-            'status' => HostingChangeStatus::SUCCESS,
-        ]);
-
-        $this->consoleBlogApi('GET', $blog, '/hosting', user: $user);
-
-        $this->assertResponseIsSuccessful();
-        $json = $this->getJson();
-        $this->assertNull($json['change']);
+        $this->assertSame('https://example.com/blog', $json['hosting_url']);
+        $this->assertSame('https://example.com/blog', $json['url']);
     }
 
     public function test_returns_hosting_info_with_pending_intent(): void
@@ -121,6 +87,7 @@ class GetHostingInfoTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertIsArray($json['custom_domain']);
         $this->assertSame('mysite.com', $json['custom_domain']['domain']);
+        $this->assertSame('https://mysite.com', $json['url']);
         $this->assertSame('auto', $json['custom_domain']['tls_provider']);
         $this->assertNull($json['custom_domain_intent']);
     }

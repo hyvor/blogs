@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default\Sitemap;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Service\Delivery\PathMatcher;
 use App\Service\Delivery\Processor\Sitemap\SitemapPagesProcessor;
@@ -26,7 +25,7 @@ class SitemapPagesTest extends KernelTestCase
 
     public function test_generates_entries_for_homepage_and_variants(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN, 'subdomain' => 'test']);
+        $blog = BlogFactory::createOne(['subdomain' => 'test']);
         $primaryLang = LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
         ]);
@@ -57,7 +56,7 @@ class SitemapPagesTest extends KernelTestCase
 
     public function test_generates_entries_for_pages(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN, 'subdomain' => 'test']);
+        $blog = BlogFactory::createOne(['subdomain' => 'test']);
         $primaryLanguage = LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
         ]);

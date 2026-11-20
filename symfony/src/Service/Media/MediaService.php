@@ -4,7 +4,6 @@ namespace App\Service\Media;
 
 use App\Entity\Blog;
 use App\Entity\Media;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlLock;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
 use App\Service\Limit;
@@ -287,27 +286,14 @@ class MediaService
 
         $newUrl = $this->permalinkService->getMediaPermalink($media, $blog);
 
-        $canUpdateBlogUrls = $this->updateBlogUrlLock->canUpdate(UpdateBlogUrlEvent::MEDIA_URL_CHANGED, $media->getId());
-        if ($canUpdateBlogUrls !== true) {
-            throw new MediaException($canUpdateBlogUrls->getMessage());
-        }
-
-        $globalLock = $this->updateBlogUrlLock->mediaUrlGlobalLock();
         $mediaLock = $this->updateBlogUrlLock->mediaUrlLock($media->getId());
-
-        $globalLock[0]->acquire(); // doesn't matter if we can't acquire, we just want to block HOSTING_CHANGED from running while we update the media URL
         if (!$mediaLock[0]->acquire()) {
-            $globalLock[0]->release();
             throw new MediaException('Cannot update media URL because another process is already updating the media URL. Please try again later.');
         }
 
         $updateBlogUrlsMessage = new UpdateBlogUrlsMessage(
             blogId: $blogId,
-            event: UpdateBlogUrlEvent::MEDIA_URL_CHANGED,
-            lockKeys: [
-                $globalLock[1],
-                $mediaLock[1]
-            ],
+            lockKeys: [$mediaLock[1]],
             mediaId: $media->getId(),
             mediaOldUrl: $oldUrl,
             mediaNewUrl: $newUrl
@@ -316,6 +302,7 @@ class MediaService
         try {
             $this->filesystem->move($oldPath, $newPath);
         } catch (FilesystemException $e) {
+            $mediaLock[0]->release();
             throw new MediaException('Error while renaming: ' . $e->getMessage());
         }
 

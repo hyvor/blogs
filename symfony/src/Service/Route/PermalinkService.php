@@ -3,13 +3,13 @@
 namespace App\Service\Route;
 
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Language;
 use App\Entity\Media;
 use App\Entity\PostVariant;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\AppConfig;
+use App\Service\Media\BlogIdEncoder;
 
 /**
  * Manages permalinks of the blog
@@ -42,41 +42,45 @@ class PermalinkService
         private RouteService $routeService,
     ) {}
 
-    // the base URL
+    /**
+     * The base URL of the blog, used for all URL generation (permalinks, Data API, sitemaps, feeds, etc.)
+     * 1. the hosting URL, if set (where the blog is finally served, ex: a reverse proxy or a headless frontend)
+     * 2. the custom domain, if connected
+     * 3. the default subdomain URL
+     */
     public function getBlogUrl(Blog $blog): string
     {
-        $hostingAt = $blog->getHostingAt();
+        return $blog->getHostingUrl() ?? $this->getBlogDeliveryUrl($blog);
+    }
 
-        return $this->buildUrlForHosting(
-            $hostingAt,
-            $hostingAt === BlogHostingAt::SUBDOMAIN ? $blog->getSubdomain() : null,
-            $blog->getHostingUrl(),
-            $blog->getCustomDomain()?->getDomain()
-        );
+    /**
+     * The URL where Hyvor Blogs serves the blog (custom domain if connected, otherwise the subdomain),
+     * ignoring the hosting URL
+     */
+    public function getBlogDeliveryUrl(Blog $blog): string
+    {
+        $customDomain = $blog->getCustomDomain();
+
+        if ($customDomain !== null) {
+            return 'https://' . $customDomain->getDomain();
+        }
+
+        return $this->getBlogSubdomainUrl($blog);
+    }
+
+    /**
+     * The default URL of the blog on Hyvor Blogs (subdomain or app subdirectory),
+     * ignoring the custom domain and the hosting URL
+     */
+    public function getBlogSubdomainUrl(Blog $blog): string
+    {
+        return $this->buildSubdomainUrl($blog->getSubdomain());
     }
 
     // homepage URL, with language prefix if not primary
     public function getBlogPermalink(Blog $blog, Language $language): string
     {
         return $this->getBlogUrlWithPath($blog, $language->isPrimary() ? '/' : '/' . $language->getCode());
-    }
-
-    /**
-     * Computes the URL a blog would have under a given (possibly not-yet-applied)
-     * hosting configuration, without mutating the blog.
-     */
-    public function buildUrlForHosting(
-        BlogHostingAt $hostingAt,
-        ?string $subdomain,
-        ?string $hostingUrl,
-        ?string $domain
-    ): string
-    {
-        return match ($hostingAt) {
-            BlogHostingAt::SUBDOMAIN => $this->buildSubdomainUrl($subdomain ?? ''),
-            BlogHostingAt::DOMAIN => 'https://' . $domain,
-            BlogHostingAt::SELF => $hostingUrl ?? '',
-        };
     }
 
     /**
@@ -187,10 +191,59 @@ class PermalinkService
         return $this->getBlogUrlWithLanguageAndPath($blog, $language, $path, $onlyPath);
     }
 
-    public function getMediaPermalink(Media $media, Blog $blog, bool $onlyPath = false): string
+    /**
+     * Media is served independently of the blog's hosting, so its URL never changes when hosting changes
+     * and works in headless setups:
+     * - {MEDIA_URL}/{blogIdEncoded}/{mediaName} if MEDIA_URL is set
+     * - https://{DOMAIN_APP}/media/{blogIdEncoded}/{mediaName} otherwise
+     */
+    public function getMediaPermalink(Media $media, Blog $blog): string
     {
-        $path = '/media/' . $media->getName();
-        return $onlyPath ? $path : $this->getBlogUrlWithPath($blog, $path);
+        return $this->getMediaBlogBaseUrl($blog) . '/' . $media->getName();
+    }
+
+    /**
+     * Base URL of all media (no trailing slash)
+     */
+    public function getMediaBaseUrl(): string
+    {
+        return $this->appConfig->getMediaUrl()
+            ?? $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/media';
+    }
+
+    /**
+     * Base URL of the blog's media (no trailing slash)
+     */
+    public function getMediaBlogBaseUrl(Blog $blog): string
+    {
+        return $this->getMediaBaseUrl() . '/' . BlogIdEncoder::encode($blog->getId());
+    }
+
+    /**
+     * Returns the media name if the URL is a media URL of the blog, null otherwise.
+     * Supports both the current format ({mediaBlogBaseUrl}/{name}) and the legacy format
+     * that was served from the blog's host ({blogUrl}/media/{name} or /media/{name}).
+     * Any trailing segments (ex: /500w), query, or fragment are ignored.
+     */
+    public function getMediaNameFromUrl(Blog $blog, string $url): ?string
+    {
+        $prefixes = [
+            $this->getMediaBlogBaseUrl($blog) . '/',
+            $this->getBlogUrl($blog) . '/media/',
+            '/media/',
+        ];
+
+        foreach ($prefixes as $prefix) {
+            if (!str_starts_with($url, $prefix)) {
+                continue;
+            }
+
+            $rest = substr($url, strlen($prefix));
+            $name = substr($rest, 0, strcspn($rest, '/?#'));
+            return $name !== '' ? $name : null;
+        }
+
+        return null;
     }
 
 

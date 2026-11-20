@@ -43,6 +43,35 @@ esac
 export APP_ADDRESS
 export APP_TLS_DIRECTIVE
 
+# Configure the media domain's Caddy address from MEDIA_URL
+# http://media.domain:  served on port 80 without TLS (ex: TLS is terminated by a reverse proxy / CDN in front)
+# https://media.domain: Caddy obtains and renews a certificate automatically (ports 80 and 443 must be reachable)
+# If MEDIA_URL is not set, media is served from DOMAIN_APP/media, and the media site block
+# listens on an unused local address (Caddy does not allow an empty site address)
+if [ -n "$MEDIA_URL" ]; then
+    # scheme://host[:port] (any path is ignored)
+    MEDIA_ADDRESS=$(echo "$MEDIA_URL" | sed -E 's#^(https?://[^/]+).*#\1#')
+    case "$MEDIA_ADDRESS" in
+        http://*)
+            MEDIA_TLS_DIRECTIVE=""
+            ;;
+        https://*)
+            # without this, Caddy tries to use get_certificate (same as the app domain in auto mode)
+            MEDIA_TLS_DIRECTIVE="tls certificates@example.com"
+            ;;
+        *)
+            echo "Invalid MEDIA_URL: $MEDIA_URL. Must start with http:// or https://" >&2
+            exit 1
+            ;;
+    esac
+else
+    MEDIA_ADDRESS="http://localhost:8082"
+    MEDIA_TLS_DIRECTIVE=""
+fi
+
+export MEDIA_ADDRESS
+export MEDIA_TLS_DIRECTIVE
+
 # Configure FrankenPHP's built-in Mercure hub (if MERCURE_INTERNAL=true)
 # https://frankenphp.dev/docs/mercure
 MERCURE_INTERNAL="${MERCURE_INTERNAL:-true}"

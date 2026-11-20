@@ -10,6 +10,7 @@ use App\Service\Cache\BlogCacheService;
 use App\Service\Delivery\DeliveryService;
 use App\Service\Delivery\Dto\DeliveryResponse;
 use App\Service\Delivery\PathMatcher;
+use App\Service\Delivery\Processor\MediaProcessor;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\ApiKeyFactory;
 use App\Tests\Factory\BlogFactory;
@@ -31,6 +32,7 @@ class DeliveryApiEndpointTest extends ApiTestCase
         // we want debug false forced to ensure caching is tested
         $this->getContainer()->set(DeliveryService::class, new DeliveryService(
             $this->getService(PathMatcher::class),
+            $this->getService(MediaProcessor::class),
             $this->getService(BlogCacheService::class),
             debug: false, // force
         ));
