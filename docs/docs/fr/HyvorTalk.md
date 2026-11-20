@@ -65,7 +65,7 @@ La déconnexion supprime entièrement le site web de Hyvor Talk, ainsi que tous 
 
 Une fois connecté, Hyvor Blogs ajoute automatiquement le code d'intégration Hyvor Talk à la [variable `_comments`](/docs/themes-templates#placeholders) de votre blog, que les thèmes affichent généralement sous le contenu de l'article.
 
-Vous pouvez personnaliser le code d'intégration dans **Paramètres &rarr; Intégrations &rarr; Hyvor Talk** - par exemple, pour modifier le tri des commentaires ou d'autres [options d'intégration](https://hyvor.com/talk/docs/embed). Vous pouvez le réinitialiser à tout moment à sa valeur par défaut.
+Vous pouvez personnaliser le code d'intégration dans **Paramètres &rarr; Intégrations &rarr; Hyvor Talk** - par exemple, pour modifier le tri des commentaires ou d'autres [options d'intégration](https://hyvor.com/talk/docs/comments). Vous pouvez le réinitialiser à tout moment à sa valeur par défaut.
 
 <h2 id="access">Correspondance des accès</h2>
 
