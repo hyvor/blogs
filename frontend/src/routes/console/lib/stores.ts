@@ -11,6 +11,11 @@ export const authUserStore = writable<CloudContextUser>();
 export const authOrganizationStore = writable<CloudContextOrganization>();
 export const hasPaymentMethodStore = writable<boolean | null>(null);
 export const resolvedLicenseStore = writable<ResolvedLicense | null>();
+// limits of the current organization from /init (-1 = unlimited)
+export interface OrgLimits {
+	languages: number;
+}
+export const orgLimitsStore = writable<OrgLimits | null>(null);
 // List of blogs of the current user (all roles)
 export const blogListStore = writable<BlogList[]>([]);
 // Whether the blog selector modal is open

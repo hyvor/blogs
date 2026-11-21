@@ -94,6 +94,15 @@ class ConsoleController
             }
         }
 
+        // limits of the current organization (-1 = unlimited)
+        $orgLimits = null;
+        if ($org) {
+            $bl = $resolvedLicense?->license instanceof BlogsLicense ? $resolvedLicense->license : null;
+            $orgLimits = [
+                'languages' => $bl->languages ?? -1,
+            ];
+        }
+
         $hasPaymentMethod = null;
         if ($this->internalConfig->getDeployment()->isCloud() && $org) {
             try {
@@ -140,6 +149,7 @@ class ConsoleController
                 'post' => null,
             ],
             'resolved_license' => $resolvedLicense,
+            'limits' => $orgLimits,
         ]);
     }
 

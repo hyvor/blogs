@@ -249,6 +249,7 @@ class CreateBlogTest extends ApiTestCase
             linkAnalysis: false,
             blogs: 1,
             noBranding: false,
+            languages: -1,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -298,6 +299,7 @@ class CreateBlogTest extends ApiTestCase
             linkAnalysis: false,
             blogs: 1,
             noBranding: false,
+            languages: -1,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),
@@ -322,6 +324,7 @@ class CreateBlogTest extends ApiTestCase
             linkAnalysis: false,
             blogs: 1,
             noBranding: false,
+            languages: -1,
         );
         BillingFake::enableForSymfony(
             $this->getContainer(),

@@ -9,6 +9,8 @@
 	import SettingsTable from '../@components/SettingsTable.svelte';
 	import { getI18n } from '../../../../lib/i18n';
 	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+	import UsageLimit from '../../../../lib/components/UsageLimit/UsageLimit.svelte';
+	import { orgLimitsStore } from '../../../../lib/stores';
 
 	const i18n = getI18n();
 
@@ -21,6 +23,7 @@
 
 <div class="languages">
 	<SettingsTop>
+		<UsageLimit used={$languagesStore.length} limit={$orgLimitsStore?.languages} focus="languages" />
 		<Button disabled={cant('languages.write')} on:click={() => (isCreating = true)}>
 			Add Language {#snippet end()}
 				<IconPlus />

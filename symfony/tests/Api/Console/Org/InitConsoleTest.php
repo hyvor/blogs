@@ -14,6 +14,10 @@ use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
 use Hyvor\Internal\Auth\AuthFake;
 use Hyvor\Internal\Auth\AuthUserOrganization;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(AuthUserObject::class)]
@@ -78,6 +82,24 @@ class InitConsoleTest extends ApiTestCase
         $this->assertArrayHasKey('usage_percent', $firstModel);
     }
 
+    public function test_returns_org_limits(): void
+    {
+        $orgId = 101;
+        $license = BlogsLicense::trial();
+        $license->languages = 2;
+        BillingFake::enableForSymfony(
+            $this->getContainer(),
+            [$orgId => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)],
+        );
+
+        $authUser = AuthFake::generateUser(['id' => 201]);
+        $authOrg = new AuthUserOrganization($orgId, 'My Org', 'admin');
+        $this->consoleOrgApi('GET', '/init', user: $authUser, organization: $authOrg);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(['languages' => 2], $this->getJson()['limits']);
+    }
+
     public function test_returns_empty_blogs_if_no_organization(): void
     {
         $authUser = AuthFake::generateUser(['id' => 999]);
@@ -87,6 +109,7 @@ class InitConsoleTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame([], $json['blogs']);
         $this->assertNull($json['organization']);
+        $this->assertNull($json['limits']);
     }
 
     public function test_preloads_first_blog(): void

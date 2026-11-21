@@ -94,6 +94,7 @@ class UsageServiceTest extends KernelTestCase
             linkAnalysis: true,
             blogs: -1,
             noBranding: false,
+            languages: -1,
         );
     }
 
