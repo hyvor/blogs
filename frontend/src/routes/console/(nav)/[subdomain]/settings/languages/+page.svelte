@@ -23,7 +23,11 @@
 
 <div class="languages">
 	<SettingsTop>
-		<UsageLimit used={$languagesStore.length} limit={$orgLimitsStore?.languages} focus="languages" />
+		<UsageLimit
+			used={$languagesStore.length}
+			limit={$orgLimitsStore?.languages}
+			focus="languages"
+		/>
 		<Button disabled={cant('languages.write')} on:click={() => (isCreating = true)}>
 			Add Language {#snippet end()}
 				<IconPlus />

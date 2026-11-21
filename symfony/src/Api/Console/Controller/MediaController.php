@@ -69,13 +69,13 @@ class MediaController
     {
         $blog = $this->blogAuthListener->getBlog();
 
-        if ($this->usageService->storageLimitReached($blog)) {
-            throw new UnprocessableEntityHttpException('Total storage limit exceeded. Please upgrade your plan.');
-        }
-
         $file = $request->files->get('file');
         if (!$file instanceof UploadedFile) {
             throw new UnprocessableEntityHttpException('The file field is required.');
+        }
+
+        if ($this->usageService->storageLimitReached($blog, (int)$file->getSize())) {
+            throw new UnprocessableEntityHttpException('Total storage limit exceeded. Please upgrade your plan.');
         }
 
         $fileSize = $file->getSize();

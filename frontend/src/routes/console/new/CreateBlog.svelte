@@ -16,6 +16,7 @@
 		addToBlogList,
 		blogListStore,
 		hasPaymentMethodStore,
+		orgLimitsStore,
 		resolvedLicenseStore
 	} from '../lib/stores';
 	import CardRequired from './CardRequired.svelte';
@@ -33,6 +34,15 @@
 	let { dev = false }: Props = $props();
 
 	const cardRequired = $derived($hasPaymentMethodStore === false);
+
+	// DEV blogs are not counted and never limited
+	const blogLimitReached = $derived(
+		!dev &&
+			getConfig().deployment === 'cloud' &&
+			$orgLimitsStore !== null &&
+			$orgLimitsStore.blogs >= 0 &&
+			$orgLimitsStore.blogs_used >= $orgLimitsStore.blogs
+	);
 
 	let cardRequiredComponent: CardRequired | undefined = $state();
 	let cardCanSubmit = $state(false);
@@ -135,6 +145,8 @@
 			addToBlogList(res.blog);
 			blog = res.blog;
 
+			orgLimitsStore.update((l) => (l ? { ...l, blogs_used: l.blogs_used + (dev ? 0 : 1) } : l));
+
 			if (res.resolved_license) {
 				resolvedLicenseStore.set(res.resolved_license);
 			}
@@ -161,7 +173,7 @@
 	oncreate={handleCreate}
 	ctaDisabled={cardRequired
 		? !cardCanSubmit || cardBusy
-		: name.trim() === '' || subdomain.trim() === ''}
+		: blogLimitReached || name.trim() === '' || subdomain.trim() === ''}
 >
 	{#if cardRequired}
 		<CardRequired
@@ -170,6 +182,25 @@
 			bind:busy={cardBusy}
 		/>
 	{:else}
+		{#if blogLimitReached}
+			<div style="margin-bottom:20px;">
+				<Callout type="warning">
+					{#snippet icon()}
+						<IconExclamationCircle />
+					{/snippet}
+					{#snippet title()}
+						<div>Blog limit reached</div>
+					{/snippet}
+					<div>
+						Your organization has reached the maximum number of blogs ({$orgLimitsStore?.blogs})
+						allowed in your plan. <Link href="/console/billing">Upgrade your plan</Link> to create more
+						blogs, or <Link href="/console/new/dev">create a development blog</Link>, which is free
+						and not limited.
+					</div>
+				</Callout>
+			</div>
+		{/if}
+
 		{#if dev}
 			<div style="margin-bottom:20px;">
 				<Callout type="warning">

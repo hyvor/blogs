@@ -13,6 +13,9 @@ export const hasPaymentMethodStore = writable<boolean | null>(null);
 export const resolvedLicenseStore = writable<ResolvedLicense | null>();
 // limits of the current organization from /init (-1 = unlimited)
 export interface OrgLimits {
+	users: number;
+	blogs: number;
+	blogs_used: number;
 	languages: number;
 }
 export const orgLimitsStore = writable<OrgLimits | null>(null);

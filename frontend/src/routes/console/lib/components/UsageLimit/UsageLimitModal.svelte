@@ -33,9 +33,9 @@
 </script>
 
 <div class="wrap">
-<Modal bind:show {title} size="large">
-	<div class="content" bind:this={wrap}></div>
-</Modal>
+	<Modal bind:show {title} size="large">
+		<div class="content" bind:this={wrap}></div>
+	</Modal>
 </div>
 
 <style>

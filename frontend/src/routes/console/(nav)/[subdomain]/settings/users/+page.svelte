@@ -13,11 +13,13 @@
 	import SettingsTop from '../@components/SettingsTop.svelte';
 	import SettingsTable from '../@components/SettingsTable.svelte';
 	import UserRow from './UserRow.svelte';
-	import { getUsers } from './userActions';
+	import { getUsers, getUsersUsage } from './userActions';
 	import { onMount } from 'svelte';
 	import AddUser from './AddUser.svelte';
 	import { getI18n } from '../../../../lib/i18n';
 	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+	import UsageLimit from '../../../../lib/components/UsageLimit/UsageLimit.svelte';
+	import { orgLimitsStore } from '../../../../lib/stores';
 
 	const i18n = getI18n();
 
@@ -27,6 +29,13 @@
 	let isLoadingMore = $state(false);
 
 	let users: User[] = $state([]);
+	let usersUsed = $state(0);
+
+	function loadUsage() {
+		getUsersUsage()
+			.then((res) => (usersUsed = res.used))
+			.catch(() => {});
+	}
 
 	const limit = 20;
 
@@ -53,10 +62,12 @@
 
 	function handleAdd(e: CustomEvent<User>) {
 		users = [e.detail, ...users];
+		loadUsage();
 	}
 
 	function handleDelete(e: CustomEvent<number>) {
 		users = users.filter((t) => t.id !== e.detail);
+		loadUsage();
 	}
 
 	function handleCreateVariant(e: CustomEvent<{ id: number; variant: UserVariant }>) {
@@ -74,10 +85,12 @@
 	onMount(() => {
 		redirectIfCant('users.read');
 		loadUsers();
+		loadUsage();
 	});
 </script>
 
 <SettingsTop>
+	<UsageLimit used={usersUsed} limit={$orgLimitsStore?.users} focus="users" />
 	<Button disabled={cant('users.add')} on:click={() => (isCreating = true)}>
 		Add User {#snippet end()}
 			<IconPlus />

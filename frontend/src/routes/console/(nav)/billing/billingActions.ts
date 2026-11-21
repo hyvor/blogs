@@ -6,7 +6,6 @@ export interface Usage {
 }
 
 export interface UsageData {
-	users: Usage;
 	storage: Usage;
 	ai: Usage;
 	blogs: Usage;

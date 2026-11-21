@@ -97,7 +97,12 @@ class InitConsoleTest extends ApiTestCase
         $this->consoleOrgApi('GET', '/init', user: $authUser, organization: $authOrg);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSame(['languages' => 2], $this->getJson()['limits']);
+        $this->assertSame([
+                'users' => BlogsLicense::trial()->users,
+                'languages' => 2,
+                'blogs' => BlogsLicense::trial()->blogs,
+                'blogs_used' => 0,
+            ], $this->getJson()['limits']);
     }
 
     public function test_returns_empty_blogs_if_no_organization(): void

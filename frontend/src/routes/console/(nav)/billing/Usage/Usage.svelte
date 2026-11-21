@@ -28,7 +28,6 @@
 		{#if usage.blogs.limit !== -1}
 			<UsageBar name="Blogs" data={usage.blogs} />
 		{/if}
-		<UsageBar name="Users" data={usage.users} />
 		<UsageBar name="Media Storage" data={usage.storage} bytes={true} />
 		<UsageBar name="AI Usage (this month)" data={usage.ai} percent={true} />
 	</div>

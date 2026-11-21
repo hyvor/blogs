@@ -10,6 +10,10 @@ use App\Service\Language\LanguageService;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
+use Hyvor\Internal\Billing\BillingFake;
+use Hyvor\Internal\Billing\License\BlogsLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
+use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(LanguageController::class)]
@@ -21,8 +25,15 @@ class CreateLanguageTest extends ApiTestCase
     public function test_create_language(): void
     {
         [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'lang-create'],
+            ['subdomain' => 'lang-create', 'organization_id' => 4000],
             ['status' => UserStatus::ACTIVE],
+        );
+
+        $license = BlogsLicense::trial();
+        $license->languages = -1;
+        BillingFake::enableForSymfony(
+            $this->getContainer(),
+            [4000 => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)],
         );
 
         $this->consoleBlogApi('POST', 'lang-create', '/language', [
@@ -56,5 +67,57 @@ class CreateLanguageTest extends ApiTestCase
         ], user: $user);
 
         $this->assertResponseFailed(422, 'A language with this code already exists');
+    }
+
+    public function test_fails_when_languages_limit_reached(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'lang-limit', 'organization_id' => 4001],
+            ['status' => UserStatus::ACTIVE],
+        );
+        LanguageFactory::createOnePrimaryFor($blog);
+
+        $license = BlogsLicense::trial();
+        $license->languages = 1;
+        BillingFake::enableForSymfony(
+            $this->getContainer(),
+            [4001 => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)],
+        );
+
+        $this->consoleBlogApi('POST', 'lang-limit', '/language', [
+            'code' => 'fr',
+            'name' => 'French',
+            'direction' => 'ltr',
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString(
+            'maximum number of languages allowed per blog',
+            (string)$this->client->getResponse()->getContent(),
+        );
+    }
+
+    public function test_unlimited_languages(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'lang-unlimited', 'organization_id' => 4002],
+            ['status' => UserStatus::ACTIVE],
+        );
+        LanguageFactory::createOnePrimaryFor($blog);
+
+        $license = BlogsLicense::trial();
+        $license->languages = -1;
+        BillingFake::enableForSymfony(
+            $this->getContainer(),
+            [4002 => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)],
+        );
+
+        $this->consoleBlogApi('POST', 'lang-unlimited', '/language', [
+            'code' => 'fr',
+            'name' => 'French',
+            'direction' => 'ltr',
+        ], user: $user);
+
+        $this->assertResponseStatusCodeSame(201);
     }
 }

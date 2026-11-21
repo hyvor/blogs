@@ -36,6 +36,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class UserController
 {
+    private const USERS_LIMIT_MESSAGE = 'You have reached the maximum number of users allowed per blog in your plan. Please upgrade your plan to add more users.';
+
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private UserService $userService,
@@ -47,6 +49,15 @@ class UserController
         private InternalConfig $internalConfig,
         private HyvorPostService $hyvorPostService,
     ) {}
+
+    #[Route('/users/usage', methods: ['GET'])]
+    #[ScopeRequired(Scope::USERS_READ)]
+    public function getUsersUsage(): JsonResponse
+    {
+        $blog = $this->blogAuthListener->getBlog();
+
+        return new JsonResponse(['used' => $this->usageService->getUsersUsage($blog)]);
+    }
 
     #[Route('/users', methods: ['GET'])]
     #[ScopeRequired(Scope::USERS_READ)]
@@ -77,8 +88,8 @@ class UserController
         assert($organizationId !== null);
 
         if ($this->internalConfig->getDeployment()->isCloud()) {
-            if ($this->usageService->usersLimitReached($blog, $input->hyvor_user_id)) {
-                throw new UnprocessableEntityHttpException('Max users limit exceeded. Please upgrade your organization\'s Hyvor Blogs plan');
+            if ($this->usageService->usersLimitReached($blog)) {
+                throw new UnprocessableEntityHttpException(self::USERS_LIMIT_MESSAGE);
             }
             try {
                 $verification = $this->comms->send(
@@ -112,7 +123,7 @@ class UserController
         $blog = $this->blogAuthListener->getBlog();
 
         if ($this->usageService->usersLimitReached($blog)) {
-            throw new UnprocessableEntityHttpException('Max users limit exceeded. Please upgrade your plan');
+            throw new UnprocessableEntityHttpException(self::USERS_LIMIT_MESSAGE);
         }
 
         $user = $this->userService->createGuestUser($blog, $input->name);

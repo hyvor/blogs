@@ -99,7 +99,10 @@ class ConsoleController
         if ($org) {
             $bl = $resolvedLicense?->license instanceof BlogsLicense ? $resolvedLicense->license : null;
             $orgLimits = [
+                'users' => $bl->users ?? -1,
                 'languages' => $bl->languages ?? -1,
+                'blogs' => $bl->blogs ?? -1,
+                'blogs_used' => $this->usageService->getBlogsUsage($org->id),
             ];
         }
 
@@ -167,10 +170,6 @@ class ConsoleController
         $bl = $license->license instanceof BlogsLicense ? $license->license : null;
 
         return new JsonResponse([
-            'users' => [
-                'used' => $this->usageService->getUsersUsage($org->id),
-                'limit' => $bl->users ?? 0,
-            ],
             'storage' => [
                 'used' => $this->usageService->getStorageUsageBytes($org->id),
                 'limit' => $bl->storage ?? 0,

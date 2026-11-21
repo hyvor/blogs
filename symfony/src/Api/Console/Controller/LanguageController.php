@@ -10,6 +10,7 @@ use App\Api\Console\Input\Language\CreateLanguageInput;
 use App\Api\Console\Input\Language\UpdateLanguageInput;
 use App\Api\Console\Object\LanguageObject;
 use App\Entity\Language;
+use App\Service\Billing\UsageService;
 use App\Service\Language\LanguageService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -21,6 +22,7 @@ class LanguageController
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private LanguageService $languageService,
+        private UsageService $usageService,
     ) {}
 
     #[Route('/languages', methods: ['GET'])]
@@ -42,6 +44,12 @@ class LanguageController
 
         if ($this->languageService->getLanguageByCode($blog, $input->code) !== null) {
             throw new UnprocessableEntityHttpException('A language with this code already exists');
+        }
+
+        if ($this->usageService->languagesLimitReached($blog)) {
+            throw new UnprocessableEntityHttpException(
+                'You have reached the maximum number of languages allowed per blog in your plan. Please upgrade your plan or purchase the languages add-on to add more languages.',
+            );
         }
 
         $language = $this->languageService->createLanguage($blog, $input->code, $input->name, $input->direction);

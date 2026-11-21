@@ -14,6 +14,12 @@ export function getUsers(data: GetUsersData = {}) {
 	});
 }
 
+export function getUsersUsage() {
+	return consoleApi.get<{ used: number }>({
+		endpoint: '/users/usage'
+	});
+}
+
 export function deleteUser(id: number) {
 	return consoleApi.delete({
 		endpoint: `/user/${id}`

@@ -66,4 +66,18 @@ class GetUsersTest extends ApiTestCase
         $this->assertIsArray($json[0]['variants'][0]);
         $this->assertSame($name, $json[0]['variants'][0]['name']);
     }
+
+    public function test_gets_users_usage(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'get-users-usage']);
+        LanguageFactory::createOnePrimaryFor($blog);
+        $owner = UserFactory::createOne(['blog' => $blog, 'role' => UserRole::ADMIN]);
+        UserFactory::createMany(2, ['blog' => $blog]);
+        UserFactory::createOne(['blog' => BlogFactory::createOne()]);
+
+        $this->consoleBlogApi('GET', $blog, '/users/usage', user: $owner);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSame(['used' => 3], $this->getJson());
+    }
 }
