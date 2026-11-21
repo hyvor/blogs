@@ -7,6 +7,10 @@
 
 "Media" refers to the files you upload in your blog. It can be images, videos, audio, or any other file. Visit **Tools → Media Library** to manage your blog media.
 
+<h2 id="storage">Storage</h2>
+
+Media storage is shared by all blogs in your organization. The amount depends on your [plan](https://hyvor.com/blogs/pricing): 2GB on Personal, 25GB on Pro, 150GB on Team, and 500GB on Business. If you need more, you can buy 50GB of extra storage as an add-on for €5 per month (or €50 per year).
+
 <h2 id="images">Images</h2>
 
 "A picture is worth a thousand words". Adding pictures to your blog posts is a great way to make them more interesting and informative. But be careful – using too many or large images can slow down your website. Hyvor Blogs automatically optimizes images for you when possible.

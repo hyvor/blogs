@@ -36,15 +36,15 @@ Tous les forfaits Hyvor Blogs incluent une <span class="info"><Tooltip text="Cet
 		<div>5k emails/mois</div>
 	</TableRow>
 	<TableRow>
-		<div>Starter</div>
+		<div>Pro</div>
 		<div>15k emails/mois</div>
 	</TableRow>
 	<TableRow>
-		<div>Growth</div>
+		<div>Team</div>
 		<div>50k emails/mois</div>
 	</TableRow>
 	<TableRow>
-		<div>Premium</div>
+		<div>Business</div>
 		<div>150k emails/mois</div>
 	</TableRow>
 </Table>

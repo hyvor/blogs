@@ -7,6 +7,10 @@
 
 Les « médias » désignent les fichiers que vous téléchargez sur votre blog. Il peut s'agir d'images, de vidéos, de fichiers audio ou de tout autre type de fichier. Rendez-vous dans **Outils → Bibliothèque de médias** pour gérer les médias de votre blog.
 
+<h2 id="storage">Stockage</h2>
+
+Le stockage des médias est partagé par tous les blogs de votre organisation. La quantité dépend de votre [forfait](https://hyvor.com/blogs/pricing) : 2 Go avec Personal, 25 Go avec Pro, 150 Go avec Team et 500 Go avec Business. Si vous avez besoin de plus, vous pouvez acheter 50 Go de stockage supplémentaire en tant qu'option (add-on) pour 5 € par mois (ou 50 € par an).
+
 <h2 id="images">Images</h2>
 
 « Une image vaut mille mots ». Ajouter des images à vos articles de blog est un excellent moyen de les rendre plus intéressants et informatifs. Mais attention – utiliser trop d'images ou des images trop volumineuses peut ralentir votre site web. Hyvor Blogs optimise automatiquement les images pour vous lorsque cela est possible.
