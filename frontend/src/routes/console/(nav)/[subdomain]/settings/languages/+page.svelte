@@ -9,7 +9,7 @@
 	import SettingsTable from '../@components/SettingsTable.svelte';
 	import { getI18n } from '../../../../lib/i18n';
 	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
-	import UsageLimit from '../../../../lib/components/UsageLimit/UsageLimit.svelte';
+	import { UsageLimit } from '@hyvor/design/cloud';
 	import { orgLimitsStore } from '../../../../lib/stores';
 
 	const i18n = getI18n();
@@ -27,6 +27,9 @@
 			used={$languagesStore.length}
 			limit={$orgLimitsStore?.languages}
 			focus="languages"
+			label={i18n.t('console.common.usageLimit.usage')}
+			buttonText={i18n.t('console.common.usageLimit.upgrade')}
+			modalTitle={i18n.t('console.common.usageLimit.modalTitle')}
 		/>
 		<Button disabled={cant('languages.write')} on:click={() => (isCreating = true)}>
 			Add Language {#snippet end()}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Callout } from '@hyvor/design/components';
 	import IconExclamationCircle from '@hyvor/icons/IconExclamationCircle';
-	import UsageLimitModal from '../lib/components/UsageLimit/UsageLimitModal.svelte';
+	import { UpgradeModal } from '@hyvor/design/cloud';
 	import { orgLimitsStore } from '../lib/stores';
 
 	let show = $state(false);
@@ -26,7 +26,7 @@
 </div>
 
 {#if show}
-	<UsageLimitModal bind:show focus="blogs" />
+	<UpgradeModal bind:show focus="blogs" />
 {/if}
 
 <style>
