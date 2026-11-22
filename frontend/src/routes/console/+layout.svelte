@@ -9,8 +9,8 @@
 		blogSelectorOpenStore,
 		resolvedLicenseStore,
 		hasPaymentMethodStore,
-		orgLimitsStore,
-		type OrgLimits
+		orgUsageStore,
+		type OrgUsage
 	} from './lib/stores';
 	import {
 		ConsoleLoader,
@@ -43,7 +43,7 @@
 		organization: CloudContextOrganization;
 		has_payment_method: boolean | null;
 		resolved_license: ResolvedLicense | null;
-		limits: OrgLimits | null;
+		usage: OrgUsage | null;
 		blogs: BlogList[];
 		temp_unique_id?: string;
 		config: Config;
@@ -88,7 +88,7 @@
 				authOrganizationStore.set(res.organization);
 				hasPaymentMethodStore.set(res.has_payment_method);
 				resolvedLicenseStore.set(res.resolved_license);
-				orgLimitsStore.set(res.limits);
+				orgUsageStore.set(res.usage);
 				blogListStore.set(res.blogs);
 
 				if (res.preloaded.blog) {

@@ -82,7 +82,7 @@ class InitConsoleTest extends ApiTestCase
         $this->assertArrayHasKey('usage_percent', $firstModel);
     }
 
-    public function test_returns_org_limits(): void
+    public function test_returns_org_usage(): void
     {
         $orgId = 101;
         $license = BlogsLicense::trial();
@@ -97,12 +97,11 @@ class InitConsoleTest extends ApiTestCase
         $this->consoleOrgApi('GET', '/init', user: $authUser, organization: $authOrg);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSame([
-                'users' => BlogsLicense::trial()->users,
-                'languages' => 2,
-                'blogs' => BlogsLicense::trial()->blogs,
-                'blogs_used' => 0,
-            ], $this->getJson()['limits']);
+        $json = $this->getJson();
+        $this->assertSame(['blogs' => 0], $json['usage']);
+        $this->assertIsArray($json['resolved_license']);
+        $this->assertIsArray($json['resolved_license']['license']);
+        $this->assertSame(2, $json['resolved_license']['license']['languages']);
     }
 
     public function test_returns_empty_blogs_if_no_organization(): void
@@ -114,7 +113,7 @@ class InitConsoleTest extends ApiTestCase
         $json = $this->getJson();
         $this->assertSame([], $json['blogs']);
         $this->assertNull($json['organization']);
-        $this->assertNull($json['limits']);
+        $this->assertNull($json['usage']);
     }
 
     public function test_preloads_first_blog(): void

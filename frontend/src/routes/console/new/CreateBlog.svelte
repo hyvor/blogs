@@ -17,6 +17,7 @@
 		blogListStore,
 		hasPaymentMethodStore,
 		orgLimitsStore,
+		orgUsageStore,
 		resolvedLicenseStore
 	} from '../lib/stores';
 	import CardRequired from './CardRequired.svelte';
@@ -145,7 +146,7 @@
 			addToBlogList(res.blog);
 			blog = res.blog;
 
-			orgLimitsStore.update((l) => (l ? { ...l, blogs_used: l.blogs_used + (dev ? 0 : 1) } : l));
+			orgUsageStore.update((u) => (u && !dev ? { ...u, blogs: u.blogs + 1 } : u));
 
 			if (res.resolved_license) {
 				resolvedLicenseStore.set(res.resolved_license);

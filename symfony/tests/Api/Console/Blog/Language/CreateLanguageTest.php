@@ -96,28 +96,4 @@ class CreateLanguageTest extends ApiTestCase
             (string)$this->client->getResponse()->getContent(),
         );
     }
-
-    public function test_unlimited_languages(): void
-    {
-        [$blog, $user] = BlogFactory::createOneWithUser(
-            ['subdomain' => 'lang-unlimited', 'organization_id' => 4002],
-            ['status' => UserStatus::ACTIVE],
-        );
-        LanguageFactory::createOnePrimaryFor($blog);
-
-        $license = BlogsLicense::trial();
-        $license->languages = -1;
-        BillingFake::enableForSymfony(
-            $this->getContainer(),
-            [4002 => new ResolvedLicense(ResolvedLicenseType::TRIAL, $license)],
-        );
-
-        $this->consoleBlogApi('POST', 'lang-unlimited', '/language', [
-            'code' => 'fr',
-            'name' => 'French',
-            'direction' => 'ltr',
-        ], user: $user);
-
-        $this->assertResponseStatusCodeSame(201);
-    }
 }

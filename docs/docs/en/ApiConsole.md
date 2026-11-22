@@ -417,7 +417,7 @@ type Request = {
 };
 type Response = {
 	users: User[];
-	// total number of users in the blog (used for the users-per-blog limit)
+	// total number of users in the blog
 	used: number;
 };
 ```
