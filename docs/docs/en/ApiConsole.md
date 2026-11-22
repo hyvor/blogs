@@ -411,9 +411,15 @@ Objects:
 
 ```ts
 type Request = {
+	limit?: number;
 	offset?: number;
+	search?: string;
 };
-type Response = User[];
+type Response = {
+	users: User[];
+	// total number of users in the blog (used for the users-per-blog limit)
+	used: number;
+};
 ```
 
 <h4 id="search-users">Search users</h4>

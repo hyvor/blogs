@@ -34,7 +34,7 @@
 		setTimeout(() => {
 			getUsers({ search }).then((res) => {
 				isLoading = false;
-				searchedUsers = res;
+				searchedUsers = res.users;
 			});
 		}, 250);
 	}
@@ -48,7 +48,7 @@
 	onMount(() => {
 		getUsers().then((res) => {
 			isLoading = false;
-			users = res;
+			users = res.users;
 		});
 	});
 </script>

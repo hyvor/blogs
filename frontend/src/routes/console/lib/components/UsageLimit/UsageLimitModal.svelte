@@ -6,10 +6,10 @@
 	interface Props {
 		show: boolean;
 		focus: string;
-		title: string;
+		title?: string;
 	}
 
-	let { show = $bindable(), focus, title }: Props = $props();
+	let { show = $bindable(), focus, title = 'Upgrade or add-ons' }: Props = $props();
 
 	let wrap: HTMLDivElement | undefined = $state();
 
@@ -32,11 +32,9 @@
 	});
 </script>
 
-<div class="wrap">
-	<Modal bind:show {title} size="large">
-		<div class="content" bind:this={wrap}></div>
-	</Modal>
-</div>
+<Modal bind:show {title} size="large">
+	<div class="content" bind:this={wrap}></div>
+</Modal>
 
 <style>
 	.content {

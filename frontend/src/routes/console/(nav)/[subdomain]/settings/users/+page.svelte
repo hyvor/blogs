@@ -13,7 +13,7 @@
 	import SettingsTop from '../@components/SettingsTop.svelte';
 	import SettingsTable from '../@components/SettingsTable.svelte';
 	import UserRow from './UserRow.svelte';
-	import { getUsers, getUsersUsage } from './userActions';
+	import { getUsers } from './userActions';
 	import { onMount } from 'svelte';
 	import AddUser from './AddUser.svelte';
 	import { getI18n } from '../../../../lib/i18n';
@@ -31,12 +31,6 @@
 	let users: User[] = $state([]);
 	let usersUsed = $state(0);
 
-	function loadUsage() {
-		getUsersUsage()
-			.then((res) => (usersUsed = res.used))
-			.catch(() => {});
-	}
-
 	const limit = 20;
 
 	function loadUsers(more = false) {
@@ -47,8 +41,9 @@
 			offset: more ? users.length : 0
 		})
 			.then((res) => {
-				users = more ? [...users, ...res] : res;
-				hasMore = res.length === limit;
+				users = more ? [...users, ...res.users] : res.users;
+				usersUsed = res.used;
+				hasMore = res.users.length === limit;
 			})
 			.catch((e) => {
 				if (!more) users = [];
@@ -62,12 +57,12 @@
 
 	function handleAdd(e: CustomEvent<User>) {
 		users = [e.detail, ...users];
-		loadUsage();
+		usersUsed++;
 	}
 
 	function handleDelete(e: CustomEvent<number>) {
 		users = users.filter((t) => t.id !== e.detail);
-		loadUsage();
+		usersUsed = Math.max(0, usersUsed - 1);
 	}
 
 	function handleCreateVariant(e: CustomEvent<{ id: number; variant: UserVariant }>) {
@@ -85,7 +80,6 @@
 	onMount(() => {
 		redirectIfCant('users.read');
 		loadUsers();
-		loadUsage();
 	});
 </script>
 

@@ -20,6 +20,7 @@
 		resolvedLicenseStore
 	} from '../lib/stores';
 	import CardRequired from './CardRequired.svelte';
+	import BlogLimitReached from './BlogLimitReached.svelte';
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
 	import type { BlogList } from '../lib/types';
 	import { getConfig } from '../lib/config';
@@ -35,7 +36,6 @@
 
 	const cardRequired = $derived($hasPaymentMethodStore === false);
 
-	// DEV blogs are not counted and never limited
 	const blogLimitReached = $derived(
 		!dev &&
 			getConfig().deployment === 'cloud' &&
@@ -167,8 +167,8 @@
 
 <ResourceCreator
 	title="Start a blog"
-	resourceTitle={cardRequired ? 'Card Confirmation' : 'Blog'}
-	cta={cardRequired ? 'Confirm Card' : 'Create Blog'}
+	resourceTitle={cardRequired ? 'Billing Details' : 'Blog'}
+	cta={cardRequired ? 'Continue' : 'Create Blog'}
 	onback={handleBack}
 	oncreate={handleCreate}
 	ctaDisabled={cardRequired
@@ -183,22 +183,7 @@
 		/>
 	{:else}
 		{#if blogLimitReached}
-			<div style="margin-bottom:20px;">
-				<Callout type="warning">
-					{#snippet icon()}
-						<IconExclamationCircle />
-					{/snippet}
-					{#snippet title()}
-						<div>Blog limit reached</div>
-					{/snippet}
-					<div>
-						Your organization has reached the maximum number of blogs ({$orgLimitsStore?.blogs})
-						allowed in your plan. <Link href="/console/billing">Upgrade your plan</Link> to create more
-						blogs, or <Link href="/console/new/dev">create a development blog</Link>, which is free
-						and not limited.
-					</div>
-				</Callout>
-			</div>
+			<BlogLimitReached />
 		{/if}
 
 		{#if dev}

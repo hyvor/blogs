@@ -50,15 +50,6 @@ class UserController
         private HyvorPostService $hyvorPostService,
     ) {}
 
-    #[Route('/users/usage', methods: ['GET'])]
-    #[ScopeRequired(Scope::USERS_READ)]
-    public function getUsersUsage(): JsonResponse
-    {
-        $blog = $this->blogAuthListener->getBlog();
-
-        return new JsonResponse(['used' => $this->usageService->getUsersUsage($blog)]);
-    }
-
     #[Route('/users', methods: ['GET'])]
     #[ScopeRequired(Scope::USERS_READ)]
     public function getUsers(
@@ -67,10 +58,13 @@ class UserController
         $blog = $this->blogAuthListener->getBlog();
         $users = $this->userService->getUsers($blog, $input->limit, $input->offset, search: $input->search);
 
-        return new JsonResponse(array_map(
-            fn($user) => $this->userObjectFactory->create($user, $blog),
-            $users,
-        ));
+        return new JsonResponse([
+            'users' => array_map(
+                fn($user) => $this->userObjectFactory->create($user, $blog),
+                $users,
+            ),
+            'used' => $this->usageService->getUsersUsage($blog),
+        ]);
     }
 
     #[Route('/user', methods: ['POST'])]
