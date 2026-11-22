@@ -419,10 +419,7 @@
 			},
 			"hosting": {
 				"subdomain": "Subdomain",
-				"subdomainCaption": "Unique identifier of your blog, used in its default URL ({url}) and in APIs.",
-				"changeSubdomain": "Change Subdomain",
-				"changeSubdomainContent": "The default URL of your blog will change, and URLs on the current subdomain will stop working. Integrations and API clients that use the current subdomain must be updated. Are you sure?",
-				"subdomainChanging": "Changing subdomain...",
+				"subdomainCaption": "The default URL of your blog on Hyvor Blogs. Media (images and files) is always served from it, even with a custom domain or a hosting URL. The subdomain cannot be changed.",
 				"optionDomain": "Custom Domain",
 				"customDomainCaption": "Serve your blog from your own domain (e.g., blog.example.com). Once connected, the URLs of your blog use the custom domain, unless a hosting URL is set.",
 				"removeDomain": "Remove",

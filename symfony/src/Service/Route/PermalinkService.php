@@ -9,7 +9,6 @@ use App\Entity\PostVariant;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Service\AppConfig;
-use App\Service\Media\BlogIdEncoder;
 
 /**
  * Manages permalinks of the blog
@@ -70,7 +69,8 @@ class PermalinkService
 
     /**
      * The default URL of the blog on Hyvor Blogs (subdomain or app subdirectory),
-     * ignoring the custom domain and the hosting URL
+     * ignoring the custom domain and the hosting URL.
+     * The subdomain cannot be changed, so this URL (and the media URLs under it) never changes.
      */
     public function getBlogSubdomainUrl(Blog $blog): string
     {
@@ -192,46 +192,38 @@ class PermalinkService
     }
 
     /**
-     * Media is served independently of the blog's hosting, so its URL never changes when hosting changes
-     * and works in headless setups:
-     * - {MEDIA_URL}/{blogIdEncoded}/{mediaName} if MEDIA_URL is set
-     * - https://{DOMAIN_APP}/media/{blogIdEncoded}/{mediaName} otherwise
+     * Media is always served from the blog's subdomain URL ({subdomainUrl}/media/{mediaName}),
+     * no matter where the blog is hosted (custom domain, hosting URL, headless),
+     * so media URLs never change and work in headless setups.
      */
     public function getMediaPermalink(Media $media, Blog $blog): string
     {
-        return $this->getMediaBlogBaseUrl($blog) . '/' . $media->getName();
+        return $this->getMediaBaseUrl($blog) . '/' . $media->getName();
     }
 
     /**
-     * Base URL of all media (no trailing slash)
+     * Base URL of the blog's media (no trailing slash): {subdomainUrl}/media
      */
-    public function getMediaBaseUrl(): string
+    public function getMediaBaseUrl(Blog $blog): string
     {
-        return $this->appConfig->getMediaUrl()
-            ?? $this->appConfig->getTlsMode()->getScheme() . '://' . $this->appConfig->getDomainApp() . '/media';
-    }
-
-    /**
-     * Base URL of the blog's media (no trailing slash)
-     */
-    public function getMediaBlogBaseUrl(Blog $blog): string
-    {
-        return $this->getMediaBaseUrl() . '/' . BlogIdEncoder::encode($blog->getId());
+        return $this->getBlogSubdomainUrl($blog) . '/media';
     }
 
     /**
      * Returns the media name if the URL is a media URL of the blog, null otherwise.
-     * Supports both the current format ({mediaBlogBaseUrl}/{name}) and the legacy format
-     * that was served from the blog's host ({blogUrl}/media/{name} or /media/{name}).
+     * Supports the current format ({subdomainUrl}/media/{name}), the legacy formats
+     * that were served from the blog's host ({blogUrl}/media/{name}, {customDomainUrl}/media/{name}),
+     * and relative URLs (/media/{name}).
      * Any trailing segments (ex: /500w), query, or fragment are ignored.
      */
     public function getMediaNameFromUrl(Blog $blog, string $url): ?string
     {
-        $prefixes = [
-            $this->getMediaBlogBaseUrl($blog) . '/',
+        $prefixes = array_unique([
+            $this->getMediaBaseUrl($blog) . '/',
+            $this->getBlogDeliveryUrl($blog) . '/media/',
             $this->getBlogUrl($blog) . '/media/',
             '/media/',
-        ];
+        ]);
 
         foreach ($prefixes as $prefix) {
             if (!str_starts_with($url, $prefix)) {

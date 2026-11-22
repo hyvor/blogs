@@ -18,15 +18,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Media was previously served from the blog's host ({blogUrl}/media/{name}).
- * It is now served from the media URL ({DOMAIN_APP}/media/{blogIdEncoded}/{name} or {MEDIA_URL}/{blogIdEncoded}/{name}).
+ * Media was previously served from the blog's host ({blogUrl}/media/{name}), which was the custom domain
+ * or the self-hosting URL (now the hosting URL) when set.
+ * It is now always served from the blog's subdomain ({subdomainUrl}/media/{name}).
  * This rewrites the legacy URLs saved in blog meta, posts, and users to the new format.
  *
- * Legacy URLs keep working (the blog-host /media/ route is still served), so this can be run anytime after deploying.
+ * Only blogs with a custom domain or a hosting URL can have legacy URLs: for the others, the blog URL
+ * was already the subdomain URL.
+ *
+ * Legacy URLs keep working (the custom domain still serves /media/), but run this soon after deploying:
+ * the legacy URLs are found from the current custom domain and hosting URL, which users can now change
+ * without the URLs being rewritten.
  */
 #[AsCommand(
     name: 'blogs:migrate-media-urls',
-    description: 'Rewrites legacy {blogUrl}/media/{name} URLs to the media URL format',
+    description: 'Rewrites legacy {customDomain|hostingUrl}/media/{name} URLs to {subdomainUrl}/media/{name}',
 )]
 class MigrateMediaUrlsCommand extends Command
 {
@@ -68,6 +74,7 @@ class MigrateMediaUrlsCommand extends Command
                 ->select('b')
                 ->from(Blog::class, 'b')
                 ->where('b.id > :lastId')
+                ->andWhere('b.custom_domain IS NOT NULL OR b.hosting_url IS NOT NULL')
                 ->orderBy('b.id', 'ASC')
                 ->setMaxResults(1)
                 ->setParameter('lastId', $lastId);
@@ -88,8 +95,8 @@ class MigrateMediaUrlsCommand extends Command
             $blogsProcessed++;
 
             $updater = new LegacyMediaUpdater(
-                $this->permalinkService->getBlogUrl($blog),
-                $this->permalinkService->getMediaBlogBaseUrl($blog),
+                $this->getLegacyBlogUrls($blog),
+                $this->permalinkService->getMediaBaseUrl($blog),
             );
 
             try {
@@ -146,6 +153,28 @@ class MigrateMediaUrlsCommand extends Command
 
         $io->success('Done');
         return Command::SUCCESS;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function getLegacyBlogUrls(Blog $blog): array
+    {
+        $subdomainUrl = $this->permalinkService->getBlogSubdomainUrl($blog);
+        $urls = [];
+
+        $customDomain = $blog->getCustomDomain();
+        if ($customDomain !== null) {
+            $urls[] = 'https://' . $customDomain->getDomain();
+        }
+
+        $hostingUrl = $blog->getHostingUrl();
+        if ($hostingUrl !== null) {
+            $urls[] = $hostingUrl;
+        }
+
+        // media URLs on the subdomain are already in the new format
+        return array_values(array_unique(array_filter($urls, fn(string $url) => $url !== $subdomainUrl)));
     }
 
 }

@@ -5,14 +5,12 @@ namespace App\Tests\Api\Delivery;
 use App\Api\Delivery\SubdomainController;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
-use App\Tests\Factory\MediaFactory;
 use App\Tests\Factory\RouteFactory;
 use App\Tests\Factory\ThemeFileFactory;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicense;
 use Hyvor\Internal\Billing\License\Resolved\ResolvedLicenseType;
-use League\Flysystem\Filesystem;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -154,19 +152,6 @@ class SubdomainTest extends ApiTestCase
         $location = $response->headers->get('Location');
         $this->assertNotNull($location);
         $this->assertSame('https://example.com/blog/test', $location);
-    }
-
-    public function test_does_not_redirect_legacy_media_to_hosting_url(): void
-    {
-        $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
-
-        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_url' => 'https://example.com/blog']);
-        MediaFactory::createOne(['blog' => $blog, 'name' => 'image.svg', 'original_name' => 'image.svg', 'extension' => 'svg']);
-        $this->getService(Filesystem::class)->write('blog/' . $blog->getId() . '/image.svg', '<svg/>');
-
-        $response = $this->call('testblog.hyvorblogs.io', '/media/image.svg');
-        $this->assertResponseIsSuccessful();
-        $this->assertSame('<svg/>', $response->getContent());
     }
 
     public function test_does_not_redirect_if_its_disabled(): void

@@ -43,7 +43,7 @@ class UpdateMediaNameTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
         $this->filesystem->write('blog/' . $blog->getId() . '/test.png', 'content');
         $media = MediaFactory::createOne(['blog' => $blog, 'name' => 'test.png']);
-        $mediaBaseUrl = $this->getService(PermalinkService::class)->getMediaBlogBaseUrl($blog);
+        $mediaBaseUrl = $this->getService(PermalinkService::class)->getMediaBaseUrl($blog);
 
         $post = PostFactory::createOne(['blog' => $blog]);
         $variant = PostVariantFactory::createOneFor($post, [

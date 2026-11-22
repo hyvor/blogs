@@ -419,10 +419,7 @@
 			},
 			"hosting": {
 				"subdomain": "Sous-domaine",
-				"subdomainCaption": "Identifiant unique de votre blog, utilisé dans son URL par défaut ({url}) et dans les API.",
-				"changeSubdomain": "Changer le sous-domaine",
-				"changeSubdomainContent": "L'URL par défaut de votre blog changera et les URL du sous-domaine actuel cesseront de fonctionner. Les intégrations et clients API qui utilisent le sous-domaine actuel devront être mis à jour. Êtes-vous sûr ?",
-				"subdomainChanging": "Changement du sous-domaine...",
+				"subdomainCaption": "L'URL par défaut de votre blog sur Hyvor Blogs. Les médias (images et fichiers) sont toujours servis depuis celle-ci, même avec un domaine personnalisé ou une URL d'hébergement. Le sous-domaine ne peut pas être modifié.",
 				"optionDomain": "Domaine personnalisé",
 				"customDomainCaption": "Servez votre blog depuis votre propre domaine (ex. : blog.example.com). Une fois connecté, les URL de votre blog utilisent le domaine personnalisé, sauf si une URL d'hébergement est définie.",
 				"removeDomain": "Supprimer",

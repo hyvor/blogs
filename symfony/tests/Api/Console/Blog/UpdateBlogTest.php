@@ -26,82 +26,35 @@ class UpdateBlogTest extends ApiTestCase
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
 
         $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'subdomain' => 'blog-update-new',
+            'hosting_redirect_subdomain' => false,
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
-        $this->assertSame('blog-update-new', $json['subdomain']);
+        $this->assertFalse($json['hosting_redirect_subdomain']);
 
         $event = $this->getEd()->getFirstEvent(BlogUpdatedEvent::class);
         $this->assertSame($blog->getId(), $event->blog->getId());
-        $this->assertSame('blog-update-new', $event->blog->getSubdomain());
-        $this->assertSame('blog-update', $event->blogOld->getSubdomain());
+        $this->assertFalse($event->blog->getHostingRedirectSubdomain());
+        $this->assertTrue($event->blogOld->getHostingRedirectSubdomain());
     }
 
-    public function test_updating_subdomain_changes_blog_url(): void
+    public function test_subdomain_cannot_be_changed(): void
     {
-        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-url']);
+        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-subdomain']);
         $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
 
         $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'subdomain' => 'blog-update-url-new',
+            'subdomain' => 'blog-update-subdomain-new',
         ], user: $user);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSame('https://blog-update-url-new.hyvorblogs.io', $this->getJson()['url']);
-    }
+        $json = $this->getJson();
+        $this->assertSame('blog-update-subdomain', $json['subdomain']);
+        $this->assertSame('https://blog-update-subdomain.hyvorblogs.io', $json['url']);
 
-    public function test_keeping_the_same_subdomain_is_allowed(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-same']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-
-        $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'subdomain' => 'blog-update-same',
-        ], user: $user);
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSame('blog-update-same', $this->getJson()['subdomain']);
-    }
-
-    public function test_fails_when_subdomain_is_taken(): void
-    {
-        BlogFactory::createOne(['subdomain' => 'blog-update-taken']);
-        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-taker']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-
-        $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'subdomain' => 'blog-update-taken',
-        ], user: $user);
-
-        $this->assertResponseFailed(422, 'subdomain is already taken');
         $this->getEm()->refresh($blog);
-        $this->assertSame('blog-update-taker', $blog->getSubdomain());
-    }
-
-    public function test_fails_when_subdomain_is_reserved(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-reserved']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-
-        $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'subdomain' => 'billing',
-        ], user: $user);
-
-        $this->assertResponseFailed(422, 'subdomain is reserved');
-    }
-
-    public function test_fails_when_subdomain_is_invalid(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'blog-update-invalid']);
-        $user = UserFactory::createOne(['blog' => $blog, 'status' => UserStatus::ACTIVE]);
-
-        $this->consoleBlogApi('PATCH', $blog, '/blog', [
-            'subdomain' => '-invalid-',
-        ], user: $user);
-
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('blog-update-subdomain', $blog->getSubdomain());
     }
 
     public function test_update_metadata(): void

@@ -7,7 +7,6 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
  * - app: for app routes (ex: blogs.hyvor.com)
  * - subdomain: for subdomain delivery (ex: subdomain.hyvorblogs.io)
  * - customdomain: for custom domain delivery
- * - media: for media delivery on MEDIA_URL (ex: https://media.hyvorblogs.io)
  * - local: for local endpoints (ex: caddy certificate)
  */
 return static function (RoutingConfigurator $routes): void {
@@ -26,11 +25,6 @@ return static function (RoutingConfigurator $routes): void {
     $routes
         ->import('../../src/Api/Delivery/CustomDomainController.php', 'attribute')
         ->condition('service("app_router").isCustomDomain()');
-
-    // media delivery on MEDIA_URL (ex: https://media.hyvorblogs.io)
-    $routes
-        ->import('../../src/Api/Delivery/MediaDomainController.php', 'attribute')
-        ->condition('service("app_router").isMedia()');
 
     // local endpoints
     $routes

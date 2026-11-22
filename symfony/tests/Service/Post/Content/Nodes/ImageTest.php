@@ -168,9 +168,9 @@ class ImageTest extends KernelTestCase
         );
     }
 
-    public function test_adds_srcset_for_images_with_media_url(): void
+    public function test_adds_srcset_for_media_on_subdomain_when_blog_is_hosted_elsewhere(): void
     {
-        $blog = BlogFactory::createOne();
+        $blog = BlogFactory::createOne(['hosting_url' => 'https://example.com/blog']);
         $permalinkService = $this->getService(PermalinkService::class);
 
         $name = 'image.png';
@@ -183,7 +183,7 @@ class ImageTest extends KernelTestCase
         $this->storeFile($blog->getId(), $name, $this->pngContent(600));
 
         $src = $permalinkService->getMediaPermalink($media, $blog);
-        $this->assertStringNotContainsString($permalinkService->getBlogUrl($blog), $src);
+        $this->assertStringStartsWith($permalinkService->getBlogSubdomainUrl($blog) . '/media/', $src);
 
         $json = json_encode([
             'type' => 'doc',

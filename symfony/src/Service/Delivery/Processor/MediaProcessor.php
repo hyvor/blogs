@@ -20,17 +20,13 @@ class MediaProcessor
     }
 
     /**
-     * Path of a media file in the blog's delivery cache. Shared by the legacy blog-host route
-     * ({blogUrl}/media/{file_name}/{additional}) and the media URL (see DeliveryService::getMediaResponse)
+     * Path of a media file in the blog's delivery cache ({subdomainUrl}/media/{file_name}/{additional})
      */
     public static function getCachePath(string $fileName, ?string $additional = null): string
     {
         return '/media/' . $fileName . ($additional !== null ? '/' . $additional : '');
     }
 
-    /**
-     * Legacy route on the blog's host: {blogUrl}/media/{file_name}/{additional}
-     */
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
     {
         $fileName = $matchedRoute->param('file_name');
@@ -38,14 +34,6 @@ class MediaProcessor
             return null;
         }
 
-        return $this->processFile($blog, $fileName, $matchedRoute->param('additional'));
-    }
-
-    /**
-     * @param string|null $additional ex: "500w" to resize the image to 500px width
-     */
-    public function processFile(Blog $blog, string $fileName, ?string $additional = null): ?DeliveryResponse
-    {
         $media = $this->mediaService->getMediaByBlogAndName($blog, $fileName);
         if ($media === null) {
             return null;
@@ -66,7 +54,7 @@ class MediaProcessor
         ['content' => $content, 'mimeType' => $mimeType] = $this->convertImage(
             $content,
             $mimeType,
-            $this->getWidth($additional)
+            $this->getWidth($matchedRoute)
         );
 
         return DeliveryResponse::forFile(
@@ -77,8 +65,9 @@ class MediaProcessor
         );
     }
 
-    private function getWidth(?string $additional): ?int
+    private function getWidth(MatchedRoute $matchedRoute): ?int
     {
+        $additional = $matchedRoute->param('additional');
         if ($additional === null) {
             return null;
         }

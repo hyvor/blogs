@@ -7,7 +7,7 @@
 
 According to most SEO experts, a subdirectory like `/blog` is the best place to host your blog. Hyvor Blogs supports multiple methods to host your blog in a subdirectory.
 
-Whichever method you use, set the **Hosting URL** (e.g. `https://example.com/blog`) in Console &rarr; Settings &rarr; Hosting. Hyvor Blogs then uses it for all links, sitemaps, feeds, and canonical URLs, and (optionally) redirects visitors of your subdomain to it.
+Whichever method you use, set the **Hosting URL** (e.g. `https://example.com/blog`) in Console &rarr; Settings &rarr; Hosting. Hyvor Blogs then uses it for all links, sitemaps, feeds, and canonical URLs, and (optionally) redirects visitors of your subdomain to it. Uploaded media is always served from your blog's subdomain (e.g. `https://yourblog.hyvorblogs.io/media/image.png`) and is never redirected.
 
 <h2 id="docker">1. Docker</h2>
 
