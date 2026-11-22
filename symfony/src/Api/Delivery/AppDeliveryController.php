@@ -7,7 +7,6 @@ use App\Service\ApiKey\ApiKeyService;
 use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
 use App\Service\Delivery\DeliveryService;
-use App\Service\Delivery\MediaDeliveryService;
 use App\Service\Route\PermalinkService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +25,6 @@ class AppDeliveryController extends AbstractController
         private DeliveryService $deliveryService,
         private AppConfig $appConfig,
         private PermalinkService $permalinkService,
-        private MediaDeliveryService $mediaDeliveryService,
     ) {}
 
     #[Route('/api/delivery/v0/{subdomain}', methods: ['GET'])]
@@ -65,6 +63,12 @@ class AppDeliveryController extends AbstractController
 
         $path = '/' . ltrim($path ?? '', '/');
 
+        // media is never redirected: without a delivery URL, this is the media URL of the blog
+        // (see PermalinkService::getMediaPermalink), and the final host (ex: headless) may not serve media
+        if (str_starts_with($path, '/media/')) {
+            return $this->deliveryService->getSymfonyResponse($blog, $path);
+        }
+
         if (
             $this->appConfig->getDeliveryUrl() !== null ||
             $blog->getCustomDomain() !== null
@@ -78,35 +82,11 @@ class AppDeliveryController extends AbstractController
 
         if (
             $blog->getHostingUrl() !== null &&
-            $blog->getHostingRedirectSubdomain() &&
-            // legacy media URLs ({blogUrl}/media/...) are always served, as the final host (ex: headless) may not serve them
-            !str_starts_with($path, '/media/')
+            $blog->getHostingRedirectSubdomain()
         ) {
             return new RedirectResponse($this->permalinkService->getBlogUrlWithPath($blog, $path), 302);
         }
 
         return $this->deliveryService->getSymfonyResponse($blog, $path);
-    }
-
-    /**
-     * Default media URL (see PermalinkService::getMediaPermalink)
-     * Redirects to MEDIA_URL if it is configured.
-     */
-    #[Route(
-        '/media/{blogIdEncoded}/{fileName}/{additional}',
-        defaults: ['additional' => null],
-        methods: ['GET'],
-    )]
-    public function media(string $blogIdEncoded, string $fileName, ?string $additional): Response
-    {
-        if ($this->appConfig->getMediaUrl() !== null) {
-            $url = $this->permalinkService->getMediaBaseUrl() . '/' . $blogIdEncoded . '/' . $fileName;
-            if ($additional !== null) {
-                $url .= '/' . $additional;
-            }
-            return new RedirectResponse($url, 302);
-        }
-
-        return $this->mediaDeliveryService->getSymfonyResponse($blogIdEncoded, $fileName, $additional);
     }
 }

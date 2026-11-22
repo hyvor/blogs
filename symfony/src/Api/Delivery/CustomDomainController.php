@@ -63,7 +63,11 @@ class CustomDomainController
         $host = $request->getHost();
 
         // this happens on port 80 only
-        if (!$request->isSecure() && $this->shouldRedirectToHttps($host)) {
+        if (
+            $host === $this->appConfig->getDomainApp() &&
+            !$request->isSecure() &&
+            $this->appConfig->getTlsMode() !== TlsMode::DISABLED
+        ) {
             return new RedirectResponse('https://' . $host . $request->getRequestUri(), 308);
         }
 
@@ -81,21 +85,5 @@ class CustomDomainController
         return $this->deliveryService->getSymfonyResponse($blog, $path);
     }
 
-    /**
-     * HTTP requests to the app domain and media domain on port 80 land here
-     * (Caddy does not do automatic HTTP->HTTPS redirects, see Caddyfile)
-     */
-    private function shouldRedirectToHttps(string $host): bool
-    {
-        if ($host === $this->appConfig->getDomainApp()) {
-            return $this->appConfig->getTlsMode() !== TlsMode::DISABLED;
-        }
-
-        if ($host === $this->appConfig->getMediaDomain()) {
-            return $this->appConfig->isMediaUrlHttps();
-        }
-
-        return false;
-    }
 
 }

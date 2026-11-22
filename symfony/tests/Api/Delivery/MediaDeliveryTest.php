@@ -3,14 +3,13 @@
 namespace App\Tests\Api\Delivery;
 
 use App\Api\Delivery\AppDeliveryController;
-use App\Api\Delivery\MediaDomainController;
+use App\Api\Delivery\CustomDomainController;
+use App\Api\Delivery\SubdomainController;
 use App\Entity\Blog;
-use App\Service\Delivery\BlogHomepageRedirector;
-use App\Service\Delivery\DeliveryService;
-use App\Service\Delivery\MediaDeliveryService;
-use App\Service\Media\BlogIdEncoder;
+use App\Service\Delivery\Processor\MediaProcessor;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\MediaFactory;
 use Hyvor\Internal\Billing\BillingFake;
 use Hyvor\Internal\Billing\License\BlogsLicense;
@@ -20,11 +19,13 @@ use League\Flysystem\Filesystem;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Media is always served from the blog's subdomain URL ({subdomainUrl}/media/{name}) and never redirected
+ */
+#[CoversClass(SubdomainController::class)]
 #[CoversClass(AppDeliveryController::class)]
-#[CoversClass(MediaDomainController::class)]
-#[CoversClass(MediaDeliveryService::class)]
-#[CoversClass(DeliveryService::class)]
-#[CoversClass(BlogHomepageRedirector::class)]
+#[CoversClass(CustomDomainController::class)]
+#[CoversClass(MediaProcessor::class)]
 class MediaDeliveryTest extends ApiTestCase
 {
 
@@ -52,7 +53,7 @@ class MediaDeliveryTest extends ApiTestCase
         array $blogAttrs = [],
     ): Blog
     {
-        $blog = BlogFactory::createOne($blogAttrs);
+        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'media-blog', ...$blogAttrs]);
         MediaFactory::createOne([
             'blog' => $blog,
             'name' => $name,
@@ -63,11 +64,18 @@ class MediaDeliveryTest extends ApiTestCase
         return $blog;
     }
 
-    private function onMediaDomain(string $path): Response
+    private function onSubdomain(string $path, string $subdomain = 'media-blog'): Response
     {
-        $this->setEnvVar('MEDIA_URL', 'https://media.hyvorblogs.io');
-        $this->setEnvVar('CADDY_ROUTER', 'media');
-        $this->client->request('GET', $path, [], [], ['HTTP_HOST' => 'media.hyvorblogs.io']);
+        $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
+        $this->setEnvVar('CADDY_ROUTER', 'subdomain');
+        $this->client->request('GET', $path, [], [], ['HTTP_HOST' => $subdomain . '.hyvorblogs.io']);
+        return $this->client->getResponse();
+    }
+
+    private function onCustomDomain(string $host, string $path): Response
+    {
+        $this->setEnvVar('CADDY_ROUTER', 'customdomain');
+        $this->client->request('GET', $path, [], [], ['HTTP_HOST' => $host, 'HTTPS' => 'on']);
         return $this->client->getResponse();
     }
 
@@ -80,132 +88,88 @@ class MediaDeliveryTest extends ApiTestCase
         $this->assertStringContainsString('max-age=31536000', (string) $response->headers->get('Cache-Control'));
     }
 
-    // app domain: /media/{blogIdEncoded}/{fileName} ================
+    // subdomain: https://{subdomain}.{deliveryDomain}/media/{fileName} ================
 
-    public function test_serves_media_from_app_domain(): void
+    public function test_serves_media_from_subdomain(): void
     {
-        $blog = $this->createBlogWithMedia();
+        $this->createBlogWithMedia();
 
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.svg');
-
-        $this->assertServesSvg($this->client->getResponse());
+        $this->assertServesSvg($this->onSubdomain('/media/image.svg'));
     }
 
     public function test_resizes_and_converts_images(): void
     {
         $png = (string) file_get_contents(__DIR__ . '/../../Service/Delivery/PathMatcher/Default/Media/test.png');
-        $blog = $this->createBlogWithMedia('photo.png', $png);
+        $this->createBlogWithMedia('photo.png', $png);
 
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($blog->getId()) . '/photo.png/100w');
+        $response = $this->onSubdomain('/media/photo.png/100w');
 
-        $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('image/webp', $response->headers->get('Content-Type'));
     }
 
-    public function test_redirects_to_media_domain_when_configured(): void
-    {
-        $this->setEnvVar('MEDIA_URL', 'https://media.hyvorblogs.io');
-
-        $this->client->request('GET', '/media/AQ/image.png/500w');
-
-        $this->assertResponseRedirects('https://media.hyvorblogs.io/AQ/image.png/500w', 302);
-    }
-
-    public function test_returns_404_for_invalid_blog_id(): void
+    public function test_returns_404_for_unknown_media(): void
     {
         $this->createBlogWithMedia();
 
-        $this->client->request('GET', '/media/not.valid/image.svg');
-        $this->assertResponseStatusCodeSame(404);
-
-        // non-canonical encoding of 1
-        $this->client->request('GET', '/media/AR/image.svg');
-        $this->assertResponseStatusCodeSame(404);
-    }
-
-    public function test_returns_404_for_unknown_blog(): void
-    {
-        $blog = $this->createBlogWithMedia();
-
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($blog->getId() + 1000) . '/image.svg');
-
-        $this->assertResponseStatusCodeSame(404);
-    }
-
-    public function test_returns_404_for_unknown_media(): void
-    {
-        $blog = $this->createBlogWithMedia();
-
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($blog->getId()) . '/other.svg');
-
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertSame(404, $this->onSubdomain('/media/other.svg')->getStatusCode());
     }
 
     public function test_does_not_serve_media_of_another_blog(): void
     {
         $this->createBlogWithMedia();
-        $otherBlog = BlogFactory::createOne();
+        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'other-blog']);
 
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($otherBlog->getId()) . '/image.svg');
-
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertSame(404, $this->onSubdomain('/media/image.svg', 'other-blog')->getStatusCode());
     }
 
-    public function test_returns_404_for_deleted_blog(): void
-    {
-        $blog = $this->createBlogWithMedia(blogAttrs: ['deleted_at' => new \DateTimeImmutable()]);
-
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.svg');
-
-        $this->assertResponseStatusCodeSame(404);
-    }
-
-    public function test_returns_404_for_blocked_blog(): void
-    {
-        $blog = $this->createBlogWithMedia(blogAttrs: ['blocked_at' => new \DateTimeImmutable()]);
-
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.svg');
-
-        $this->assertResponseStatusCodeSame(404);
-    }
-
-    public function test_returns_404_when_license_expired(): void
-    {
-        $blog = $this->createBlogWithMedia(blogAttrs: ['organization_id' => 1]);
-        $this->getService(BillingFake::class)->setLicenses([
-            1 => new ResolvedLicense(ResolvedLicenseType::EXPIRED),
-        ]);
-
-        $this->client->request('GET', '/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.svg');
-
-        $this->assertResponseStatusCodeSame(404);
-    }
-
-    // media domain: {MEDIA_URL}/{blogIdEncoded}/{fileName} ================
-
-    public function test_serves_media_from_media_domain(): void
+    public function test_does_not_redirect_media_to_custom_domain(): void
     {
         $blog = $this->createBlogWithMedia();
+        // other paths redirect to the custom domain (see SubdomainTest)
+        CustomDomainFactory::createActiveFor($blog, 'media-blog.com');
 
-        $response = $this->onMediaDomain('/' . BlogIdEncoder::encode($blog->getId()) . '/image.svg');
-
-        $this->assertServesSvg($response);
+        $this->assertServesSvg($this->onSubdomain('/media/image.svg'));
     }
 
-    public function test_media_domain_returns_404_for_unknown_media(): void
+    public function test_does_not_redirect_media_to_hosting_url(): void
+    {
+        // other paths redirect to the hosting URL (see SubdomainTest)
+        $this->createBlogWithMedia(blogAttrs: ['hosting_url' => 'https://example.com/blog']);
+
+        $this->assertServesSvg($this->onSubdomain('/media/image.svg'));
+    }
+
+    // app subdirectory: https://{DOMAIN_APP}/blog/{subdomain}/media/{fileName} ================
+
+    public function test_serves_media_from_app_subdirectory(): void
+    {
+        $this->setEnvVar('DELIVERY_URL', '');
+        $this->createBlogWithMedia();
+
+        $this->client->request('GET', '/blog/media-blog/media/image.svg');
+
+        $this->assertServesSvg($this->client->getResponse());
+    }
+
+    public function test_does_not_redirect_media_on_app_subdirectory(): void
+    {
+        // a delivery URL, a custom domain, or a hosting URL redirect other paths (see BlogOnSubdirectoryTest)
+        $blog = $this->createBlogWithMedia(blogAttrs: ['hosting_url' => 'https://example.com/blog']);
+        CustomDomainFactory::createActiveFor($blog, 'media-blog.com');
+
+        $this->client->request('GET', '/blog/media-blog/media/image.svg');
+        $this->assertServesSvg($this->client->getResponse());
+    }
+
+    // custom domain (legacy URLs): https://{customDomain}/media/{fileName} ================
+
+    public function test_serves_legacy_media_from_custom_domain(): void
     {
         $blog = $this->createBlogWithMedia();
+        CustomDomainFactory::createActiveFor($blog, 'media-blog.com');
 
-        $this->assertSame(404, $this->onMediaDomain('/' . BlogIdEncoder::encode($blog->getId()) . '/other.svg')->getStatusCode());
-        $this->assertSame(404, $this->onMediaDomain('/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.svg')->getStatusCode());
-        $this->assertSame(404, $this->onMediaDomain('/')->getStatusCode());
-    }
-
-    public function test_media_domain_does_not_serve_app_routes(): void
-    {
-        $this->onMediaDomain('/api/health');
-        $this->assertResponseStatusCodeSame(404);
+        $this->assertServesSvg($this->onCustomDomain('media-blog.com', '/media/image.svg'));
     }
 
 }

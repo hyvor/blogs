@@ -59,7 +59,7 @@ class SubdomainController
         if (
             ($blog->getCustomDomain() !== null || $blog->getHostingUrl() !== null) &&
             $blog->getHostingRedirectSubdomain() &&
-            // legacy media URLs ({blogUrl}/media/...) are always served, as the final host (ex: headless) may not serve them
+            // media is always served from the subdomain (see PermalinkService::getMediaPermalink), never redirected
             !str_starts_with($path, 'media/')
         ) {
             return new RedirectResponse($this->permalinkService->getBlogUrlWithPath($blog, $path), 302);

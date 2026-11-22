@@ -10,16 +10,24 @@ use PHPUnit\Framework\TestCase;
 class LegacyMediaUpdaterTest extends TestCase
 {
 
+    private function updater(): LegacyMediaUpdater
+    {
+        return new LegacyMediaUpdater(
+            ['https://supun.com', 'https://example.com/blog'],
+            'https://supun.hyvorblogs.io/media'
+        );
+    }
+
     public function test_updates_legacy_media_urls(): void
     {
-        $updater = new LegacyMediaUpdater('https://example.com/blog', 'https://blogs.hyvor.com/media/AQ');
+        $updater = $this->updater();
 
         $this->assertSame(
-            'https://blogs.hyvor.com/media/AQ/image.png',
-            $updater->update('https://example.com/blog/media/image.png')
+            'https://supun.hyvorblogs.io/media/image.png',
+            $updater->update('https://supun.com/media/image.png')
         );
         $this->assertSame(
-            'https://blogs.hyvor.com/media/AQ/image.png/500w',
+            'https://supun.hyvorblogs.io/media/image.png/500w',
             $updater->update('https://example.com/blog/media/image.png/500w')
         );
         $this->assertSame(2, $updater->getUpdatedCount());
@@ -27,14 +35,23 @@ class LegacyMediaUpdaterTest extends TestCase
 
     public function test_ignores_other_urls(): void
     {
-        $updater = new LegacyMediaUpdater('https://example.com/blog', 'https://blogs.hyvor.com/media/AQ');
+        $updater = $this->updater();
 
-        $this->assertFalse($updater->update('https://example.com/blog/post'));
-        $this->assertFalse($updater->update('https://example.com/blog/media/'));
+        $this->assertFalse($updater->update('https://supun.com/post'));
+        $this->assertFalse($updater->update('https://supun.com/media/'));
         $this->assertFalse($updater->update('https://example.com/media/image.png'));
         $this->assertFalse($updater->update('https://other.com/blog/media/image.png'));
+        $this->assertFalse($updater->update('/media/image.png'));
         // already migrated
-        $this->assertFalse($updater->update('https://blogs.hyvor.com/media/AQ/image.png'));
+        $this->assertFalse($updater->update('https://supun.hyvorblogs.io/media/image.png'));
+        $this->assertSame(0, $updater->getUpdatedCount());
+    }
+
+    public function test_without_legacy_urls(): void
+    {
+        $updater = new LegacyMediaUpdater([], 'https://supun.hyvorblogs.io/media');
+
+        $this->assertFalse($updater->update('https://supun.com/media/image.png'));
         $this->assertSame(0, $updater->getUpdatedCount());
     }
 

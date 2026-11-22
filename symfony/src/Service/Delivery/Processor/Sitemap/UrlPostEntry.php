@@ -36,7 +36,7 @@ class UrlPostEntry
                 foreach ($images as $src) {
                     if (
                         $permalinkService->isLinkInBlog($src, $blog) ||
-                        str_starts_with($src, $permalinkService->getMediaBlogBaseUrl($blog) . '/')
+                        str_starts_with($src, $permalinkService->getMediaBaseUrl($blog) . '/')
                     ) {
                         $entry->image($src);
                     }

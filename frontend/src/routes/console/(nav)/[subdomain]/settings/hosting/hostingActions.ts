@@ -2,7 +2,7 @@ import consoleApi from '../../../../lib/consoleApi';
 import type { CustomDomainTlsProvider, HostingInfo } from '../../../../lib/types';
 
 /**
- * The subdomain and the hosting URL are updated with the blog update endpoint (updateBlog).
+ * The hosting URL is updated with the blog update endpoint (updateBlog). The subdomain cannot be changed.
  * Custom domains are managed with the endpoints below.
  */
 

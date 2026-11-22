@@ -167,18 +167,6 @@ class ClearCacheListenerTest extends KernelTestCase
         $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
     }
 
-    public function test_blog_subdomain_updated_clears_all_cache(): void
-    {
-        $blog = BlogFactory::createOne(['subdomain' => 'old-subdomain']);
-        $blogOld = clone $blog;
-        $blog->setSubdomain('new-subdomain');
-
-        $this->dispatch(new BlogUpdatedEvent($blog, $blogOld));
-
-        $this->getEd()->assertDispatched(CacheClearAllEvent::class);
-        $this->getEd()->assertNotDispatched(CacheClearTemplatesEvent::class);
-    }
-
     public function test_blog_hosting_changed_clears_all_cache(): void
     {
         $blog = BlogFactory::createOne();

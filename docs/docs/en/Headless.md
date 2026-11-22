@@ -58,7 +58,7 @@ const post = await res.json();
 // post.content is sanitized HTML, ready to render
 ```
 
-The `content` field is HTML output by the Hyvor Blogs editor. Render it directly (e.g. `{@html post.content}` in Svelte, or `dangerouslySetInnerHTML` in React) - it's already sanitized. Images, embeds, and other media referenced in the content use absolute URLs, so they render correctly regardless of where you host your frontend.
+The `content` field is HTML output by the Hyvor Blogs editor. Render it directly (e.g. `{@html post.content}` in Svelte, or `dangerouslySetInnerHTML` in React) - it's already sanitized. Images, embeds, and other media referenced in the content use absolute URLs, so they render correctly regardless of where you host your frontend. Uploaded media is always served from your blog's subdomain (e.g. `https://yourblog.hyvorblogs.io/media/image.png`), so your frontend doesn't need to serve or proxy it.
 
 <h2 id="routing">3. Routing</h2>
 

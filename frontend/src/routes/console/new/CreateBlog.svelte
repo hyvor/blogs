@@ -214,7 +214,7 @@
 		{#if !dev}
 			<SplitControl
 				label={i18n.t('console.settings.hosting.subdomain')}
-				caption="Only a-z, 0-9, and hyphens (-)"
+				caption="Only a-z, 0-9, and hyphens (-). It cannot be changed later."
 				noHorizonalPadding
 			>
 				<FormControl>
