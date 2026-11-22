@@ -124,6 +124,10 @@
 			return false;
 		}
 
+		if (blogLimitReached) {
+			return false;
+		}
+
 		let valid = true;
 
 		if (name.trim() === '') {

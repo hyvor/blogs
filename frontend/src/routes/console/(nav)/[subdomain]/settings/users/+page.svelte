@@ -29,7 +29,7 @@
 	let isLoadingMore = $state(false);
 
 	let users: User[] = $state([]);
-	let usersUsed = $state(0);
+	let usersUsed: number | null = $state(null);
 
 	const limit = 20;
 
@@ -57,12 +57,12 @@
 
 	function handleAdd(e: CustomEvent<User>) {
 		users = [e.detail, ...users];
-		usersUsed++;
+		if (usersUsed !== null) usersUsed++;
 	}
 
 	function handleDelete(e: CustomEvent<number>) {
 		users = users.filter((t) => t.id !== e.detail);
-		usersUsed = Math.max(0, usersUsed - 1);
+		if (usersUsed !== null) usersUsed = Math.max(0, usersUsed - 1);
 	}
 
 	function handleCreateVariant(e: CustomEvent<{ id: number; variant: UserVariant }>) {
@@ -84,7 +84,9 @@
 </script>
 
 <SettingsTop>
-	<UsageLimit used={usersUsed} limit={$orgLimitsStore?.users} focus="users" />
+	{#if usersUsed !== null}
+		<UsageLimit used={usersUsed} limit={$orgLimitsStore?.users} focus="users" />
+	{/if}
 	<Button disabled={cant('users.add')} on:click={() => (isCreating = true)}>
 		Add User {#snippet end()}
 			<IconPlus />

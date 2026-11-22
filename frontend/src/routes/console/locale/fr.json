@@ -3,7 +3,7 @@
 		"common": {
 			"usageLimit": {
 				"usage": "Utilisation",
-				"addOn": "Module complémentaire",
+				"upgrade": "Module complémentaire",
 				"modalTitle": "Passer à un forfait supérieur ou ajouter plus"
 			},
 			"cancel": "Annuler",

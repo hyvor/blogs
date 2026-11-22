@@ -116,7 +116,7 @@ class UserController
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
 
-        if ($this->usageService->usersLimitReached($blog)) {
+        if ($this->internalConfig->getDeployment()->isCloud() && $this->usageService->usersLimitReached($blog)) {
             throw new UnprocessableEntityHttpException(self::USERS_LIMIT_MESSAGE);
         }
 
