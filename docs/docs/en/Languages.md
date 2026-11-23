@@ -10,6 +10,17 @@
 
 Hyvor Blogs comes with in-built multi-language support. This guide will help you to set up languages of your blog correctly. Language settings are located at **Settings &rarr; Languages**.
 
+<h2 id="language-limits">Language Limits</h2>
+
+The number of languages you can publish each blog in depends on your [plan](https://hyvor.com/blogs/pricing):
+
+- **Personal** - 1 language per blog
+- **Pro** - 3 languages per blog
+- **Team** - 5 languages per blog
+- **Business** - 10 languages per blog
+
+If you need more, you can buy extra languages as add-ons for €5 per month (or €50 per year) each, without changing your plan. You can manage add-ons from your console billing settings.
+
 <h2 id="primary-language">Primary Language</h2>
 
 **English (en)** is the primary language for newly created blogs. If you are blogging in a different language, it is important to change the language in Language settings to tell users, browsers, and crawlers the language of your blog.
@@ -31,7 +42,7 @@ Everything in Hyvor Blogs is designed to support multiple languages. Most of the
 
 <h3 id="add-language">Step 1: Add a Language</h3>
 
-Go to **Settings &rarr; Languages** and click **Add Language** button to add a new language.
+Go to **Settings &rarr; Languages** and click **Add Language** button to add a new language. If you have reached the [language limit](#language-limits) of your plan, you can buy an extra language add-on or upgrade your plan.
 
 <DocsImage src={imgLanguagesAddLanguage} alt="Add Language" />
 

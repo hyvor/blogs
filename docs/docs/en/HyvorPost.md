@@ -36,15 +36,15 @@ All Hyvor Blogs plans include a <span class="info"><Tooltip text="This complimen
 		<div>5k emails/month</div>
 	</TableRow>
 	<TableRow>
-		<div>Starter</div>
+		<div>Pro</div>
 		<div>15k emails/month</div>
 	</TableRow>
 	<TableRow>
-		<div>Growth</div>
+		<div>Team</div>
 		<div>50k emails/month</div>
 	</TableRow>
 	<TableRow>
-		<div>Premium</div>
+		<div>Business</div>
 		<div>150k emails/month</div>
 	</TableRow>
 </Table>

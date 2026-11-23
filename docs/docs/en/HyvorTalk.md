@@ -38,15 +38,15 @@ All Hyvor Blogs plans include a <span class="info"><Tooltip text="This complimen
 		<div>10k credits/month</div>
 	</TableRow>
 	<TableRow>
-		<div>Starter</div>
+		<div>Pro</div>
 		<div>25k credits/month</div>
 	</TableRow>
 	<TableRow>
-		<div>Growth</div>
+		<div>Team</div>
 		<div>100k credits/month</div>
 	</TableRow>
 	<TableRow>
-		<div>Premium</div>
+		<div>Business</div>
 		<div>250k credits/month</div>
 	</TableRow>
 </Table>

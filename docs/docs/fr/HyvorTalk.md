@@ -38,15 +38,15 @@ Tous les forfaits Hyvor Blogs incluent une <span class="info"><Tooltip text="Cet
 		<div>10k crédits/mois</div>
 	</TableRow>
 	<TableRow>
-		<div>Starter</div>
+		<div>Pro</div>
 		<div>25k crédits/mois</div>
 	</TableRow>
 	<TableRow>
-		<div>Growth</div>
+		<div>Team</div>
 		<div>100k crédits/mois</div>
 	</TableRow>
 	<TableRow>
-		<div>Premium</div>
+		<div>Business</div>
 		<div>250k crédits/mois</div>
 	</TableRow>
 </Table>

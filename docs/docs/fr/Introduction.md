@@ -10,7 +10,7 @@ Nous avons créé Hyvor Blogs pour rendre le blogging facile pour tout le monde.
 
 <h2 id="get-started">Comment commencer ?</h2>
 
-Visitez la [Console Hyvor Blogs](https://blogs.hyvor.com/console) pour créer un nouveau blog. Il vous sera demandé de créer un compte HYVOR, puis une organisation. Vous pouvez avoir plusieurs blogs au sein de votre organisation. Tous peuvent être accédés et gérés facilement depuis la Console.
+Visitez la [Console Hyvor Blogs](https://blogs.hyvor.com/console) pour créer un nouveau blog. Il vous sera demandé de créer un compte HYVOR, puis une organisation. Selon votre [forfait](https://hyvor.com/blogs/pricing), vous pouvez avoir plusieurs blogs au sein de votre organisation (1 avec Personal, 2 avec Pro, 5 avec Team et 10 avec Business), et vous pouvez acheter des blogs supplémentaires en tant qu'options (add-ons) pour 5 € par mois chacun. Tous peuvent être accédés et gérés facilement depuis la Console.
 
 <Callout type="info" title="Auto-hébergement">
     Hyvor Blogs est open-source et peut être auto-hébergé gratuitement si vous êtes à l'aise avec les serveurs. Dans ce cas, <a href="/hosting">commencez ici</a>.

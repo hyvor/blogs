@@ -17,6 +17,17 @@ Pour ajouter un nouvel utilisateur,
 
 <DocsImage src={imgUsersAddUser} alt="Ajout d'utilisateurs" />
 
+<h3 id="user-limits">Limites d'utilisateurs</h3>
+
+Chaque [forfait](https://hyvor.com/blogs/pricing) définit le nombre d'utilisateurs que vous pouvez ajouter à **chaque blog**. La limite est comptée séparément pour chaque blog de votre organisation.
+
+- **Personal** - 1 utilisateur par blog
+- **Pro** - 3 utilisateurs par blog
+- **Team** - 5 utilisateurs par blog
+- **Business** - 20 utilisateurs par blog
+
+Si vous avez besoin de plus, vous pouvez acheter des utilisateurs supplémentaires en tant qu'options (add-ons) pour 5 € par mois (ou 50 € par an) chacun, ou passer à un forfait supérieur. Vous pouvez gérer les options depuis les paramètres de facturation de la console.
+
 <h2 id="roles">Rôles</h2>
 
 Il existe 5 rôles pour les utilisateurs. Chaque utilisateur a accès à des fonctionnalités en fonction de son rôle.
