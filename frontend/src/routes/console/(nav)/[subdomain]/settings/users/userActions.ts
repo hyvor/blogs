@@ -8,7 +8,7 @@ interface GetUsersData {
 }
 
 export function getUsers(data: GetUsersData = {}) {
-	return consoleApi.get<User[]>({
+	return consoleApi.get<{ users: User[]; used: number }>({
 		endpoint: '/users',
 		data
 	});

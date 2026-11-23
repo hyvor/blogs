@@ -94,6 +94,9 @@ class ConsoleController
             }
         }
 
+        // usage of the current organization (limits come from the license)
+        $usage = $org ? ['blogs' => $this->usageService->getBlogsUsage($org->id)] : null;
+
         $hasPaymentMethod = null;
         if ($this->internalConfig->getDeployment()->isCloud() && $org) {
             try {
@@ -140,6 +143,7 @@ class ConsoleController
                 'post' => null,
             ],
             'resolved_license' => $resolvedLicense,
+            'usage' => $usage,
         ]);
     }
 
@@ -157,10 +161,6 @@ class ConsoleController
         $bl = $license->license instanceof BlogsLicense ? $license->license : null;
 
         return new JsonResponse([
-            'users' => [
-                'used' => $this->usageService->getUsersUsage($org->id),
-                'limit' => $bl->users ?? 0,
-            ],
             'storage' => [
                 'used' => $this->usageService->getStorageUsageBytes($org->id),
                 'limit' => $bl->storage ?? 0,

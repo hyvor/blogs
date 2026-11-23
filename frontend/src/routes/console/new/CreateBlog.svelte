@@ -16,9 +16,12 @@
 		addToBlogList,
 		blogListStore,
 		hasPaymentMethodStore,
+		orgLimitsStore,
+		orgUsageStore,
 		resolvedLicenseStore
 	} from '../lib/stores';
 	import CardRequired from './CardRequired.svelte';
+	import BlogLimitReached from './BlogLimitReached.svelte';
 	import { createBlog, getSubdomainAvailable } from '../lib/actions/blogActions';
 	import type { BlogList } from '../lib/types';
 	import { getConfig } from '../lib/config';
@@ -33,6 +36,14 @@
 	let { dev = false }: Props = $props();
 
 	const cardRequired = $derived($hasPaymentMethodStore === false);
+
+	const blogLimitReached = $derived(
+		!dev &&
+			getConfig().deployment === 'cloud' &&
+			$orgLimitsStore !== null &&
+			$orgLimitsStore.blogs >= 0 &&
+			$orgLimitsStore.blogs_used >= $orgLimitsStore.blogs
+	);
 
 	let cardRequiredComponent: CardRequired | undefined = $state();
 	let cardCanSubmit = $state(false);
@@ -113,6 +124,10 @@
 			return false;
 		}
 
+		if (blogLimitReached) {
+			return false;
+		}
+
 		let valid = true;
 
 		if (name.trim() === '') {
@@ -135,6 +150,8 @@
 			addToBlogList(res.blog);
 			blog = res.blog;
 
+			orgUsageStore.update((u) => (u && !dev ? { ...u, blogs: u.blogs + 1 } : u));
+
 			if (res.resolved_license) {
 				resolvedLicenseStore.set(res.resolved_license);
 			}
@@ -155,13 +172,13 @@
 
 <ResourceCreator
 	title="Start a blog"
-	resourceTitle={cardRequired ? 'Card Confirmation' : 'Blog'}
-	cta={cardRequired ? 'Confirm Card' : 'Create Blog'}
+	resourceTitle={cardRequired ? 'Billing Details' : 'Blog'}
+	cta={cardRequired ? 'Continue' : 'Create Blog'}
 	onback={handleBack}
 	oncreate={handleCreate}
 	ctaDisabled={cardRequired
 		? !cardCanSubmit || cardBusy
-		: name.trim() === '' || subdomain.trim() === ''}
+		: blogLimitReached || name.trim() === '' || subdomain.trim() === ''}
 >
 	{#if cardRequired}
 		<CardRequired
@@ -170,6 +187,10 @@
 			bind:busy={cardBusy}
 		/>
 	{:else}
+		{#if blogLimitReached}
+			<BlogLimitReached />
+		{/if}
+
 		{#if dev}
 			<div style="margin-bottom:20px;">
 				<Callout type="warning">

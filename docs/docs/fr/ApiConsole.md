@@ -411,9 +411,15 @@ Objets :
 
 ```ts
 type Request = {
+	limit?: number;
 	offset?: number;
+	search?: string;
 };
-type Response = User[];
+type Response = {
+	users: User[];
+	// total number of users in the blog
+	used: number;
+};
 ```
 
 <h4 id="search-users">Rechercher des utilisateurs</h4>

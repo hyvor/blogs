@@ -14,6 +14,8 @@
 	.top {
 		display: flex;
 		justify-content: flex-end;
+		align-items: center;
+		gap: 15px;
 		padding: 15px;
 		margin-bottom: 15px;
 		border-bottom: 1px solid var(--border);

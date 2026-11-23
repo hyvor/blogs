@@ -18,7 +18,12 @@ class UsageService
         private BillingInterface $billing,
     ) {}
 
-    public function storageLimitReached(Blog $blog): bool
+    /**
+     * Storage is an organization-level limit (shared by all blogs of the organization).
+     *
+     * @param int $additionalBytes size of the file about to be stored (if known)
+     */
+    public function storageLimitReached(Blog $blog, int $additionalBytes = 0): bool
     {
         $organizationId = $blog->getOrganizationId();
 
@@ -37,10 +42,13 @@ class UsageService
         $limit = $bl->storage ?? 0;
         $usage = $this->getStorageUsageBytes($organizationId);
 
-        return $usage >= $limit;
+        return $usage + $additionalBytes > $limit || $usage >= $limit;
     }
 
-    public function usersLimitReached(Blog $blog, ?int $hyvorUserId = null): bool
+    /**
+     * Users is a per-blog limit (BlogsLicense::$users = users per blog).
+     */
+    public function usersLimitReached(Blog $blog): bool
     {
         $organizationId = $blog->getOrganizationId();
 
@@ -58,39 +66,57 @@ class UsageService
         $bl = $license->license instanceof BlogsLicense ? $license->license : null;
         $limit = $bl->users ?? 0;
 
-        if ($hyvorUserId !== null) {
-            $alreadyInOrg = (bool) $this->connection->fetchOne(
-                "SELECT 1
-                 FROM users u
-                 JOIN blogs b ON b.id = u.blog_id
-                 WHERE b.organization_id = ?
-                   AND b.deleted_at IS NULL
-                   AND u.hyvor_user_id = ?
-                 LIMIT 1",
-                [$organizationId, $hyvorUserId],
-            );
-
-            if ($alreadyInOrg) {
-                return false;
-            }
+        if ($limit < 0) {
+            return false;
         }
 
-        $usage = $this->getUsersUsage($organizationId);
-
-        return $usage >= $limit;
+        return $this->getUsersUsage($blog) >= $limit;
     }
 
-    public function getUsersUsage(int $organizationId): int
+    /**
+     * Languages is a per-blog limit (BlogsLicense::$languages = languages per blog, -1 = unlimited).
+     */
+    public function languagesLimitReached(Blog $blog): bool
+    {
+        $organizationId = $blog->getOrganizationId();
+
+        if ($organizationId === null) {
+            return false;
+        }
+
+        try {
+            $license = $this->billing->license($organizationId);
+        } catch (CommsApiFailedException) {
+            return true;
+        }
+
+        $bl = $license->license instanceof BlogsLicense ? $license->license : null;
+        $limit = $bl->languages ?? 0;
+
+        if ($limit < 0) {
+            return false;
+        }
+
+        return $this->getLanguagesUsage($blog) >= $limit;
+    }
+
+    public function getUsersUsage(Blog $blog): int
     {
         /** @var ?int $result */
         $result = $this->connection->fetchOne(
-            "SELECT COUNT(DISTINCT u.hyvor_user_id) AS count
-             FROM users u
-             JOIN blogs b ON b.id = u.blog_id
-             WHERE b.organization_id = ?
-               AND b.deleted_at IS NULL
-               AND u.hyvor_user_id IS NOT NULL",
-            [$organizationId],
+            'SELECT COUNT(*) FROM users WHERE blog_id = ?',
+            [$blog->getId()],
+        );
+
+        return (int)$result;
+    }
+
+    public function getLanguagesUsage(Blog $blog): int
+    {
+        /** @var ?int $result */
+        $result = $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM languages WHERE blog_id = ?',
+            [$blog->getId()],
         );
 
         return (int)$result;
@@ -142,7 +168,7 @@ class UsageService
     {
         /** @var ?int $result */
         $result = $this->connection->fetchOne(
-            "SELECT COUNT(*) FROM blogs WHERE organization_id = ? AND type = 'default'",
+            "SELECT COUNT(*) FROM blogs WHERE organization_id = ? AND type = 'default' AND deleted_at IS NULL",
             [$organizationId],
         );
 

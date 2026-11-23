@@ -7,6 +7,7 @@ use App\Service\Billing\UsageService;
 use App\Tests\Factory\AiConversationFactory;
 use App\Tests\Factory\AiMessageFactory;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\UserFactory;
 use Hyvor\Internal\Billing\License\BlogsLicense;
 use Hyvor\Internal\Bundle\Testing\KernelTestCase;
@@ -27,36 +28,39 @@ class UsageServiceTest extends KernelTestCase
     // Users usage
     // -----------------------------------------------------------------------
 
-    public function test_users_usage(): void
+    public function test_users_usage_is_per_blog(): void
     {
         $blog1 = BlogFactory::createOne(['organization_id' => 1]);
         $blog2 = BlogFactory::createOne(['organization_id' => 1]);
-        $blogOtherOrg = BlogFactory::createOne(['organization_id' => 2]);
-        $deletedBlog = BlogFactory::createOne(['organization_id' => 1, 'deleted_at' => new \DateTimeImmutable()]);
 
-        // User 101 should only be counted once
+        // the same hyvor user in two blogs counts in each blog
         UserFactory::createOne(['blog' => $blog1, 'hyvor_user_id' => 101]);
         UserFactory::createOne(['blog' => $blog2, 'hyvor_user_id' => 101]);
-
-        // User 102 in another blog
         UserFactory::createOne(['blog' => $blog2, 'hyvor_user_id' => 102]);
 
-        // Guest user should not be counted
+        // guest users count
         UserFactory::createOne(['blog' => $blog1, 'hyvor_user_id' => null]);
 
-        // User in deleted blog should not be counted
-        UserFactory::createOne(['blog' => $deletedBlog, 'hyvor_user_id' => 103]);
-
-        // User in another organization should not be counted
-        UserFactory::createOne(['blog' => $blogOtherOrg, 'hyvor_user_id' => 104]);
-
-        $this->assertSame(2, $this->usage()->getUsersUsage(1));
-        $this->assertSame(1, $this->usage()->getUsersUsage(2));
+        $this->assertSame(2, $this->usage()->getUsersUsage($blog1));
+        $this->assertSame(2, $this->usage()->getUsersUsage($blog2));
     }
 
-    public function test_users_usage_without_blogs(): void
+    public function test_users_usage_without_users(): void
     {
-        $this->assertSame(0, $this->usage()->getUsersUsage(1));
+        $blog = BlogFactory::createOne(['organization_id' => 1]);
+        $this->assertSame(0, $this->usage()->getUsersUsage($blog));
+    }
+
+    public function test_languages_usage_is_per_blog(): void
+    {
+        $blog1 = BlogFactory::createOne(['organization_id' => 1]);
+        $blog2 = BlogFactory::createOne(['organization_id' => 1]);
+        LanguageFactory::createOnePrimaryFor($blog1);
+        LanguageFactory::createOneFor($blog1, ['code' => 'fr']);
+        LanguageFactory::createOnePrimaryFor($blog2);
+
+        $this->assertSame(2, $this->usage()->getLanguagesUsage($blog1));
+        $this->assertSame(1, $this->usage()->getLanguagesUsage($blog2));
     }
 
     // -----------------------------------------------------------------------
@@ -94,6 +98,7 @@ class UsageServiceTest extends KernelTestCase
             linkAnalysis: true,
             blogs: -1,
             noBranding: false,
+            languages: -1,
         );
     }
 

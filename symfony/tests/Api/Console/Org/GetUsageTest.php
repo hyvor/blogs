@@ -58,13 +58,15 @@ class GetUsageTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
 
-        $this->assertIsArray($json['users']);
+        // users is a per-blog limit, so it is not part of the org-level usage
+        $this->assertArrayNotHasKey('users', $json);
         $this->assertIsArray($json['storage']);
         $this->assertIsArray($json['ai']);
+        $this->assertIsArray($json['blogs']);
 
-        // users
-        $this->assertSame(3, $json['users']['used']);
-        $this->assertSame(BlogsLicense::trial()->users, $json['users']['limit']);
+        // blogs
+        $this->assertSame(1, $json['blogs']['used']);
+        $this->assertSame(BlogsLicense::trial()->blogs, $json['blogs']['limit']);
 
         // storage
         $this->assertSame(2_000_000, $json['storage']['used']);
@@ -102,10 +104,8 @@ class GetUsageTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
         $json = $this->getJson();
 
-        $this->assertIsArray($json['users']);
         $this->assertIsArray($json['storage']);
 
-        $this->assertSame(2, $json['users']['used']);
         $this->assertSame(0, $json['storage']['used']);
     }
 
