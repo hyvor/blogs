@@ -18,6 +18,8 @@
 	import AddUser from './AddUser.svelte';
 	import { getI18n } from '../../../../lib/i18n';
 	import { cant, redirectIfCant } from '../../../../lib/scope.svelte';
+	import { UsageLimit } from '@hyvor/design/cloud';
+	import { orgLimitsStore } from '../../../../lib/stores';
 
 	const i18n = getI18n();
 
@@ -27,6 +29,7 @@
 	let isLoadingMore = $state(false);
 
 	let users: User[] = $state([]);
+	let usersUsed: number | null = $state(null);
 
 	const limit = 20;
 
@@ -38,8 +41,9 @@
 			offset: more ? users.length : 0
 		})
 			.then((res) => {
-				users = more ? [...users, ...res] : res;
-				hasMore = res.length === limit;
+				users = more ? [...users, ...res.users] : res.users;
+				usersUsed = res.used;
+				hasMore = res.users.length === limit;
 			})
 			.catch((e) => {
 				if (!more) users = [];
@@ -53,10 +57,12 @@
 
 	function handleAdd(e: CustomEvent<User>) {
 		users = [e.detail, ...users];
+		if (usersUsed !== null) usersUsed++;
 	}
 
 	function handleDelete(e: CustomEvent<number>) {
 		users = users.filter((t) => t.id !== e.detail);
+		if (usersUsed !== null) usersUsed = Math.max(0, usersUsed - 1);
 	}
 
 	function handleCreateVariant(e: CustomEvent<{ id: number; variant: UserVariant }>) {
@@ -78,6 +84,16 @@
 </script>
 
 <SettingsTop>
+	{#if usersUsed !== null}
+		<UsageLimit
+			used={usersUsed}
+			limit={$orgLimitsStore?.users}
+			focus="users"
+			label={i18n.t('console.common.usageLimit.usage')}
+			buttonText={i18n.t('console.common.usageLimit.upgrade')}
+			modalTitle={i18n.t('console.common.usageLimit.modalTitle')}
+		/>
+	{/if}
 	<Button disabled={cant('users.add')} on:click={() => (isCreating = true)}>
 		Add User {#snippet end()}
 			<IconPlus />

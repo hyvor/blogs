@@ -10,7 +10,9 @@ use App\Api\Console\Input\Language\CreateLanguageInput;
 use App\Api\Console\Input\Language\UpdateLanguageInput;
 use App\Api\Console\Object\LanguageObject;
 use App\Entity\Language;
+use App\Service\Billing\UsageService;
 use App\Service\Language\LanguageService;
+use Hyvor\Internal\InternalConfig;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -21,6 +23,8 @@ class LanguageController
     public function __construct(
         private ConsoleApiAuthorizationListener $blogAuthListener,
         private LanguageService $languageService,
+        private UsageService $usageService,
+        private InternalConfig $internalConfig,
     ) {}
 
     #[Route('/languages', methods: ['GET'])]
@@ -42,6 +46,12 @@ class LanguageController
 
         if ($this->languageService->getLanguageByCode($blog, $input->code) !== null) {
             throw new UnprocessableEntityHttpException('A language with this code already exists');
+        }
+
+        if ($this->internalConfig->getDeployment()->isCloud() && $this->usageService->languagesLimitReached($blog)) {
+            throw new UnprocessableEntityHttpException(
+                'You have reached the maximum number of languages allowed per blog in your plan. Please upgrade your plan or purchase the languages add-on to add more languages.',
+            );
         }
 
         $language = $this->languageService->createLanguage($blog, $input->code, $input->name, $input->direction);

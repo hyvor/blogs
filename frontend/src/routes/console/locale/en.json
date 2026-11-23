@@ -1,6 +1,11 @@
 {
 	"console": {
 		"common": {
+			"usageLimit": {
+				"usage": "Usage",
+				"upgrade": "Upgrade",
+				"modalTitle": "Upgrade or add more"
+			},
 			"cancel": "Cancel",
 			"close": "Close",
 			"save": "Save",

@@ -85,7 +85,7 @@
 
 <div class="card-required">
 	<Callout type="info">
-		We ask for a card to keep spam off our platform.
+		We ask for a card verification to keep spam off our platform.
 		<strong>You won't be charged</strong> unless you choose to upgrade later.
 	</Callout>
 

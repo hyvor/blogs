@@ -28,7 +28,7 @@
 
 		getUsers({ search: search.trim() ? search.trim() : undefined })
 			.then((res) => {
-				users = res;
+				users = res.users;
 				isLoading = false;
 			})
 			.catch((_) => (err = true))

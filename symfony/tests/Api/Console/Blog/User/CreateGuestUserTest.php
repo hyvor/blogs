@@ -67,7 +67,7 @@ class CreateGuestUserTest extends ApiTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringContainsString(
-            'Max users limit exceeded. Please upgrade your plan',
+            'maximum number of users allowed per blog',
             (string)$this->client->getResponse()->getContent(),
         );
     }
