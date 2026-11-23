@@ -3,7 +3,6 @@
 namespace App\Api\Delivery;
 
 use App\Entity\Enum\ApiKeyType;
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\ApiKey\ApiKeyService;
 use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
@@ -25,7 +24,7 @@ class AppDeliveryController extends AbstractController
         private ApiKeyService $apiKeyService,
         private DeliveryService $deliveryService,
         private AppConfig $appConfig,
-        private PermalinkService $permalinkService
+        private PermalinkService $permalinkService,
     ) {}
 
     #[Route('/api/delivery/v0/{subdomain}', methods: ['GET'])]
@@ -64,9 +63,26 @@ class AppDeliveryController extends AbstractController
 
         $path = '/' . ltrim($path ?? '', '/');
 
+        // media is never redirected: without a delivery URL, this is the media URL of the blog
+        // (see PermalinkService::getMediaPermalink), and the final host (ex: headless) may not serve media
+        if (str_starts_with($path, '/media/')) {
+            return $this->deliveryService->getSymfonyResponse($blog, $path);
+        }
+
         if (
             $this->appConfig->getDeliveryUrl() !== null ||
-            $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN
+            $blog->getCustomDomain() !== null
+        ) {
+            // to the subdomain/custom domain (which then redirects to the hosting URL, if needed)
+            return new RedirectResponse(
+                $this->permalinkService->getBlogDeliveryUrl($blog) . ($path === '/' ? '' : $path),
+                302
+            );
+        }
+
+        if (
+            $blog->getHostingUrl() !== null &&
+            $blog->getHostingRedirectSubdomain()
         ) {
             return new RedirectResponse($this->permalinkService->getBlogUrlWithPath($blog, $path), 302);
         }

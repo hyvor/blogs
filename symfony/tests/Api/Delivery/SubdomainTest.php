@@ -3,7 +3,6 @@
 namespace App\Tests\Api\Delivery;
 
 use App\Api\Delivery\SubdomainController;
-use App\Entity\Enum\BlogHostingAt;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\RouteFactory;
@@ -87,7 +86,7 @@ class SubdomainTest extends ApiTestCase
     {
         $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
 
-        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'deleted_at' => new \DateTimeImmutable()]);
+        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'deleted_at' => new \DateTimeImmutable()]);
         RouteFactory::createDefaultsFor($blog);
         ThemeFileFactory::createIndexTwig($blog, '<h1>Hello World</h1>');
 
@@ -102,7 +101,7 @@ class SubdomainTest extends ApiTestCase
     {
         $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
 
-        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'blocked_at' => new \DateTimeImmutable()]);
+        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'blocked_at' => new \DateTimeImmutable()]);
 
         $this->call('testblog.hyvorblogs.io', '/');
         $this->assertResponseRedirects(
@@ -115,7 +114,7 @@ class SubdomainTest extends ApiTestCase
     {
         $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
 
-        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SUBDOMAIN, 'organization_id' => 1]);
+        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'organization_id' => 1]);
         $this->billing()->setLicenses([
             1 => new ResolvedLicense(ResolvedLicenseType::EXPIRED),
         ]);
@@ -131,7 +130,7 @@ class SubdomainTest extends ApiTestCase
     {
         $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
 
-        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog']);
         RouteFactory::createDefaultsFor($blog);
         ThemeFileFactory::createIndexTwig($blog, '<h1>Hello World</h1>');
 
@@ -142,17 +141,17 @@ class SubdomainTest extends ApiTestCase
         $this->assertStringContainsString('<h1>Hello World</h1>', $content);
     }
 
-    public function test_redirects_if_not_hosted_at_subdomain(): void
+    public function test_redirects_to_hosting_url(): void
     {
         $this->setEnvVar('DELIVERY_URL', 'https://hyvorblogs.io');
 
-        $blog = BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_at' => BlogHostingAt::SELF, 'hosting_url' => 'https://customdomain.com']);
+        BlogFactory::createOneWithPrimaryLanguage(['subdomain' => 'testblog', 'hosting_url' => 'https://example.com/blog']);
 
         $response = $this->call('testblog.hyvorblogs.io', '/test');
         $this->assertResponseStatusCodeSame(302);
         $location = $response->headers->get('Location');
         $this->assertNotNull($location);
-        $this->assertStringContainsString('https://customdomain.com/test', $location);
+        $this->assertSame('https://example.com/blog/test', $location);
     }
 
     public function test_does_not_redirect_if_its_disabled(): void
@@ -161,8 +160,7 @@ class SubdomainTest extends ApiTestCase
 
         $blog = BlogFactory::createOneWithPrimaryLanguage([
             'subdomain' => 'testblog',
-            'hosting_at' => BlogHostingAt::SELF,
-            'hosting_url' => 'https://customdomain.com',
+            'hosting_url' => 'https://example.com/blog',
             'hosting_redirect_subdomain' => false
         ]);
         RouteFactory::createDefaultsFor($blog);

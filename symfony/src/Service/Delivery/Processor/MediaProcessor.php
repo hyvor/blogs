@@ -19,6 +19,14 @@ class MediaProcessor
     {
     }
 
+    /**
+     * Path of a media file in the blog's delivery cache ({subdomainUrl}/media/{file_name}/{additional})
+     */
+    public static function getCachePath(string $fileName, ?string $additional = null): string
+    {
+        return '/media/' . $fileName . ($additional !== null ? '/' . $additional : '');
+    }
+
     public function process(Blog $blog, MatchedRoute $matchedRoute): ?DeliveryResponse
     {
         $fileName = $matchedRoute->param('file_name');

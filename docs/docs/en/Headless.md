@@ -58,9 +58,11 @@ const post = await res.json();
 // post.content is sanitized HTML, ready to render
 ```
 
-The `content` field is HTML output by the Hyvor Blogs editor. Render it directly (e.g. `{@html post.content}` in Svelte, or `dangerouslySetInnerHTML` in React) - it's already sanitized. Images, embeds, and other media referenced in the content use absolute URLs, so they render correctly regardless of where you host your frontend.
+The `content` field is HTML output by the Hyvor Blogs editor. Render it directly (e.g. `{@html post.content}` in Svelte, or `dangerouslySetInnerHTML` in React) - it's already sanitized. Images, embeds, and other media referenced in the content use absolute URLs, so they render correctly regardless of where you host your frontend. Uploaded media is always served from your blog's subdomain (e.g. `https://yourblog.hyvorblogs.io/media/image.png`), so your frontend doesn't need to serve or proxy it.
 
 <h2 id="routing">3. Routing</h2>
+
+Set the **Hosting URL** (e.g. `https://example.com/blog`) in Console &rarr; Settings &rarr; Hosting, so that URLs returned by the Data API (like `post.url`) point to your frontend. Keep your routes consistent with the blog's [routes](/docs/routes) so that those URLs resolve.
 
 Because you're not using a Hyvor Blogs theme, **you own the URL structure**. A common pattern is a dynamic route like `/blog/[slug]` in your app that calls `/post?slug=...` to render the page, and a listing route like `/blog` that calls `/posts` to build an index. Since Hyvor Blogs isn't serving these pages, features that depend on Hyvor Blogs generating pages for you - like automatic [redirects](/docs/redirects), [custom routes](/docs/routes), or theme-level [SEO](/docs/seo) - don't apply; you're responsible for SEO tags, sitemaps, and redirects yourself in your own app.
 

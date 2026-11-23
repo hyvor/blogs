@@ -3,7 +3,7 @@
 namespace App\Tests\Service\Post\Content;
 
 use App\Entity\Blog;
-use App\Service\Blog\UpdateBlogUrls\Updater\HostingUpdater;
+use App\Service\Blog\UpdateBlogUrls\Updater\UpdaterInterface;
 use App\Service\Blog\UpdateBlogUrls\Updater\MediaUpdater;
 use App\Service\Post\Content\DocUrlUpdater;
 use App\Service\Post\Content\PostContentService;
@@ -156,10 +156,26 @@ class UrlUpdaterTest extends KernelTestCase
         $this->assertSame('https://old.com/page', $this->dig($decoded, ['content', 2, 'marks', 0, 'attrs', 'href']));
     }
 
-    public function test_updates_from_updater_with_hosting_updater(): void
+    /**
+     * Replaces the https://old.com prefix with https://new.com
+     */
+    private function prefixUpdater(): UpdaterInterface
     {
-        // HostingUpdater matches by URL prefix only - unlike updateFromOldToNew,
-        // it has no "/media/" requirement, so any URL under the old host is rewritten
+        return new class implements UpdaterInterface {
+            public function update(string $url): false|string
+            {
+                if (!str_starts_with($url, 'https://old.com')) {
+                    return false;
+                }
+                return 'https://new.com' . substr($url, strlen('https://old.com'));
+            }
+        };
+    }
+
+    public function test_updates_from_updater_with_prefix_updater(): void
+    {
+        // the updater decides what to rewrite - unlike updateFromOldToNew,
+        // there is no "/media/" requirement, so any URL under the old host is rewritten
         $doc = $this->service()->getDocumentFromJson([
             'type' => 'doc',
             'content' => [
@@ -181,7 +197,7 @@ class UrlUpdaterTest extends KernelTestCase
         ], $this->blog());
 
         $updater = new DocUrlUpdater($doc);
-        $updated = $updater->updateFromUpdater(new HostingUpdater('https://old.com', 'https://new.com'));
+        $updated = $updater->updateFromUpdater($this->prefixUpdater());
 
         $decoded = json_decode($updated->toJson(), true);
         $this->assertSame('https://new.com/uploads/image.jpg', $this->dig($decoded, ['content', 0, 'attrs', 'src']));
@@ -221,7 +237,7 @@ class UrlUpdaterTest extends KernelTestCase
 
         $updater = new DocUrlUpdater($doc);
         $updated = $updater->updateFromUpdater(
-            new HostingUpdater('https://old.com', 'https://new.com'),
+            $this->prefixUpdater(),
             updateMedia: false
         );
 
@@ -237,7 +253,7 @@ class UrlUpdaterTest extends KernelTestCase
 
         $updater = new DocUrlUpdater($doc);
         $updated = $updater->updateFromUpdater(
-            new HostingUpdater('https://old.com', 'https://new.com'),
+            $this->prefixUpdater(),
             updateLinks: false
         );
 

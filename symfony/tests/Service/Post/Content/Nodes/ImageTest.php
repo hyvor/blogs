@@ -38,7 +38,7 @@ class ImageTest extends KernelTestCase
 
     private function blog(): Blog
     {
-        return (new Blog())->setSubdomain('test');
+        return (new Blog())->setId(1)->setSubdomain('test');
     }
 
     private function storeFile(int $blogId, string $name, string $content): void
@@ -164,6 +164,41 @@ class ImageTest extends KernelTestCase
 
         $this->assertSame(
             "<img src=\"$src\" loading=\"lazy\" alt=\"$alt\" width=\"$width\" height=\"$height\" srcset=\"$src 2000w, $src/500w 500w, $src/750w 750w, $src/1000w 1000w, $src/1500w 1500w\">",
+            $html
+        );
+    }
+
+    public function test_adds_srcset_for_media_on_subdomain_when_blog_is_hosted_elsewhere(): void
+    {
+        $blog = BlogFactory::createOne(['hosting_url' => 'https://example.com/blog']);
+        $permalinkService = $this->getService(PermalinkService::class);
+
+        $name = 'image.png';
+        $media = MediaFactory::createOne([
+            'blog' => $blog,
+            'name' => $name,
+            'original_name' => $name,
+            'extension' => 'png',
+        ]);
+        $this->storeFile($blog->getId(), $name, $this->pngContent(600));
+
+        $src = $permalinkService->getMediaPermalink($media, $blog);
+        $this->assertStringStartsWith($permalinkService->getBlogSubdomainUrl($blog) . '/media/', $src);
+
+        $json = json_encode([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'image',
+                    'attrs' => ['src' => $src],
+                ],
+            ],
+        ], JSON_THROW_ON_ERROR);
+
+        $html = $this->service()->getHtml($json, $blog);
+
+        $this->assertSame(
+            "<img src=\"$src\" loading=\"lazy\" srcset=\"$src 600w, $src/500w 500w\">",
             $html
         );
     }

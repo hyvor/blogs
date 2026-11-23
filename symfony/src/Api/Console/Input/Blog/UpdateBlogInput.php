@@ -7,15 +7,21 @@ use App\Entity\Enum\Blog\ColorModeDefault;
 use App\Entity\Enum\Blog\LinkAnalysisEmailReport;
 use App\Entity\Enum\Blog\SeoExternalLinksFollow;
 use App\Service\Ai\AiModel;
-use App\Service\Blog\BlogService;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdateBlogInput
 {
-    #[Assert\Regex(BlogService::SUBDOMAIN_REGEX)]
-    public ?string $subdomain = null;
+    // the subdomain cannot be changed after the blog is created (media URLs are based on it)
 
     public ?bool $hosting_redirect_subdomain = null;
+
+    /**
+     * Custom URL where the blog is finally served (ex: a reverse proxy or a headless frontend)
+     * Used for all URL generation instead of the subdomain/custom domain. Empty string to unset.
+     */
+    #[Assert\Url]
+    #[Assert\Length(max: 255)]
+    public ?string $hosting_url = null;
 
     // meta
     public ?bool $embeddable = null;

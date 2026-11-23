@@ -1167,9 +1167,10 @@ interface Blog {
 	is_blocked: boolean;
 	subdomain: string;
 	type: 'default' | 'dev';
-	hosting_at: 'subdomain' | 'domain' | 'self';
-	hosting_domain: string | null;
-	hosting_url: string | null;
+	hosting_domain: string | null; // connected custom domain
+	hosting_url: string | null; // where the blog is finally served (ex: reverse proxy or headless)
+	hosting_redirect_subdomain: boolean;
+	url: string; // hosting_url > custom domain > subdomain URL
 
 	embeddable: boolean;
 	embedding_domains: string | null;

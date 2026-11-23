@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Integration\HyvorTalk;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\Integration\HyvorTalk\SyncDomainsMessage;
 use App\Service\Integration\HyvorTalk\SyncDomainsMessageHandler;
@@ -27,7 +26,6 @@ class SyncDomainsMessageHandlerTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne([
             'organization_id' => 555,
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'subdomain' => 'my-blog',
         ]);
         $hyvorTalk = InterHyvorTalkWebsiteFactory::createOne(['blog' => $blog, 'website_id' => 777]);

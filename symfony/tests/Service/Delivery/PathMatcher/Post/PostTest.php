@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Post;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\Meta\BlogMeta;
@@ -65,7 +64,6 @@ class PostTest extends KernelTestCase
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
             'meta' => $blogMeta,
             'subdomain' => 'example',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
         ]);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false,

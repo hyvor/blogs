@@ -48,7 +48,7 @@ class FontCssTest extends KernelTestCase
         $mockClient = new MockHttpClient($mockResponse);
         static::getContainer()->set(HttpClientInterface::class, $mockClient);
 
-        $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $blogUrl = $this->getService(\App\Service\Route\PermalinkService::class)->getBlogUrl($blog);
 
         $replaced = "@font-face {

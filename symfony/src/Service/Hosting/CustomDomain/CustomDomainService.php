@@ -5,12 +5,14 @@ namespace App\Service\Hosting\CustomDomain;
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
 use App\Entity\CustomDomainIntent;
+use App\Service\Blog\Event\BlogHostingChangedEvent;
 use App\Service\Hosting\CustomDomain\Acme\AcmeClient;
 use App\Service\Hosting\CustomDomain\Acme\AcmeException;
 use App\Service\Hosting\CustomDomain\Acme\Dto\FinalCertificate;
 use Doctrine\ORM\EntityManagerInterface;
 use Hyvor\Internal\Util\Crypt\Encryption;
 use Symfony\Component\Clock\ClockAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CustomDomainService
 {
@@ -20,6 +22,7 @@ class CustomDomainService
         private EntityManagerInterface $em,
         private AcmeClient $acmeClient,
         private Encryption $encryption,
+        private EventDispatcherInterface $eventDispatcher,
     ) {}
 
     public function getDecryptedPrivateKeyPem(CustomDomain $cert): string
@@ -61,11 +64,10 @@ class CustomDomainService
 
     /**
      * Copies an intent's (already-validated/already-issued) TLS material into the blog's
-     * live CustomDomain and removes the intent. Called once a hosting change to DOMAIN has
-     * actually succeeded - never before, so the custom domain record and the live URL never
-     * disagree.
+     * CustomDomain (creating it, or replacing the previous domain) and removes the intent.
+     * From this point, the blog is served at the custom domain.
      */
-    public function promoteIntentToCustomDomain(CustomDomainIntent $intent, bool $flush = true): CustomDomain
+    public function promoteIntentToCustomDomain(CustomDomainIntent $intent): CustomDomain
     {
         $blog = $intent->getBlog();
 
@@ -89,12 +91,30 @@ class CustomDomainService
         $this->em->persist($blog);
         $this->em->persist($customDomain);
         $this->em->remove($intent);
+        $this->em->flush();
 
-        if ($flush) {
-            $this->em->flush();
-        }
+        $this->eventDispatcher->dispatch(new BlogHostingChangedEvent($blog));
 
         return $customDomain;
+    }
+
+    /**
+     * Disconnects the custom domain of the blog. The blog is then served at its subdomain.
+     */
+    public function removeBlogCustomDomain(Blog $blog): void
+    {
+        $customDomain = $this->getBlogCustomDomain($blog);
+
+        if ($customDomain === null) {
+            return;
+        }
+
+        $blog->setCustomDomain(null);
+        $this->em->persist($blog);
+        $this->em->remove($customDomain);
+        $this->em->flush();
+
+        $this->eventDispatcher->dispatch(new BlogHostingChangedEvent($blog));
     }
 
     /**
@@ -134,11 +154,4 @@ class CustomDomainService
         $this->em->flush();
     }
 
-    public function deleteCustomDomain(CustomDomain $customDomain, bool $flush = true): void
-    {
-        $this->em->remove($customDomain);
-        if ($flush) {
-            $this->em->flush();
-        }
-    }
 }

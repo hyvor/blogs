@@ -41,8 +41,6 @@ export interface Blog {
 	theme_version_id: number | null;
 	subdomain: string;
 	type: string | null;
-	hosting_at: string;
-	hosting_domain: string | null;
 	hosting_url: string | null;
 	hosting_redirect_subdomain: boolean | null;
 	meta: Record<string, any> | null;

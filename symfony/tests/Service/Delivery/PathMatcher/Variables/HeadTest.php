@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Variables;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Meta\BlogMeta;
 use App\Entity\Post;
@@ -45,7 +44,6 @@ class HeadTest extends KernelTestCase
 
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
             'subdomain' => 'example',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'meta' => $meta,
         ], variants: false);
         BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: [
@@ -116,7 +114,6 @@ class HeadTest extends KernelTestCase
     public function test_sets_alternate_language_links_for_post_variants(): void
     {
         $blog = BlogFactory::createOne([
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'subdomain' => 'example',
         ]);
         $primary = LanguageFactory::createOnePrimaryFor($blog);

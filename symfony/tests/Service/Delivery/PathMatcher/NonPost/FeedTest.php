@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\Delivery\FeedService;
 use App\Service\Delivery\PathMatcher;
 use App\Tests\Factory\BlogFactory;
@@ -21,7 +20,7 @@ class FeedTest extends KernelTestCase
 
     public function test_matches_index_with_feed(): void
     {
-        $blog = BlogFactory::createOneWithLanguageAndRoutes(['hosting_at' => BlogHostingAt::SUBDOMAIN, 'subdomain' => 'myblog']);
+        $blog = BlogFactory::createOneWithLanguageAndRoutes(['subdomain' => 'myblog']);
 
         $post = PostFactory::createPublishedOneForWithVariants(
             $blog,

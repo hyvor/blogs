@@ -72,12 +72,13 @@ class BlogService
     {
         $blogOld = clone $blog;
 
-        if ($input->subdomain !== null) {
-            $blog->setSubdomain($input->subdomain);
-        }
-
         if ($input->hosting_redirect_subdomain !== null) {
             $blog->setHostingRedirectSubdomain($input->hosting_redirect_subdomain);
+        }
+
+        if ($input->hosting_url !== null) {
+            $hostingUrl = rtrim(trim($input->hosting_url), '/');
+            $blog->setHostingUrl($hostingUrl !== '' ? $hostingUrl : null);
         }
 
         $meta = clone $blog->getMeta();

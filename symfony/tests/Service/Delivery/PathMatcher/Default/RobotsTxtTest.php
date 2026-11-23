@@ -22,7 +22,7 @@ class RobotsTxtTest extends KernelTestCase
 
     public function test_returns_robots_txt(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => \App\Entity\Enum\BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         LanguageFactory::createOnePrimaryFor($blog, [
             'code' => 'en',
         ]);

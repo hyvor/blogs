@@ -86,7 +86,6 @@ export interface Blog {
 	is_blocked: boolean;
 	subdomain: string;
 	type: BlogType;
-	hosting_at: 'subdomain' | 'domain' | 'self';
 	hosting_domain: string | null;
 	hosting_url: string | null;
 	hosting_redirect_subdomain: boolean;
@@ -150,29 +149,14 @@ export interface BlogCounts {
 }
 
 export interface HostingInfo {
-	hosting_at: 'subdomain' | 'domain' | 'self';
-	custom_domain?: CustomDomainSetup | null;
-	custom_domain_intent?: CustomDomainIntent | null;
-	hosting_url?: string;
-	change?: HostingChange | null;
-}
-
-export type HostingChangeAt = 'subdomain' | 'domain' | 'self';
-export type HostingChangeStatus = 'changing' | 'success' | 'failed';
-
-export interface HostingChange {
-	id: number;
-	created_at: number;
-	updated_at: number;
-	from_at: HostingChangeAt;
-	from_subdomain: string | null;
-	from_domain: string | null;
-	from_url: string;
-	to_at: HostingChangeAt;
-	to_subdomain: string | null;
-	to_domain: string | null;
-	to_url: string;
-	status: HostingChangeStatus;
+	delivery_url: string | null;
+	// default URL of the blog on Hyvor Blogs (subdomain or app subdirectory)
+	subdomain_url: string;
+	// final URL of the blog (hosting URL > custom domain > subdomain)
+	url: string;
+	hosting_url: string | null;
+	custom_domain: CustomDomainSetup | null;
+	custom_domain_intent: CustomDomainIntent | null;
 }
 
 export type CustomDomainTlsProvider = 'auto' | 'custom';

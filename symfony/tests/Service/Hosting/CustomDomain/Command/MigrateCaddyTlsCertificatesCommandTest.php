@@ -4,7 +4,6 @@ namespace App\Tests\Service\Hosting\CustomDomain\Command;
 
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\Hosting\CustomDomain\Command\MigrateCaddyTlsCertificatesCommand;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Helper\SelfSignedCertificate;
@@ -69,7 +68,7 @@ class MigrateCaddyTlsCertificatesCommandTest extends KernelTestCase
 
     public function test_migrates_valid_certificate_for_matching_blog(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::DOMAIN]);
+        $blog = BlogFactory::createOne();
         $this->setBlogHostingDomain($blog, 'migrate-example.com');
         $this->writeDomainFolder('migrate-example.com');
 
@@ -98,7 +97,7 @@ class MigrateCaddyTlsCertificatesCommandTest extends KernelTestCase
 
     public function test_dry_run_validates_without_creating_records(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::DOMAIN]);
+        $blog = BlogFactory::createOne();
         $this->setBlogHostingDomain($blog, 'dry-run-example.com');
         $this->writeDomainFolder('dry-run-example.com');
 
@@ -126,24 +125,9 @@ class MigrateCaddyTlsCertificatesCommandTest extends KernelTestCase
         $this->assertStringContainsString('0 migrated, 1 skipped, 0 invalid', $commandTester->getDisplay());
     }
 
-    public function test_skips_when_blog_hosting_at_is_not_domain(): void
-    {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
-        $this->setBlogHostingDomain($blog, 'not-domain-hosted.com');
-        $this->writeDomainFolder('not-domain-hosted.com');
-
-        $commandTester = $this->getCommandTester(self::COMMAND);
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute(['--dir' => $this->dir]);
-
-        $this->assertSame(Command::SUCCESS, $commandTester->getStatusCode());
-        $this->assertStringContainsString("hosting_at is 'subdomain'", $commandTester->getDisplay());
-        $this->assertStringContainsString('0 migrated, 1 skipped, 0 invalid', $commandTester->getDisplay());
-    }
-
     public function test_is_idempotent_when_run_twice(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::DOMAIN]);
+        $blog = BlogFactory::createOne();
         $this->setBlogHostingDomain($blog, 'idempotent-example.com');
         $this->writeDomainFolder('idempotent-example.com');
 
@@ -182,7 +166,7 @@ class MigrateCaddyTlsCertificatesCommandTest extends KernelTestCase
 
     public function test_aborts_when_confirmation_declined(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::DOMAIN]);
+        $blog = BlogFactory::createOne();
         $this->setBlogHostingDomain($blog, 'declined-example.com');
         $this->writeDomainFolder('declined-example.com');
 
@@ -199,7 +183,7 @@ class MigrateCaddyTlsCertificatesCommandTest extends KernelTestCase
 
     public function test_does_not_prompt_for_confirmation_on_dry_run(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::DOMAIN]);
+        $blog = BlogFactory::createOne();
         $this->setBlogHostingDomain($blog, 'dry-run-no-prompt.com');
         $this->writeDomainFolder('dry-run-no-prompt.com');
 

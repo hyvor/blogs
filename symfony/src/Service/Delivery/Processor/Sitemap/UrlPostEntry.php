@@ -34,7 +34,10 @@ class UrlPostEntry
 
                 $images = $this->findImageSrcs($variant->getContent(), $postContentService, $blog);
                 foreach ($images as $src) {
-                    if ($permalinkService->isLinkInBlog($src, $blog)) {
+                    if (
+                        $permalinkService->isLinkInBlog($src, $blog) ||
+                        str_starts_with($src, $permalinkService->getMediaBaseUrl($blog) . '/')
+                    ) {
                         $entry->image($src);
                     }
                 }

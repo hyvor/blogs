@@ -95,7 +95,6 @@ class BlogController
         #[MapRequestPayload] UpdateBlogInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
-
         $blog = $this->blogService->updateBlog($blog, $input);
 
         return new JsonResponse($this->blogObjectFactory->create($blog));

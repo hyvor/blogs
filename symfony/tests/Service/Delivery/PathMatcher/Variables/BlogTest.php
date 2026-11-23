@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Variables;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Delivery\PathMatcher;
 use App\Tests\Factory\BlogFactory;
@@ -42,7 +41,6 @@ class BlogTest extends KernelTestCase
         $meta->social_twitter = 'https://x.com/HyvorBlogs';
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
             'subdomain' => 'my-blog',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'meta' => $meta,
         ]);
         ThemeFileFactory::createIndexTwig($blog, $content);

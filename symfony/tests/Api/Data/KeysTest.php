@@ -5,7 +5,6 @@ namespace App\Tests\Api\Data;
 use App\Api\Data\Factory\PostObjectFactory;
 use App\Api\Data\KeysFilter;
 use App\Api\Data\Object\PostObject;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\LanguageDirection;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
@@ -29,7 +28,7 @@ class KeysTest extends ApiTestCase
     {
         parent::setUp();
 
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $lang = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
 

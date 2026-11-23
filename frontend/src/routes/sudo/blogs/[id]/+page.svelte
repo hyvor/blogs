@@ -95,9 +95,6 @@
 			<a href={hostingUrl} class="hds-link" target="_blank">
 				{hostingUrl}
 			</a>
-			<span style="color: var(--text-light);margin-left:5px;">
-				({blog.hosting_at})
-			</span>
 		</SplitControl>
 		<SplitControl label="User ID">
 			{blog.hyvor_user_id ?? '-'}
