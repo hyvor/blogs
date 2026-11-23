@@ -65,10 +65,11 @@
 		{:else if apiKeys.length === 0}
 			<IconMessage empty message={i18n.t('console.settings.apiKeys.noKeys')} />
 		{:else}
-			<SettingsTable columns="1fr 1fr 140px">
+			<SettingsTable columns="1fr 1fr 1fr 140px">
 				<TableRow head>
 					<div>{i18n.t('console.common.name')}</div>
 					<div>{i18n.t('console.settings.apiKeys.api')}</div>
+					<div>{i18n.t('console.settings.apiKeys.scopes')}</div>
 					<div></div>
 				</TableRow>
 

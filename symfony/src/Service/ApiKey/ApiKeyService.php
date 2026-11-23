@@ -28,7 +28,10 @@ class ApiKeyService
         return $this->em->getRepository(ApiKey::class)->count(['blog' => $blog]);
     }
 
-    public function createApiKey(Blog $blog, string $name, ApiKeyType $type): ApiKey
+    /**
+     * @param Scope[] $scopes only stored for console API keys
+     */
+    public function createApiKey(Blog $blog, string $name, ApiKeyType $type, array $scopes = []): ApiKey
     {
         $apiKey = new ApiKey();
         $apiKey->setBlog($blog);
@@ -37,7 +40,7 @@ class ApiKeyService
         $apiKey->setApiKey(bin2hex(random_bytes(16)));
 
         if ($type === ApiKeyType::CONSOLE) {
-            $apiKey->setScopes(array_map(fn(Scope $scope) => $scope->value, Scope::all()));   // TODO: get scopes from user (frontend)
+            $apiKey->setScopes(array_map(fn(Scope $scope) => $scope->value, $scopes));
         }
 
         $now = $this->now();

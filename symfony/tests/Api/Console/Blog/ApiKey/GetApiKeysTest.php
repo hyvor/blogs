@@ -40,6 +40,31 @@ class GetApiKeysTest extends ApiTestCase
         $this->assertIsArray($json[0]);
         $this->assertSame('My Key', $json[0]['name']);
         $this->assertSame('delivery', $json[0]['type']);
+        $this->assertSame([], $json[0]['scopes']);
+    }
+
+    public function test_get_api_keys_returns_scopes(): void
+    {
+        [$blog, $user] = BlogFactory::createOneWithUser(
+            ['subdomain' => 'ak-list-scopes'],
+            ['status' => UserStatus::ACTIVE],
+        );
+
+        ApiKeyFactory::createOne([
+            'blog' => $blog,
+            'name' => 'Console Key',
+            'type' => ApiKeyType::CONSOLE,
+            'api_key' => 'def456',
+            'scopes' => ['posts.read', 'unknown.scope', 'tags.write'],
+        ]);
+
+        $this->consoleBlogApi('GET', 'ak-list-scopes', '/api-keys', user: $user);
+
+        $this->assertResponseIsSuccessful();
+        $json = $this->getJson();
+        $this->assertIsArray($json[0]);
+        // unknown scopes are dropped
+        $this->assertSame(['posts.read', 'tags.write'], $json[0]['scopes']);
     }
 
     public function test_access_denied_when_user_not_in_blog(): void
