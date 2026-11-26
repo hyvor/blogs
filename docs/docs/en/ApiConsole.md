@@ -108,6 +108,8 @@ Endpoints:
 - `DELETE /post/{id}` - Delete a post/page
 - `POST /post/{id}/variant` - Create a post variant
 - `PATCH /post/{id}/variant` - Update a post variant
+- `GET /post/{id}/variant/content` - Get variant content as markdown, HTML, or JSON
+- `PUT /post/{id}/variant/content` - Replace variant content from markdown, HTML, or JSON
 - `POST /post/{id}/variant/publish` - Publish a post variant
 - `POST /post/{id}/variant/unpublish` - Unpublish a post variant
 - `DELETE /post/{id}/variant` - Delete a post variant
@@ -227,6 +229,49 @@ type Response = PostVariant;
 ```
 
 `content` and `content_unsaved` should be in ProseMirror JSON format. See [Get ProseMirror JSON endpoint](/docs/api-console#get-prosemirror-json) to convert HTML to ProseMirror JSON.
+
+<h4 id="get-post-variant-content">Get post variant content</h4>
+
+`GET /post/{id}/variant/content`
+
+```ts
+type Request = {
+	language_code?: string; // defaults to the primary language
+	format?: 'markdown' | 'html' | 'json'; // default: markdown
+};
+type Response = {
+	post_variant_id: number;
+	format: 'markdown' | 'html' | 'json';
+	content: string;
+	version: number;
+};
+```
+
+Returns the current working content (the draft, which may be ahead of what is published) of a variant in the requested format. `json` is the raw ProseMirror JSON. `version` can be passed to `PUT` to avoid overwriting concurrent edits. Requires `posts.read` scope.
+
+<h4 id="update-post-variant-content">Update post variant content</h4>
+
+`PUT /post/{id}/variant/content`
+
+```ts
+type Request = {
+	language_code?: string; // defaults to the primary language
+	format?: 'markdown' | 'html' | 'json'; // default: markdown
+	content: string;
+	version?: number; // `version` from GET
+};
+type Response = {
+	post_variant_id: number;
+	version: number;
+	variant: PostVariant;
+};
+```
+
+Replaces the whole content of a variant. Editors with the post open receive the new document live. This does not publish the content - use [Publish](/docs/api-console#publish-post-variant) or update-content afterwards.
+
+- If `version` is given and the document has changed since, the endpoint returns `409` with `message: "version_mismatch"`. Fetch the content again and retry. If omitted, the content is overwritten.
+- Returns `422` if the content cannot be parsed. Markdown supports headings, lists, tables, code blocks, images, links, and basic marks; HTML is sanitized.
+- Requires `posts.write` scope.
 
 <h4 id="publish-post-variant">Publish a post variant</h4>
 
