@@ -11,6 +11,7 @@ use App\Api\Console\Input\Post\CreatePostInput;
 use App\Api\Console\Input\Post\CreatePostVariantInput;
 use App\Api\Console\Input\Post\DeletePostVariantInput;
 use App\Api\Console\Input\Post\GetPostsInput;
+use App\Api\Console\Input\Post\GetPostVariantInput;
 use App\Api\Console\Input\Post\PublishPostVariantInput;
 use App\Api\Console\Input\Post\UpdatePostAuthorsInput;
 use App\Api\Console\Input\Post\UpdatePostInput;
@@ -21,7 +22,12 @@ use App\Api\Console\Object\PostObjectFactory;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
+use App\Service\Post\Content\PostContentConverter;
+use App\Service\Post\Content\PostContentService;
 use App\Service\Post\Document\DocumentService;
+use App\Service\Post\Document\Exception\SetContentUnsavedVersionMismatchException;
+use Hyvor\Phrosemirror\Exception\PhrosemirrorException;
+use League\CommonMark\Exception\CommonMarkException;
 use App\Service\Post\PostService;
 use App\Service\Post\PostSlugService;
 use App\Service\Post\Suggestion\PostSuggestionContentChecker;
@@ -47,7 +53,9 @@ class PostController
         private PostListObjectFactory $postListObjectFactory,
         private TagService $tagService,
         private UserService $userService,
-        private PostSuggestionContentChecker $postSuggestionContentChecker
+        private PostSuggestionContentChecker $postSuggestionContentChecker,
+        private PostContentConverter $contentConverter,
+        private DocumentService $documentService,
     ) {}
 
     #[Route('/posts', methods: ['GET'])]
@@ -185,6 +193,50 @@ class PostController
         return new JsonResponse($this->postObjectFactory->createVariant($variant), 201);
     }
 
+    /**
+     * Get a variant with its working (draft) content in the requested format.
+     * Pass the returned `document.version` as `base_version` when updating to detect conflicts.
+     */
+    #[Route('/post/{id}/variant', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
+    #[ScopeRequired(Scope::POSTS_READ)]
+    public function getPostVariant(
+        #[MapBlogEntity] Post $post,
+        #[MapQueryString] GetPostVariantInput $input = new GetPostVariantInput(),
+    ): JsonResponse {
+        $blog = $this->blogAuthListener->getBlog();
+
+        $language = $input->language_id !== null
+            ? $this->languageService->getLanguageById($blog, $input->language_id)
+            : $this->languageService->getPrimaryLanguage($blog);
+        if ($language === null) {
+            throw new UnprocessableEntityHttpException('Language not found');
+        }
+
+        $variant = $this->postService->getPostVariantByPostAndLanguage($post, $language);
+        if ($variant === null) {
+            throw new NotFoundHttpException('Variant not found');
+        }
+
+        try {
+            $content = $this->contentConverter->export(
+                $variant->getContentUnsaved() ?? PostContentService::DEFAULT_CONTENT_JSON,
+                $blog,
+                $input->format,
+            );
+        } catch (PhrosemirrorException $e) { // @codeCoverageIgnoreStart
+            throw new UnprocessableEntityHttpException('Stored content is invalid: ' . $e->getMessage());
+        } // @codeCoverageIgnoreEnd
+
+        return new JsonResponse([
+            'variant' => $this->postObjectFactory->createVariant($variant),
+            'document' => [
+                'format' => $input->format->value,
+                'content' => $content,
+                'version' => $variant->getDocumentVersion(),
+            ],
+        ]);
+    }
+
     #[Route('/post/{id}/variant', methods: ['PATCH'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
     public function updatePostVariant(
@@ -268,10 +320,39 @@ class PostController
                 : null;
         }
 
+        $contentJson = null;
+        if ($input->content !== null) {
+            try {
+                $contentJson = $this->contentConverter->import($input->content, $input->format);
+            } catch (PhrosemirrorException | CommonMarkException $e) {
+                throw new UnprocessableEntityHttpException(
+                    'Invalid ' . $input->format->value . ' content: ' . $e->getMessage()
+                );
+            }
+        }
+
         $redirectOnSlugChange = isset($data['slug']) && $input->redirect_on_slug_change;
 
         if ($redirectOnSlugChange && $variant->getStatus() === PostVariantStatus::DRAFT) {
             throw new UnprocessableEntityHttpException('Cannot redirect on slug change for draft variant');
+        }
+
+        // checked before anything is saved, so a conflict leaves the variant untouched
+        if ($contentJson !== null) {
+            try {
+                $this->documentService->setContentUnsaved(
+                    $variant,
+                    $blog,
+                    $contentJson,
+                    $input->base_version ?? $variant->getDocumentVersion(),
+                    force: $input->base_version === null,
+                );
+            } catch (SetContentUnsavedVersionMismatchException) {
+                return new JsonResponse([
+                    'message' => 'version_mismatch',
+                    'message_full' => 'The content was changed after base_version. Fetch the latest content and retry.',
+                ], 409);
+            }
         }
 
         $variant = $this->postService->updatePostVariant($variant, $blog, $data, redirectOnSlugChange: $redirectOnSlugChange);
