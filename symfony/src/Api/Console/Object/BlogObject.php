@@ -80,7 +80,7 @@ class BlogObject
     public bool $ai_agent;
 
     /**
-     * @var BlogVariantObject[]
+     * @var list<BlogVariantObject>
      */
     public array $variants;
 

@@ -10,10 +10,13 @@ use App\Api\Console\Input\Blog\CreateBlogVariantInput;
 use App\Api\Console\Input\Blog\DeleteBlogCacheInput;
 use App\Api\Console\Input\Blog\UpdateBlogInput;
 use App\Api\Console\Input\Blog\UpdateBlogVariantInput;
+use App\Api\Console\Object\BlogObject;
 use App\Api\Console\Object\BlogObjectFactory;
 use App\Api\Console\Object\BlogVariantObject;
 use App\Api\Console\Object\LanguageObject;
+use App\Api\Console\Object\TagObject;
 use App\Api\Console\Object\TagObjectFactory;
+use App\Api\Console\Object\UserObject;
 use App\Api\Console\Object\UserObjectFactory;
 use App\Service\Blog\BlogService;
 use App\Service\Cache\BlogCacheService;
@@ -22,6 +25,8 @@ use App\Service\Integration\HyvorTalk\HyvorTalkService;
 use App\Service\Language\LanguageService;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -46,7 +51,16 @@ class BlogController
 
     #[Route('/blog', methods: ['GET'])]
     #[ScopeRequired(Scope::BLOG_READ)]
-    public function getBlog(): JsonResponse
+    #[OA\Get(
+        description: 'Returns the blog along with its post counts, a preview of users, tags and languages, integrations, and the scopes of the current authorization.',
+        summary: 'Get the blog',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the blog and related data.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'blog', ref: new Model(type: BlogObject::class)), new OA\Property(property: 'counts', type: 'object', properties: [new OA\Property(property: 'posts', type: 'object', properties: [new OA\Property(property: 'published', type: 'integer'), new OA\Property(property: 'draft', type: 'integer'), new OA\Property(property: 'scheduled', type: 'integer'), new OA\Property(property: 'featured', type: 'integer')])]), new OA\Property(property: 'users', type: 'array', items: new OA\Items(ref: new Model(type: UserObject::class))), new OA\Property(property: 'tags', type: 'array', items: new OA\Items(ref: new Model(type: TagObject::class))), new OA\Property(property: 'languages', type: 'array', items: new OA\Items(ref: new Model(type: LanguageObject::class))), new OA\Property(property: 'integrations', type: 'object', properties: [new OA\Property(property: 'hyvor_talk', type: 'object', nullable: true, properties: [new OA\Property(property: 'website_id', type: 'integer')]), new OA\Property(property: 'hyvor_post', type: 'object', nullable: true, properties: [new OA\Property(property: 'newsletter_id', type: 'integer')])]), new OA\Property(property: 'scopes', type: 'array', items: new OA\Items(type: 'string'))]),
+    )]
+    public function get(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
 
@@ -91,7 +105,16 @@ class BlogController
 
     #[Route('/blog', methods: ['PATCH'])]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function updateBlog(
+    #[OA\Patch(
+        description: 'Updates the blog settings. Only the provided fields are updated.',
+        summary: 'Update the blog',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated blog.',
+        content: new Model(type: BlogObject::class),
+    )]
+    public function update(
         #[MapRequestPayload] UpdateBlogInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -103,7 +126,16 @@ class BlogController
 
     #[Route('/blog/variant', methods: ['POST'])]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function createBlogVariant(
+    #[OA\Post(
+        description: 'Creates the blog variant (name, description, etc.) for a language.',
+        summary: 'Create a blog variant',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created blog variant.',
+        content: new Model(type: BlogVariantObject::class),
+    )]
+    public function createVariant(
         #[MapRequestPayload] CreateBlogVariantInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -125,7 +157,16 @@ class BlogController
 
     #[Route('/blog/variant', methods: ['PATCH'])]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function updateBlogVariant(
+    #[OA\Patch(
+        description: 'Updates the blog variant of a language.',
+        summary: 'Update a blog variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated blog variant.',
+        content: new Model(type: BlogVariantObject::class),
+    )]
+    public function updateVariant(
         #[MapRequestPayload] UpdateBlogVariantInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -147,6 +188,11 @@ class BlogController
 
     #[Route('/blog', methods: ['DELETE'])]
     #[ScopeRequired(Scope::BLOG_DELETE)]
+    #[OA\Delete(
+        description: 'Permanently deletes the blog and all of its data.',
+        summary: 'Delete the blog',
+    )]
+    #[OA\Response(response: 200, description: 'The blog was deleted.')]
     public function delete(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
@@ -158,6 +204,11 @@ class BlogController
 
     #[Route('/blog/cache', methods: ['DELETE'])]
     #[ScopeRequired(Scope::BLOG_DELETE)]
+    #[OA\Delete(
+        description: 'Clears the cache of the blog (everything, or specific paths depending on the input).',
+        summary: 'Clear the blog cache',
+    )]
+    #[OA\Response(response: 200, description: 'The cache was cleared.')]
     public function deleteCache(
         #[MapRequestPayload] DeleteBlogCacheInput $input,
     ): JsonResponse {

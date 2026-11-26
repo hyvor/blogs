@@ -11,7 +11,7 @@ class CreateWebhookInput
     #[Assert\Url]
     public string $url;
 
-    /** @var WebhookEvent[] $events */
+    /** @var list<WebhookEvent> $events */
     #[Assert\NotBlank]
     #[Assert\All(new Assert\Type(WebhookEvent::class))]
     public array $events;

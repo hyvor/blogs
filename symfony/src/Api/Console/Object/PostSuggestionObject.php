@@ -16,7 +16,7 @@ class PostSuggestionObject
     public string $author;
     // milliseconds since epoch, matching @hyvor/richtext's SuggestionSourceEntry.timestamp
     public int $timestamp;
-    /** @var PostSuggestionReplyObject[] */
+    /** @var list<PostSuggestionReplyObject> */
     public array $comments;
 
     public function __construct(PostSuggestion $suggestion)

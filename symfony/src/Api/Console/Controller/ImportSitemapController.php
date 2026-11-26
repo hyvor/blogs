@@ -15,6 +15,8 @@ use App\Service\Import\Message\ImportMessage;
 use App\Service\Import\Sitemap\PageScraper\PageScraper;
 use App\Service\Import\Sitemap\PageScraper\PageScraperOptions;
 use App\Service\Post\Content\PostContentService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -98,6 +100,15 @@ class ImportSitemapController
 
     #[Route('/data/import/sitemap/import', methods: ['POST'])]
     #[ScopeRequired(Scope::IMPORT_MANAGE)]
+    #[OA\Post(
+        description: 'Starts importing posts from a sitemap. The import is processed in the background.',
+        summary: 'Import from a sitemap',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the created import.',
+        content: new Model(type: ImportObject::class),
+    )]
     public function import(#[MapRequestPayload] SitemapImportInput $input): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();

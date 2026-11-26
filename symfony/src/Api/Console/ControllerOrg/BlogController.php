@@ -5,25 +5,28 @@ namespace App\Api\Console\ControllerOrg;
 use App\Api\Console\Authorization\ConsoleApiAuthorizationListener;
 use App\Api\Console\Authorization\OrganizationOptional;
 use App\Api\Console\Input\Blog\CreateBlogInput;
+use App\Api\Console\Object\BlogListObject;
 use App\Api\Console\Object\BlogListObjectFactory;
 use App\Entity\Enum\BlogType;
 use App\Service\Billing\UsageService;
 use App\Service\Blog\BlogCreator;
 use App\Service\Blog\BlogService;
+use App\Service\Theme\Exception\ThemeImportException;
+use App\Service\User\Exception\HyvorUserNotFoundException;
 use App\Service\User\UserService;
 use Hyvor\Internal\Auth\AuthInterface;
 use Hyvor\Internal\Billing\BillingInterface;
 use Hyvor\Internal\Billing\License\BlogsLicense;
-use Hyvor\Internal\InternalConfig;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
+use Hyvor\Internal\InternalConfig;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Uid\Uuid;
-use App\Service\Theme\Exception\ThemeImportException;
-use App\Service\User\Exception\HyvorUserNotFoundException;
 
 class BlogController
 {
@@ -44,6 +47,15 @@ class BlogController
      * @throws HyvorUserNotFoundException
      */
     #[Route('/blog', methods: ['POST'])]
+    #[OA\Post(
+        description: 'Creates a new blog for the current organization.',
+        summary: 'Create a blog',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created blog.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'blog', ref: new Model(type: BlogListObject::class)), new OA\Property(property: 'warnings', type: 'array', items: new OA\Items(type: 'string')), new OA\Property(property: 'resolved_license', type: 'object', nullable: true, additionalProperties: true)]),
+    )]
     public function create(
         #[MapRequestPayload] CreateBlogInput $input,
         Request $request,
@@ -122,6 +134,15 @@ class BlogController
 
     #[Route('/blog/check-subdomain', methods: ['GET'])]
     #[OrganizationOptional]
+    #[OA\Get(
+        description: 'Checks whether a subdomain can be used for a new blog.',
+        summary: 'Check blog subdomain availability',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns whether the subdomain is available.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'available', type: 'boolean')]),
+    )]
     public function checkSubdomain(Request $request): JsonResponse
     {
         $subdomain = $request->query->get('subdomain', '');

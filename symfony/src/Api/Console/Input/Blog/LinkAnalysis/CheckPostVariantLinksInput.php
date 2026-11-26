@@ -8,7 +8,7 @@ class CheckPostVariantLinksInput
 {
     public int $post_variant_id;
 
-    /** @var string[] */
+    /** @var list<string> */
     #[Assert\NotBlank]
     #[Assert\Count(min: 1)]
     public array $urls = [];

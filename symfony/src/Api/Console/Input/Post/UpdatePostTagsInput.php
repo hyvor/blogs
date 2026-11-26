@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class UpdatePostTagsInput
 {
-    /** @var int[] */
+    /** @var list<int> */
     #[Assert\All([
         new Assert\Type('integer'),
     ])]

@@ -26,16 +26,16 @@ class PostListObject
     /** @var array<string, mixed> */
     public array $link_analysis;
 
-    /** @var PostVariantSummaryObject[] */
+    /** @var list<PostVariantSummaryObject> */
     public array $variants;
 
     /**
-     * @var array<array{name: string, is_private: bool}>
+     * @var list<array{name: string, is_private: bool}>
      */
     public array $tags;
 
     /**
-     * @var array<array{name: string, picture_url: ?string}>
+     * @var list<array{name: string, picture_url: ?string}>
      */
     public array $authors;
 

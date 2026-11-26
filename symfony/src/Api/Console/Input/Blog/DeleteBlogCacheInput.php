@@ -9,7 +9,7 @@ class DeleteBlogCacheInput
     #[Assert\NotBlank]
     public CacheClearType $type;
 
-    /** @var string[] */
+    /** @var list<string> */
     #[Assert\All(new Assert\Type('string'))]
     public array $paths = [];
 }

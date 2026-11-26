@@ -14,7 +14,9 @@ use App\Api\Console\Input\User\DeleteUserVariantInput;
 use App\Api\Console\Input\User\GetUsersInput;
 use App\Api\Console\Input\User\UpdateUserInput;
 use App\Api\Console\Input\User\UpdateUserVariantInput;
+use App\Api\Console\Object\UserObject;
 use App\Api\Console\Object\UserObjectFactory;
+use App\Api\Console\Object\UserVariantObject;
 use App\Api\Console\Object\UserVariantObjectFactory;
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
@@ -27,6 +29,8 @@ use Hyvor\Internal\Bundle\Comms\CommsInterface;
 use Hyvor\Internal\Bundle\Comms\Event\ToCore\Organization\VerifyMember;
 use Hyvor\Internal\Bundle\Comms\Exception\CommsApiFailedException;
 use Hyvor\Internal\InternalConfig;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -52,7 +56,16 @@ class UserController
 
     #[Route('/users', methods: ['GET'])]
     #[ScopeRequired(Scope::USERS_READ)]
-    public function getUsers(
+    #[OA\Get(
+        description: 'Returns the users of the blog along with the number of users used by the plan.',
+        summary: 'List users',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the users and usage.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'users', type: 'array', items: new OA\Items(ref: new Model(type: UserObject::class))), new OA\Property(property: 'used', type: 'integer')]),
+    )]
+    public function list(
         #[MapQueryString] GetUsersInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -69,7 +82,16 @@ class UserController
 
     #[Route('/user', methods: ['POST'])]
     #[ScopeRequired(Scope::USERS_WRITE)]
-    public function createUser(
+    #[OA\Post(
+        description: 'Adds a HYVOR user to the blog with the given role.',
+        summary: 'Create a user',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the created user.',
+        content: new Model(type: UserObject::class),
+    )]
+    public function create(
         #[MapRequestPayload] CreateUserInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -111,7 +133,16 @@ class UserController
 
     #[Route('/user/guest', methods: ['POST'])]
     #[ScopeRequired(Scope::USERS_WRITE)]
-    public function createGuestUser(
+    #[OA\Post(
+        description: 'Creates a guest user (an author without a HYVOR account).',
+        summary: 'Create a guest user',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the created guest user.',
+        content: new Model(type: UserObject::class),
+    )]
+    public function createGuest(
         #[MapRequestPayload] CreateGuestUserInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -127,7 +158,16 @@ class UserController
 
     #[Route('/user/{id}', methods: ['PATCH'])]
     #[ScopeRequired(Scope::USERS_WRITE)]
-    public function updateUser(
+    #[OA\Patch(
+        description: 'Updates a user of the blog. Only the provided fields are updated.',
+        summary: 'Update a user',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated user.',
+        content: new Model(type: UserObject::class),
+    )]
+    public function update(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] UpdateUserInput $input,
     ): JsonResponse {
@@ -196,7 +236,12 @@ class UserController
 
     #[Route('/user/{id}', methods: ['DELETE'])]
     #[ScopeRequired(Scope::USERS_WRITE)]
-    public function deleteUser(#[MapBlogEntity] User $user): JsonResponse
+    #[OA\Delete(
+        description: 'Removes a user from the blog.',
+        summary: 'Delete a user',
+    )]
+    #[OA\Response(response: 200, description: 'The user was deleted.')]
+    public function delete(#[MapBlogEntity] User $user): JsonResponse
     {
         if ($user->getRole() === UserRole::ADMIN) {
             throw new UnprocessableEntityHttpException('Cannot delete the admin');
@@ -209,6 +254,15 @@ class UserController
 
     #[Route('/user/{id}/slug-available', methods: ['GET'])]
     #[ScopeRequired(Scope::USERS_READ)]
+    #[OA\Get(
+        description: 'Checks whether a slug can be used by the user.',
+        summary: 'Check user slug availability',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns whether the slug is available.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'available', type: 'boolean')]),
+    )]
     public function checkSlugAvailability(
         #[MapBlogEntity] User $user,
         #[MapQueryString] CheckUserSlugAvailableInput $input,
@@ -223,6 +277,15 @@ class UserController
 
     #[Route('/user/{id}/variant', methods: ['POST'])]
     #[ScopeRequired(Scope::USERS_WRITE)]
+    #[OA\Post(
+        description: 'Creates the translation (variant) of a user profile for a language.',
+        summary: 'Create a user variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the created variant.',
+        content: new Model(type: UserVariantObject::class),
+    )]
     public function createVariant(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] CreateUserVariantInput $input,
@@ -241,6 +304,15 @@ class UserController
 
     #[Route('/user/{id}/variant', methods: ['PATCH'])]
     #[ScopeRequired(Scope::USERS_WRITE)]
+    #[OA\Patch(
+        description: 'Updates the translation (variant) of a user profile for a language.',
+        summary: 'Update a user variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated variant.',
+        content: new Model(type: UserVariantObject::class),
+    )]
     public function updateVariant(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] UpdateUserVariantInput $input,
@@ -264,6 +336,11 @@ class UserController
 
     #[Route('/user/{id}/variant', methods: ['DELETE'])]
     #[ScopeRequired(Scope::USERS_WRITE)]
+    #[OA\Delete(
+        description: 'Deletes the translation (variant) of a user profile for a language.',
+        summary: 'Delete a user variant',
+    )]
+    #[OA\Response(response: 200, description: 'The variant was deleted.')]
     public function deleteVariant(
         #[MapBlogEntity] User $user,
         #[MapRequestPayload] DeleteUserVariantInput $input,

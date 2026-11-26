@@ -16,8 +16,11 @@ use App\Api\Console\Input\Post\UpdatePostAuthorsInput;
 use App\Api\Console\Input\Post\UpdatePostInput;
 use App\Api\Console\Input\Post\UpdatePostTagsInput;
 use App\Api\Console\Input\Post\UpdatePostVariantInput;
+use App\Api\Console\Object\PostList\PostListObject;
 use App\Api\Console\Object\PostList\PostListObjectFactory;
+use App\Api\Console\Object\PostObject;
 use App\Api\Console\Object\PostObjectFactory;
+use App\Api\Console\Object\PostVariantObject;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Service\Language\LanguageService;
@@ -27,6 +30,8 @@ use App\Service\Post\PostSlugService;
 use App\Service\Post\Suggestion\PostSuggestionContentChecker;
 use App\Service\Tag\TagService;
 use App\Service\User\UserService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -52,7 +57,16 @@ class PostController
 
     #[Route('/posts', methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
-    public function getPosts(
+    #[OA\Get(
+        description: 'Returns the posts of the blog (not pages), filtered and paginated by the given parameters.',
+        summary: 'List posts',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of posts.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: PostListObject::class))),
+    )]
+    public function list(
         #[MapQueryString] GetPostsInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -87,7 +101,16 @@ class PostController
 
     #[Route('/pages', methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
-    public function getPages(): JsonResponse
+    #[OA\Get(
+        description: 'Returns the pages (posts marked as pages) of the blog.',
+        summary: 'List pages',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of pages.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: PostListObject::class))),
+    )]
+    public function listPages(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $language = $this->languageService->getPrimaryLanguage($blog);
@@ -101,7 +124,16 @@ class PostController
 
     #[Route('/post', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function createPost(
+    #[OA\Post(
+        description: 'Creates a new post or page with a variant in the primary language.',
+        summary: 'Create a post',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created post.',
+        content: new Model(type: PostObject::class),
+    )]
+    public function create(
         #[MapRequestPayload] CreatePostInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -124,7 +156,16 @@ class PostController
 
     #[Route('/post/{id}', methods: ['PATCH'], requirements: ['id' => Requirement::DIGITS])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function updatePost(
+    #[OA\Patch(
+        description: 'Updates the settings of a post that are shared across all languages.',
+        summary: 'Update a post',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated post.',
+        content: new Model(type: PostObject::class),
+    )]
+    public function update(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostInput $input,
     ): JsonResponse {
@@ -156,7 +197,12 @@ class PostController
 
     #[Route('/post/{id}', methods: ['DELETE'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function deletePost(#[MapBlogEntity] Post $post): JsonResponse
+    #[OA\Delete(
+        description: 'Permanently deletes a post and all of its variants.',
+        summary: 'Delete a post',
+    )]
+    #[OA\Response(response: 200, description: 'The post was deleted.')]
+    public function delete(#[MapBlogEntity] Post $post): JsonResponse
     {
         $this->postService->deletePost($post);
         return new JsonResponse();
@@ -164,7 +210,16 @@ class PostController
 
     #[Route('/post/{id}/variant', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function createPostVariant(
+    #[OA\Post(
+        description: 'Creates the translation (variant) of a post for a language.',
+        summary: 'Create a post variant',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created variant.',
+        content: new Model(type: PostVariantObject::class),
+    )]
+    public function createVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] CreatePostVariantInput $input,
     ): JsonResponse {
@@ -187,7 +242,16 @@ class PostController
 
     #[Route('/post/{id}/variant', methods: ['PATCH'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function updatePostVariant(
+    #[OA\Patch(
+        description: 'Updates the content or settings of a post variant. Only the provided fields are updated.',
+        summary: 'Update a post variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated variant.',
+        content: new Model(type: PostVariantObject::class),
+    )]
+    public function updateVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostVariantInput $input,
     ): JsonResponse
@@ -281,7 +345,16 @@ class PostController
 
     #[Route('/post/{id}/variant/publish', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
-    public function publishPostVariant(
+    #[OA\Post(
+        description: 'Publishes a post variant now, or schedules it for a future time.',
+        summary: 'Publish a post variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the published variant.',
+        content: new Model(type: PostVariantObject::class),
+    )]
+    public function publishVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] PublishPostVariantInput $input,
     ): JsonResponse {
@@ -321,7 +394,16 @@ class PostController
 
     #[Route('/post/{id}/variant/update-content', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
-    public function updatePublishedPostVariantContent(
+    #[OA\Post(
+        description: 'Copies the latest saved (draft) content of a published variant to its live content.',
+        summary: 'Update the published content of a variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated variant.',
+        content: new Model(type: PostVariantObject::class),
+    )]
+    public function updatePublishedVariantContent(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] PublishPostVariantInput $input,
     ): JsonResponse {
@@ -371,7 +453,16 @@ class PostController
 
     #[Route('/post/{id}/variant/unpublish', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_PUBLISH_OWN)]
-    public function unpublishPostVariant(
+    #[OA\Post(
+        description: 'Reverts a published (or scheduled) post variant to a draft.',
+        summary: 'Unpublish a post variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the unpublished variant.',
+        content: new Model(type: PostVariantObject::class),
+    )]
+    public function unpublishVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] PublishPostVariantInput $input,
     ): JsonResponse {
@@ -391,7 +482,12 @@ class PostController
 
     #[Route('/post/{id}/variant', methods: ['DELETE'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function deletePostVariant(
+    #[OA\Delete(
+        description: 'Deletes the translation (variant) of a post for a language.',
+        summary: 'Delete a post variant',
+    )]
+    #[OA\Response(response: 200, description: 'The variant was deleted.')]
+    public function deleteVariant(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] DeletePostVariantInput $input,
     ): JsonResponse {
@@ -420,6 +516,11 @@ class PostController
 
     #[Route('/post/{id}/tags', methods: ['PATCH'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
+    #[OA\Patch(
+        description: 'Replaces the tags of a post with the given list of tag IDs.',
+        summary: 'Update the tags of a post',
+    )]
+    #[OA\Response(response: 200, description: 'The tags were updated.')]
     public function updateTags(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostTagsInput $input,
@@ -437,6 +538,11 @@ class PostController
 
     #[Route('/post/{id}/authors', methods: ['PATCH'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
+    #[OA\Patch(
+        description: 'Replaces the authors of a post with the given list of user IDs.',
+        summary: 'Update the authors of a post',
+    )]
+    #[OA\Response(response: 200, description: 'The authors were updated.')]
     public function updateAuthors(
         #[MapBlogEntity] Post $post,
         #[MapRequestPayload] UpdatePostAuthorsInput $input,
@@ -456,6 +562,15 @@ class PostController
 
     #[Route('/post/{id}/slug-available', methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
+    #[OA\Get(
+        description: 'Checks whether a slug can be used by the post.',
+        summary: 'Check post slug availability',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns whether the slug is available.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'available', type: 'boolean')]),
+    )]
     public function checkSlugAvailability(
         #[MapBlogEntity] Post $post,
         #[MapQueryString] CheckPostSlugAvailableInput $input,
@@ -477,7 +592,16 @@ class PostController
 
     #[Route('/post/{id}/clone', methods: ['POST'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function clonePost(#[MapBlogEntity] Post $post): JsonResponse
+    #[OA\Post(
+        description: 'Creates a copy of a post with all of its variants as drafts.',
+        summary: 'Clone a post',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the cloned post.',
+        content: new Model(type: PostObject::class),
+    )]
+    public function clone(#[MapBlogEntity] Post $post): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $clone = $this->postService->clonePost($post);

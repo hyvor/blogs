@@ -15,7 +15,7 @@ class AiMessageObject
     public string $content;
 
     /**
-     * @var AiMessageEventObject[]
+     * @var list<AiMessageEventObject>
      */
     public array $events;
 

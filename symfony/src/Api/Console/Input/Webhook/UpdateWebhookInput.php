@@ -10,7 +10,7 @@ class UpdateWebhookInput
     #[Assert\Url]
     public ?string $url = null;
 
-    /** @var WebhookEvent[]|null $events */
+    /** @var list<WebhookEvent>|null $events */
     #[Assert\All(new Assert\Type(WebhookEvent::class))]
     public ?array $events = null;
 }

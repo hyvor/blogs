@@ -8,10 +8,10 @@ use App\Api\Console\ConsoleSubrequest;
 use App\Api\Console\Input\Blog\SortBlogsInput;
 use App\Api\Console\Object\AuthUserObject;
 use App\Api\Console\Object\BlogListObjectFactory;
+use App\Service\Ai\AiModel;
 use App\Service\AppConfig;
 use App\Service\Billing\UsageService;
 use App\Service\CodeHighlight\Highlighter;
-use App\Service\Ai\AiModel;
 use App\Service\Limit;
 use App\Service\User\UserService;
 use Hyvor\Internal\Auth\AuthInterface;
@@ -148,7 +148,7 @@ class ConsoleController
     }
 
     #[Route('/usage', methods: ['GET'])]
-    public function usage(): JsonResponse
+    public function getUsage(): JsonResponse
     {
         $org = $this->authListener->getOrganization();
 

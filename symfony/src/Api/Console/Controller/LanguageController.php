@@ -13,6 +13,8 @@ use App\Entity\Language;
 use App\Service\Billing\UsageService;
 use App\Service\Language\LanguageService;
 use Hyvor\Internal\InternalConfig;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -29,7 +31,16 @@ class LanguageController
 
     #[Route('/languages', methods: ['GET'])]
     #[ScopeRequired(Scope::LANGUAGES_READ)]
-    public function getLanguages(): JsonResponse
+    #[OA\Get(
+        description: 'Returns all languages of the blog.',
+        summary: 'List languages',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of languages.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: LanguageObject::class))),
+    )]
+    public function list(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $languages = $this->languageService->getAllLanguages($blog);
@@ -39,7 +50,16 @@ class LanguageController
 
     #[Route('/language', methods: ['POST'])]
     #[ScopeRequired(Scope::LANGUAGES_WRITE)]
-    public function createLanguage(
+    #[OA\Post(
+        description: 'Adds a new language to the blog.',
+        summary: 'Create a language',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created language.',
+        content: new Model(type: LanguageObject::class),
+    )]
+    public function create(
         #[MapRequestPayload] CreateLanguageInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -61,7 +81,16 @@ class LanguageController
 
     #[Route('/language/{id}', methods: ['PATCH'])]
     #[ScopeRequired(Scope::LANGUAGES_WRITE)]
-    public function updateLanguage(
+    #[OA\Patch(
+        description: 'Updates a language of the blog.',
+        summary: 'Update a language',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated language.',
+        content: new Model(type: LanguageObject::class),
+    )]
+    public function update(
         #[MapBlogEntity] Language $language,
         #[MapRequestPayload] UpdateLanguageInput $input,
     ): JsonResponse {
@@ -81,7 +110,12 @@ class LanguageController
 
     #[Route('/language/{id}', methods: ['DELETE'])]
     #[ScopeRequired(Scope::LANGUAGES_WRITE)]
-    public function deleteLanguage(#[MapBlogEntity] Language $language): JsonResponse
+    #[OA\Delete(
+        description: 'Deletes a language and its content variants. The primary language cannot be deleted.',
+        summary: 'Delete a language',
+    )]
+    #[OA\Response(response: 200, description: 'The language was deleted.')]
+    public function delete(#[MapBlogEntity] Language $language): JsonResponse
     {
         if ($language->isPrimary()) {
             throw new UnprocessableEntityHttpException('Cannot delete the primary language');

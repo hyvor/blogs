@@ -20,7 +20,7 @@ class UrlDataController
 
     #[Route('/url-data', methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_WRITE)]
-    public function getData(
+    public function get(
         #[MapQueryString] GetUrlDataInput $input,
     ): JsonResponse {
         try {

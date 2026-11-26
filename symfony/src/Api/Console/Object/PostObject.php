@@ -19,12 +19,12 @@ class PostObject
     public ?string $code_head;
     public ?string $code_foot;
 
-    /** @var PostVariantSummaryObject[] */
+    /** @var list<PostVariantSummaryObject> */
     public array $variants;
 
-    /** @var TagObject[] */
+    /** @var list<TagObject> */
     public array $tags;
-    /** @var UserObject[] */
+    /** @var list<UserObject> */
     public array $authors;
 
     public function __construct(

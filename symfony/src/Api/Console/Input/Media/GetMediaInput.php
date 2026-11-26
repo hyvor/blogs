@@ -10,7 +10,7 @@ class GetMediaInput
 
     public ?string $search = null;
 
-    /** @var string[]|null */
+    /** @var list<string>|null */
     public ?array $extensions = null;
 
     public ?string $type = null;

@@ -8,6 +8,8 @@ use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Object\ExportObject;
 use App\Entity\Enum\ExportFormat;
 use App\Service\Export\ExportService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,7 +24,16 @@ class ExportController
 
     #[Route('/data/exports', methods: ['GET'])]
     #[ScopeRequired(Scope::EXPORT_MANAGE)]
-    public function getExports(): JsonResponse
+    #[OA\Get(
+        description: 'Returns the data exports of the blog.',
+        summary: 'List exports',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of exports.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: ExportObject::class))),
+    )]
+    public function list(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
 
@@ -36,7 +47,16 @@ class ExportController
 
     #[Route('/data/export', methods: ['POST'])]
     #[ScopeRequired(Scope::EXPORT_MANAGE)]
-    public function export(): JsonResponse
+    #[OA\Post(
+        description: 'Starts a new export of the blog data. The export is processed in the background.',
+        summary: 'Create an export',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the created export.',
+        content: new Model(type: ExportObject::class),
+    )]
+    public function create(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
 
