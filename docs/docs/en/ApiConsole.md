@@ -107,9 +107,8 @@ Endpoints:
 - `PATCH /post/{id}` - Update a post/page
 - `DELETE /post/{id}` - Delete a post/page
 - `POST /post/{id}/variant` - Create a post variant
-- `PATCH /post/{id}/variant` - Update a post variant
-- `GET /post/{id}/variant/content` - Get variant content as markdown, HTML, or JSON
-- `PUT /post/{id}/variant/content` - Replace variant content from markdown, HTML, or JSON
+- `GET /post/{id}/variant` - Get a post variant with its content as markdown, HTML, or JSON
+- `PATCH /post/{id}/variant` - Update a post variant (and its content)
 - `POST /post/{id}/variant/publish` - Publish a post variant
 - `POST /post/{id}/variant/unpublish` - Unpublish a post variant
 - `DELETE /post/{id}/variant` - Delete a post variant
@@ -212,6 +211,27 @@ type Request = {
 type Response = PostVariant;
 ```
 
+<h4 id="get-post-variant">Get a post variant</h4>
+
+`GET /post/{id}/variant`
+
+```ts
+type Request = {
+	language_id?: number; // defaults to the primary language
+	format?: 'markdown' | 'html' | 'json'; // default: markdown
+};
+type Response = {
+	variant: PostVariant;
+	document: {
+		format: 'markdown' | 'html' | 'json';
+		content: string;
+		version: number;
+	};
+};
+```
+
+`document.content` is the current working content (the draft, which may be ahead of what is published) in the requested format. `json` is the raw ProseMirror JSON. Pass `document.version` as `base_version` when updating to avoid overwriting concurrent edits. Requires `posts.read` scope.
+
 <h4 id="update-post-variant">Update a post variant</h4>
 
 `PATCH /post/{id}/variant`
@@ -220,58 +240,19 @@ type Response = PostVariant;
 type Request = {
 	language_id: number;
 	slug?: string; // max 255 chars
-	content?: string | null;
-	content_unsaved?: string | null;
 	title?: string | null; // max 255 chars
-	description?: string | null; // max 255 chars
+	description?: string | null; // max 350 chars
+	content?: string; // replaces the whole draft content
+	format?: 'markdown' | 'html' | 'json'; // format of `content`. default: markdown
+	base_version?: number | null; // `document.version` from GET /post/{id}/variant
 };
 type Response = PostVariant;
 ```
 
-`content` and `content_unsaved` should be in ProseMirror JSON format. See [Get ProseMirror JSON endpoint](/docs/api-console#get-prosemirror-json) to convert HTML to ProseMirror JSON.
+`content` replaces the whole draft document. It does not publish it - use [Publish](/docs/api-console#publish-post-variant) afterwards. Editors that have the post open receive the new document live.
 
-<h4 id="get-post-variant-content">Get post variant content</h4>
-
-`GET /post/{id}/variant/content`
-
-```ts
-type Request = {
-	language_code?: string; // defaults to the primary language
-	format?: 'markdown' | 'html' | 'json'; // default: markdown
-};
-type Response = {
-	post_variant_id: number;
-	format: 'markdown' | 'html' | 'json';
-	content: string;
-	version: number;
-};
-```
-
-Returns the current working content (the draft, which may be ahead of what is published) of a variant in the requested format. `json` is the raw ProseMirror JSON. `version` can be passed to `PUT` to avoid overwriting concurrent edits. Requires `posts.read` scope.
-
-<h4 id="update-post-variant-content">Update post variant content</h4>
-
-`PUT /post/{id}/variant/content`
-
-```ts
-type Request = {
-	language_code?: string; // defaults to the primary language
-	format?: 'markdown' | 'html' | 'json'; // default: markdown
-	content: string;
-	version?: number; // `version` from GET
-};
-type Response = {
-	post_variant_id: number;
-	version: number;
-	variant: PostVariant;
-};
-```
-
-Replaces the whole content of a variant. Editors with the post open receive the new document live. This does not publish the content - use [Publish](/docs/api-console#publish-post-variant) or update-content afterwards.
-
-- If `version` is given and the document has changed since, the endpoint returns `409` with `message: "version_mismatch"`. Fetch the content again and retry. If omitted, the content is overwritten.
-- Returns `422` if the content cannot be parsed. Markdown supports headings, lists, tables, code blocks, images, links, and basic marks; HTML is sanitized.
-- Requires `posts.write` scope.
+- `format` can be `markdown`, `html` (sanitized), or `json` ([ProseMirror JSON](/docs/api-console#get-prosemirror-json)). Unparseable content returns `422`.
+- If `base_version` is set and the document has changed since that version, the request fails with `409` (`message: "version_mismatch"`) and **nothing** is updated. Fetch the variant again and retry. If `base_version` is null or omitted, `content` overwrites the document.
 
 <h4 id="publish-post-variant">Publish a post variant</h4>
 
