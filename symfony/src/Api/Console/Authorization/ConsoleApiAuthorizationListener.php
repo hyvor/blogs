@@ -41,7 +41,7 @@ class ConsoleApiAuthorizationListener
     public function onController(ControllerEvent $event): void
     {
         // @codeCoverageIgnoreStart
-        if (!str_starts_with($event->getRequest()->getPathInfo(), '/api/console/v0')) {
+        if (!str_starts_with(rawurldecode($event->getRequest()->getPathInfo()), '/api/console/v0')) {
             return;
         }
         if (!$event->isMainRequest()) {
