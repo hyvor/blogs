@@ -5,9 +5,10 @@ namespace App\Tests\Service\Route;
 use App\Domains\Route\PermalinkRepository;
 use App\Entity\Blog;
 use App\Entity\CustomDomain;
-use App\Entity\Enum\BlogHostingAt;
+use App\Service\Media\BlogIdEncoder;
 use App\Service\Route\PermalinkService;
 use App\Tests\Factory\BlogFactory;
+use App\Tests\Factory\CustomDomainFactory;
 use App\Tests\Factory\LanguageFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\PostVariantFactory;
@@ -30,7 +31,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_url_subdomain(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -43,7 +43,6 @@ class PermalinkServiceTest extends KernelTestCase {
     {
         $this->setEnvVar('DELIVERY_URL', '');
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -55,7 +54,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_url_custom_domain(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::DOMAIN);
         $blog->setCustomDomain(new CustomDomain()->setDomain('supun.io'));
 
         $this->assertSame(
@@ -70,7 +68,6 @@ class PermalinkServiceTest extends KernelTestCase {
         $this->setEnvVar('TLS_MODE', 'disabled');
 
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::DOMAIN);
         $blog->setCustomDomain(new CustomDomain()->setDomain('supun.io'));
 
         $this->assertSame(
@@ -85,7 +82,6 @@ class PermalinkServiceTest extends KernelTestCase {
         $this->setEnvVar('TLS_MODE', 'disabled');
 
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -94,16 +90,27 @@ class PermalinkServiceTest extends KernelTestCase {
         );
     }
 
-    public function test_blog_url_self_hosting(): void
+    public function test_blog_url_uses_hosting_url(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SELF);
-        $blog->setHostingUrl('https://supun.io');
+        $blog->setSubdomain('supun');
+        $blog->setHostingUrl('https://supun.io/blog');
 
-        $this->assertSame(
-            'https://supun.io',
-            $this->getPermalinkService()->getBlogUrl($blog)
-        );
+        $this->assertSame('https://supun.io/blog', $this->getPermalinkService()->getBlogUrl($blog));
+        $this->assertSame('https://supun.io/blog/hello', $this->getPermalinkService()->getBlogUrlWithPath($blog, '/hello'));
+        // where Hyvor Blogs serves the blog ignores the hosting URL
+        $this->assertSame('https://supun.hyvorblogs.io', $this->getPermalinkService()->getBlogDeliveryUrl($blog));
+    }
+
+    public function test_blog_url_uses_hosting_url_with_custom_domain(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'supun', 'hosting_url' => 'https://supun.io/blog']);
+        $customDomain = CustomDomainFactory::createActiveFor($blog, 'blog.supun.io');
+        $blog->setCustomDomain($customDomain);
+
+        $this->assertSame('https://supun.io/blog', $this->getPermalinkService()->getBlogUrl($blog));
+        $this->assertSame('https://blog.supun.io', $this->getPermalinkService()->getBlogDeliveryUrl($blog));
+        $this->assertSame('https://supun.hyvorblogs.io', $this->getPermalinkService()->getBlogSubdomainUrl($blog));
     }
 
     // isLinkInBlog ============
@@ -111,7 +118,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_is_link_in_blog(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertTrue(
@@ -128,7 +134,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_url_with_path(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $this->assertSame(
@@ -157,7 +162,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_permalink_primary_language(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $language = new \App\Entity\Language();
@@ -173,7 +177,6 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_blog_permalink_non_primary_language(): void
     {
         $blog = new Blog();
-        $blog->setHostingAt(BlogHostingAt::SUBDOMAIN);
         $blog->setSubdomain('supun');
 
         $language = new \App\Entity\Language();
@@ -206,7 +209,6 @@ class PermalinkServiceTest extends KernelTestCase {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
             [
                 'subdomain' => 'supun',
-                'hosting_at' => BlogHostingAt::SUBDOMAIN
             ],
             routes: [
                 [
@@ -255,7 +257,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_post_variant_permalink_uses_page_route_for_pages(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'post',
@@ -297,7 +299,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_tag_permalink_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'tag',
@@ -329,7 +331,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_tag_permalink_non_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'tag',
@@ -364,7 +366,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_author_permalink_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'author',
@@ -396,7 +398,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_author_permalink_non_primary_language(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: [
                 [
                     'name' => 'author',
@@ -430,7 +432,7 @@ class PermalinkServiceTest extends KernelTestCase {
     public function test_get_media_asserts_permalinks(): void
     {
         $blog = BlogFactory::createOneWithLanguageAndRoutes(
-            ['subdomain' => 'supun', 'hosting_at' => BlogHostingAt::SUBDOMAIN],
+            ['subdomain' => 'supun'],
             routes: []
         );
 
@@ -439,13 +441,8 @@ class PermalinkServiceTest extends KernelTestCase {
         $media->setName('image.png');
 
         $this->assertSame(
-            'https://supun.hyvorblogs.io/media/image.png',
+            'https://blogs.hyvor.com/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.png',
             $this->getPermalinkService()->getMediaPermalink($media, $blog)
-        );
-
-        $this->assertSame(
-            '/media/image.png',
-            $this->getPermalinkService()->getMediaPermalink($media, $blog, onlyPath: true)
         );
 
         $this->assertSame(
@@ -457,6 +454,91 @@ class PermalinkServiceTest extends KernelTestCase {
             '/assets/image.png',
             $this->getPermalinkService()->getAssetPermalink('image.png', $blog, onlyPath: true)
         );
+    }
+
+    // media ==========
+
+    private function createMedia(Blog $blog, string $name = 'image.png'): \App\Entity\Media
+    {
+        $media = new \App\Entity\Media();
+        $media->setBlog($blog);
+        $media->setName($name);
+        return $media;
+    }
+
+    public function test_media_permalink_does_not_depend_on_blog_hosting(): void
+    {
+        $blog = BlogFactory::createOne([
+            'hosting_url' => 'https://example.com/blog',
+        ]);
+        $encoded = BlogIdEncoder::encode($blog->getId());
+
+        $this->assertSame('https://blogs.hyvor.com/media', $this->getPermalinkService()->getMediaBaseUrl());
+        $this->assertSame("https://blogs.hyvor.com/media/$encoded", $this->getPermalinkService()->getMediaBlogBaseUrl($blog));
+        $this->assertSame(
+            "https://blogs.hyvor.com/media/$encoded/image.png",
+            $this->getPermalinkService()->getMediaPermalink($this->createMedia($blog), $blog)
+        );
+    }
+
+    public function test_media_permalink_with_media_domain(): void
+    {
+        $this->setEnvVar('MEDIA_URL', 'https://media.hyvorblogs.io');
+        $blog = BlogFactory::createOne();
+        $encoded = BlogIdEncoder::encode($blog->getId());
+
+        $this->assertSame('https://media.hyvorblogs.io', $this->getPermalinkService()->getMediaBaseUrl());
+        $this->assertSame(
+            "https://media.hyvorblogs.io/$encoded/image.png",
+            $this->getPermalinkService()->getMediaPermalink($this->createMedia($blog), $blog)
+        );
+    }
+
+    public function test_media_permalink_with_http_media_url_and_trailing_slash(): void
+    {
+        $this->setEnvVar('MEDIA_URL', 'http://media.hyvorblogs.io/');
+        $blog = BlogFactory::createOne();
+
+        $this->assertSame('http://media.hyvorblogs.io', $this->getPermalinkService()->getMediaBaseUrl());
+        $this->assertSame(
+            'http://media.hyvorblogs.io/' . BlogIdEncoder::encode($blog->getId()) . '/image.png',
+            $this->getPermalinkService()->getMediaPermalink($this->createMedia($blog), $blog)
+        );
+    }
+
+    public function test_media_permalink_tls_disabled(): void
+    {
+        $this->setEnvVar('TLS_MODE', 'disabled');
+        $blog = BlogFactory::createOne();
+
+        $this->assertSame(
+            'http://blogs.hyvor.com/media/' . BlogIdEncoder::encode($blog->getId()) . '/image.png',
+            $this->getPermalinkService()->getMediaPermalink($this->createMedia($blog), $blog)
+        );
+    }
+
+    public function test_get_media_name_from_url(): void
+    {
+        $blog = BlogFactory::createOne(['subdomain' => 'supun']);
+        $otherBlog = BlogFactory::createOne();
+        $encoded = BlogIdEncoder::encode($blog->getId());
+        $service = $this->getPermalinkService();
+
+        // current format
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/image.png"));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/image.png/500w"));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/image.png?v=1"));
+
+        // legacy format
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, 'https://supun.hyvorblogs.io/media/image.png'));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, 'https://supun.hyvorblogs.io/media/image.png/500w'));
+        $this->assertSame('image.png', $service->getMediaNameFromUrl($blog, '/media/image.png'));
+
+        // not a media URL of the blog
+        $this->assertNull($service->getMediaNameFromUrl($blog, "https://blogs.hyvor.com/media/$encoded/"));
+        $this->assertNull($service->getMediaNameFromUrl($blog, 'https://blogs.hyvor.com/media/' . BlogIdEncoder::encode($otherBlog->getId()) . '/image.png'));
+        $this->assertNull($service->getMediaNameFromUrl($blog, 'https://supun.hyvorblogs.io/image.png'));
+        $this->assertNull($service->getMediaNameFromUrl($blog, 'https://example.com/media/image.png'));
     }
 
     // validatePostPermalink ==========

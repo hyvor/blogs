@@ -62,6 +62,8 @@ The `content` field is HTML output by the Hyvor Blogs editor. Render it directly
 
 <h2 id="routing">3. Routing</h2>
 
+Set the **Hosting URL** (e.g. `https://example.com/blog`) in Console &rarr; Settings &rarr; Hosting, so that URLs returned by the Data API (like `post.url`) point to your frontend. Keep your routes consistent with the blog's [routes](/docs/routes) so that those URLs resolve.
+
 Because you're not using a Hyvor Blogs theme, **you own the URL structure**. A common pattern is a dynamic route like `/blog/[slug]` in your app that calls `/post?slug=...` to render the page, and a listing route like `/blog` that calls `/posts` to build an index. Since Hyvor Blogs isn't serving these pages, features that depend on Hyvor Blogs generating pages for you - like automatic [redirects](/docs/redirects), [custom routes](/docs/routes), or theme-level [SEO](/docs/seo) - don't apply; you're responsible for SEO tags, sitemaps, and redirects yourself in your own app.
 
 <h2 id="build-vs-request-time">4. Build-time vs. request-time fetching</h2>

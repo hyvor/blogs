@@ -80,6 +80,11 @@ class BlogService
             $blog->setHostingRedirectSubdomain($input->hosting_redirect_subdomain);
         }
 
+        if ($input->hosting_url !== null) {
+            $hostingUrl = rtrim(trim($input->hosting_url), '/');
+            $blog->setHostingUrl($hostingUrl !== '' ? $hostingUrl : null);
+        }
+
         $meta = clone $blog->getMeta();
 
         if ($input->embeddable !== null) {

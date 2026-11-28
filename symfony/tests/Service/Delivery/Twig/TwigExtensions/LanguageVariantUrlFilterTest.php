@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\Twig\TwigExtensions;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\Delivery\Twig\TwigExtensions;
 use App\Service\Delivery\Twig\TwigRendererService;
 use App\Service\Route\PermalinkService;
@@ -25,7 +24,7 @@ class LanguageVariantUrlFilterTest extends KernelTestCase
     public function test_in_normal_pages(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage(
-            blogAttrs: ['hosting_at' => BlogHostingAt::SUBDOMAIN],
+            blogAttrs: [],
             languageAttrs: ['code' => 'en'],
         );
         LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
@@ -47,7 +46,7 @@ class LanguageVariantUrlFilterTest extends KernelTestCase
     public function test_in_posts_tags_authors(): void
     {
         $blog = BlogFactory::createOneWithPrimaryLanguage(
-            blogAttrs: ['hosting_at' => BlogHostingAt::SUBDOMAIN],
+            blogAttrs: [],
             languageAttrs: ['code' => 'en'],
         );
         LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);

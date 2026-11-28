@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Entity\Meta\BlogMeta;
@@ -56,7 +55,6 @@ class IndexTest extends KernelTestCase
         $meta->cover_url = 'https://example.com/cover.jpg';
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
             'subdomain' => 'myblog',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'meta' => $meta,
         ], variants: false);
         BlogVariantFactory::createManyForBlogWithAllLanguages($blog, attributes: [

@@ -76,7 +76,7 @@
 		}
 		if (domainTrimmed.match('/')) {
 			error =
-				'Custom Domain cannot contain /. Use self-hosting to host your blog in a subdirectory';
+				'Custom Domain cannot contain /. Use the hosting URL to host your blog in a subdirectory';
 			return;
 		}
 		if (!HOSTNAME_REGEX.test(domainTrimmed)) {

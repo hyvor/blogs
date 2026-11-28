@@ -4,7 +4,6 @@ namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\PostsController;
 use App\Api\Data\Factory\PostObjectFactory;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
@@ -23,7 +22,7 @@ class PostTest extends ApiTestCase
      */
     private function createBlogWithPost(): array
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $lang1 = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         $lang2 = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
@@ -72,7 +71,7 @@ class PostTest extends ApiTestCase
 
     public function test_requires_integer_id(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
 
         $this->dataApi($blog, '/post', ['id' => 'something']);
@@ -125,7 +124,7 @@ class PostTest extends ApiTestCase
 
     public function test_returns_404_for_missing_variant(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $lang1 = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         $lang2 = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);
@@ -145,7 +144,7 @@ class PostTest extends ApiTestCase
 
     public function test_does_not_return_unpublished_posts(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $lang = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
 
         $post = PostFactory::createOne(['blog' => $blog, 'is_page' => false]);

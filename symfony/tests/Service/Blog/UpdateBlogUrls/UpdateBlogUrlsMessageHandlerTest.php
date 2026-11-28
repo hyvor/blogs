@@ -7,7 +7,7 @@ use App\Entity\Post;
 use App\Entity\PostVariant;
 use App\Entity\User;
 use App\Service\Blog\Message\ReRenderPostHtmlMessage;
-use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlEvent;
+use App\Service\Blog\UpdateBlogUrls\Updater\UpdaterInterface;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessage;
 use App\Service\Blog\UpdateBlogUrls\UpdateBlogUrlsMessageHandler;
 use App\Tests\Factory\BlogFactory;
@@ -30,21 +30,21 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
     }
 
     /**
-     * @param list<Key> $lockKeys
+     * Replaces the https://old.com prefix with https://new.com (to test the generic URL updating of the handler)
      */
-    private function hostingMessage(
-        Blog $blog,
-        string $oldUrl = 'https://old.com',
-        string $newUrl = 'https://new.com',
-        array $lockKeys = [],
-    ): UpdateBlogUrlsMessage {
-        return new UpdateBlogUrlsMessage(
-            blogId: $blog->getId(),
-            event: UpdateBlogUrlEvent::HOSTING_CHANGED,
-            lockKeys: $lockKeys,
-            blogOldUrl: $oldUrl,
-            blogNewUrl: $newUrl,
-        );
+    private function updateWithPrefix(Blog $blog, bool $updateLinks = true): void
+    {
+        $updater = new class implements UpdaterInterface {
+            public function update(string $url): false|string
+            {
+                if (!str_starts_with($url, 'https://old.com')) {
+                    return false;
+                }
+                return 'https://new.com' . substr($url, strlen('https://old.com'));
+            }
+        };
+
+        $this->handler()->updateBlogUrls($blog, $updater, $updateLinks);
     }
 
     /**
@@ -58,7 +58,6 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
     ): UpdateBlogUrlsMessage {
         return new UpdateBlogUrlsMessage(
             blogId: $blog->getId(),
-            event: UpdateBlogUrlEvent::MEDIA_URL_CHANGED,
             lockKeys: $lockKeys,
             mediaId: 1,
             mediaOldUrl: $oldUrl,
@@ -123,14 +122,14 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
 
         $this->handler()(new UpdateBlogUrlsMessage(
             blogId: 999999999,
-            event: UpdateBlogUrlEvent::HOSTING_CHANGED,
             lockKeys: [],
-            blogOldUrl: 'https://old.com',
-            blogNewUrl: 'https://new.com',
+            mediaId: 1,
+            mediaOldUrl: 'https://old.com/a.png',
+            mediaNewUrl: 'https://new.com/a.png',
         ));
     }
 
-    public function test_hosting_changed_updates_blog_meta_urls_matching_prefix(): void
+    public function test_updates_blog_meta_urls(): void
     {
         $blog = BlogFactory::createOne();
         $meta = clone $blog->getMeta();
@@ -140,7 +139,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
         $blog->setMeta($meta);
         $this->getEm()->flush();
 
-        $this->handler()($this->hostingMessage($blog));
+        $this->updateWithPrefix($blog);
 
         $updated = $this->getEm()->find(Blog::class, $blog->getId());
         $this->assertNotNull($updated);
@@ -173,7 +172,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
         $this->assertNull($updated->getMeta()->icon_url);
     }
 
-    public function test_hosting_changed_updates_post_featured_image_and_variant_content_with_links(): void
+    public function test_updates_post_featured_image_and_variant_content_with_links(): void
     {
         $blog = BlogFactory::createOne();
         $language = LanguageFactory::createOneFor($blog);
@@ -190,7 +189,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
         $emptyPost = PostFactory::createOneFor($blog);
         $emptyVariant = PostVariantFactory::createOneFor($emptyPost, [], $language);
 
-        $this->handler()($this->hostingMessage($blog));
+        $this->updateWithPrefix($blog);
 
         $updatedPost = $this->getEm()->find(Post::class, $postWithData->getId());
         $this->assertNotNull($updatedPost);
@@ -266,7 +265,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
         ], $language);
 
         // should not throw, even though one variant's content is unparsable
-        $this->handler()($this->hostingMessage($blog));
+        $this->updateWithPrefix($blog);
 
         $updatedBrokenVariant = $this->getEm()->find(PostVariant::class, $brokenVariant->getId());
         $this->assertNotNull($updatedBrokenVariant);
@@ -298,7 +297,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
             'picture_url' => null,
         ]);
 
-        $this->handler()($this->hostingMessage($blog));
+        $this->updateWithPrefix($blog);
 
         $updatedMatching = $this->getEm()->find(User::class, $matchingUser->getId());
         $this->assertNotNull($updatedMatching);
@@ -334,7 +333,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
             ]);
         }
 
-        $this->handler()($this->hostingMessage($blog));
+        $this->updateWithPrefix($blog);
 
         $updatedPosts = $this->getEm()->getRepository(Post::class)->findBy(['blog' => $blog]);
         $this->assertCount($count, $updatedPosts);
@@ -369,7 +368,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
         $this->assertFalse($lockFactory->createLockFromKey($unacquiredKey, autoRelease: false)->isAcquired());
 
         // should not throw despite one of the keys never having been acquired
-        $this->handler()($this->hostingMessage($blog, lockKeys: [$acquiredKey, $unacquiredKey]));
+        $this->handler()($this->mediaMessage($blog, 'https://old.com/a.png', 'https://new.com/a.png', lockKeys: [$acquiredKey, $unacquiredKey]));
 
         $this->assertFalse($lockFactory->createLockFromKey($acquiredKey, autoRelease: false)->isAcquired());
     }
@@ -378,7 +377,7 @@ class UpdateBlogUrlsMessageHandlerTest extends KernelTestCase
     {
         $blog = BlogFactory::createOne();
 
-        $this->handler()($this->hostingMessage($blog));
+        $this->handler()($this->mediaMessage($blog, 'https://old.com/a.png', 'https://new.com/a.png'));
 
         $dispatched = $this->transport('async')->dispatched();
         $dispatched->assertContains(ReRenderPostHtmlMessage::class, 1);

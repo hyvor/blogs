@@ -3,7 +3,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
@@ -37,7 +36,6 @@ final class BlogFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
             'hyvor_user_id' => self::faker()->randomNumber(),
             'blocked_at' => null,
             'organization_id' => self::faker()->randomNumber(),

@@ -3,7 +3,6 @@
 namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\PostsController;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\PostVariant;
 use App\Tests\Case\ApiTestCase;
@@ -32,7 +31,7 @@ class PostsTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $this->blog = BlogFactory::createOne();
         $this->primaryLanguage = LanguageFactory::createOnePrimaryFor($this->blog, ['code' => 'en']);
         $this->secondaryLanguage = LanguageFactory::createOneFor($this->blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'post', 'match' => '/{slug}', 'template' => 'post', 'is_enabled' => true]);

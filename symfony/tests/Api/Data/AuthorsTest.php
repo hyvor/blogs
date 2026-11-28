@@ -6,7 +6,6 @@ use App\Api\Data\Controller\AuthorsController;
 use App\Api\Data\Factory\AuthorObjectFactory;
 use App\Api\Data\Object\AuthorObject;
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Language;
 use App\Entity\User;
@@ -33,7 +32,7 @@ class AuthorsTest extends ApiTestCase
     {
         parent::setUp();
 
-        $this->blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $this->blog = BlogFactory::createOne();
         $this->lang1 = LanguageFactory::createOnePrimaryFor($this->blog, ['code' => 'en']);
         $this->lang2 = LanguageFactory::createOneFor($this->blog, ['code' => 'fr', 'is_primary' => false]);
         RouteFactory::createOne(['blog' => $this->blog, 'name' => 'author', 'match' => '/author/{slug}', 'template' => 'author', 'is_enabled' => true]);

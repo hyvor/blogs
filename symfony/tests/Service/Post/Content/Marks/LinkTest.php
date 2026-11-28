@@ -4,7 +4,6 @@ namespace App\Tests\Service\Post\Content\Marks;
 
 use App\Entity\Blog;
 use App\Entity\Enum\Blog\SeoExternalLinksFollow;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Meta\BlogMeta;
 use App\Service\Post\Content\Marks\Link;
 use App\Service\Post\Content\PostContentService;
@@ -60,7 +59,6 @@ class LinkTest extends KernelTestCase
     public function test_internal_link(): void
     {
         $blog = (new Blog())->setSubdomain('test');
-        $blog->setHostingAt(BlogHostingAt::SELF);
         $blog->setHostingUrl('https://example.com');
 
         $result = $this->service()->getHtml(self::DEFAULT_DOC, $blog);

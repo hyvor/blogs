@@ -70,12 +70,15 @@ export function updateBlogStoreVariant(
 }
 
 export function updateHostingInfoStore(updates: HostingInfo) {
-	blogStore.update((blog) => ({
-		...blog,
-		hosting_at: updates.hosting_at,
-		hosting_domain: updates.custom_domain?.domain ?? null,
-		hosting_url: updates.hosting_url ?? null
-	}));
+	// these are saved on the server, so the original is updated as well
+	updateBlogStore(
+		{
+			hosting_domain: updates.custom_domain?.domain ?? null,
+			hosting_url: updates.hosting_url,
+			url: updates.url
+		},
+		true
+	);
 	hostingInfoStore.set(updates);
 }
 

@@ -3,7 +3,6 @@
 namespace App\Tests\Service\Delivery\PathMatcher\NonPost;
 
 use App\Entity\Blog;
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\ThemeFileFolder;
 use App\Service\Delivery\Dto\DeliveryFileType;
 use App\Service\Delivery\Dto\DeliveryResponseType;
@@ -51,7 +50,6 @@ class AuthorTest extends KernelTestCase
 
         $blog = BlogFactory::createOneWithLanguageAndRoutes([
             'subdomain' => 'example',
-            'hosting_at' => BlogHostingAt::SUBDOMAIN,
         ]);
         ThemeFileFactory::createTemplateTwig($blog, 'author.twig', $content);
         $user = UserFactory::createOne(['blog' => $blog, 'slug' => 'my-author']);

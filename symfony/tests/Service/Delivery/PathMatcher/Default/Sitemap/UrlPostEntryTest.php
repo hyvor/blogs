@@ -2,7 +2,6 @@
 
 namespace App\Tests\Service\Delivery\PathMatcher\Default\Sitemap;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\PostVariantStatus;
 use App\Entity\Post;
 use App\Service\Delivery\Processor\Sitemap\UrlPostEntry;
@@ -26,7 +25,7 @@ class UrlPostEntryTest extends KernelTestCase
 
     public function test_generates_url_entry_with_language_variants_and_images(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $lang1 = LanguageFactory::createOne([
             'blog' => $blog,
             'code' => 'en',

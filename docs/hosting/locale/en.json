@@ -7,6 +7,7 @@
     "deploy": "Deploy",
     "reverseProxy": "Reverse Proxy",
     "env": "Environment Variables",
-    "deliveryDomain": "Delivery Domain"
+    "deliveryDomain": "Delivery Domain",
+    "mediaDomain": "Media Domain"
   }
 }

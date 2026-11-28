@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Entity\Enum\BlogType;
 use App\Entity\Meta\BlogMeta;
 use App\Repository\BlogRepository;
@@ -46,9 +45,6 @@ class Blog
 
     #[ORM\Column(length: 255, enumType: BlogType::class, options: ['default' => 'default'])]
     private BlogType $type = BlogType::DEFAULT;
-
-    #[ORM\Column(length: 255, enumType: BlogHostingAt::class)]
-    private BlogHostingAt $hosting_at = BlogHostingAt::SUBDOMAIN;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hosting_url = null;
@@ -216,17 +212,6 @@ class Blog
     public function setType(BlogType $type): static
     {
         $this->type = $type;
-        return $this;
-    }
-
-    public function getHostingAt(): BlogHostingAt
-    {
-        return $this->hosting_at;
-    }
-
-    public function setHostingAt(BlogHostingAt $hosting_at): static
-    {
-        $this->hosting_at = $hosting_at;
         return $this;
     }
 

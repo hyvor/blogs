@@ -2,7 +2,6 @@
 
 namespace App\Api\Delivery;
 
-use App\Entity\Enum\BlogHostingAt;
 use App\Service\AppConfig;
 use App\Service\Blog\BlogService;
 use App\Service\Delivery\BlogHomepageRedirector;
@@ -58,8 +57,10 @@ class SubdomainController
         }
 
         if (
-            $blog->getHostingAt() !== BlogHostingAt::SUBDOMAIN &&
-            $blog->getHostingRedirectSubdomain()
+            ($blog->getCustomDomain() !== null || $blog->getHostingUrl() !== null) &&
+            $blog->getHostingRedirectSubdomain() &&
+            // legacy media URLs ({blogUrl}/media/...) are always served, as the final host (ex: headless) may not serve them
+            !str_starts_with($path, 'media/')
         ) {
             return new RedirectResponse($this->permalinkService->getBlogUrlWithPath($blog, $path), 302);
         }

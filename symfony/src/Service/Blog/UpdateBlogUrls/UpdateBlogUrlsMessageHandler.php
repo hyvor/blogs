@@ -7,6 +7,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Service\Blog\BlogService;
 use App\Service\Blog\Message\ReRenderPostHtmlMessage;
+use App\Service\Blog\UpdateBlogUrls\Updater\MediaUpdater;
 use App\Service\Blog\UpdateBlogUrls\Updater\UpdaterInterface;
 use App\Service\Post\Content\DocUrlUpdater;
 use App\Service\Post\Content\PostContentService;
@@ -40,12 +41,7 @@ class UpdateBlogUrlsMessageHandler
             throw new \RuntimeException("Blog with ID {$message->blogId} not found.");
         }
 
-        $updater = match ($message->event) {
-            UpdateBlogUrlEvent::HOSTING_CHANGED => new Updater\HostingUpdater((string) $message->blogOldUrl, (string) $message->blogNewUrl),
-            UpdateBlogUrlEvent::MEDIA_URL_CHANGED => new Updater\MediaUpdater((string) $message->mediaOldUrl, (string) $message->mediaNewUrl),
-        };
-
-        $this->updateBlogUrls($blog, $updater, $message->event === UpdateBlogUrlEvent::HOSTING_CHANGED);
+        $this->updateBlogUrls($blog, new MediaUpdater($message->mediaOldUrl, $message->mediaNewUrl));
 
         foreach ($message->lockKeys as $lockKey) {
             $lock = $this->lockFactory->createLockFromKey($lockKey);
@@ -56,10 +52,7 @@ class UpdateBlogUrlsMessageHandler
 
         /**
          * dispatches asynchronously to re-render post HTML
-         * in hosting change, this message handler is called synchronously, because, it is critical to update
-         * all post content in a single transaction.
-         *
-         * however, we can safely recalculate post HTML asynchronously, because, when
+         * we can safely recalculate post HTML asynchronously, because, when
          * we have content and content_unsaved saved correctly, the post HTML can be re-rendered later without any issues.
          * if it fails, we can retry anytime.
          */

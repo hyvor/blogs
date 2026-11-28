@@ -4,7 +4,6 @@ namespace App\Tests\Api\Data;
 
 use App\Api\Data\Controller\PostsController;
 use App\Api\Data\DataApiHelper;
-use App\Entity\Enum\BlogHostingAt;
 use App\Tests\Case\ApiTestCase;
 use App\Tests\Factory\BlogFactory;
 use App\Tests\Factory\LanguageFactory;
@@ -26,7 +25,7 @@ class HelperTest extends ApiTestCase
 
     public function test_returns_correct_language(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         $en = LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
         $fr = LanguageFactory::createOneFor($blog, ['code' => 'fr', 'is_primary' => false]);
 
@@ -37,7 +36,7 @@ class HelperTest extends ApiTestCase
 
     public function test_throws_error_if_language_not_found(): void
     {
-        $blog = BlogFactory::createOne(['hosting_at' => BlogHostingAt::SUBDOMAIN]);
+        $blog = BlogFactory::createOne();
         LanguageFactory::createOnePrimaryFor($blog, ['code' => 'en']);
 
         $this->expectException(UnprocessableEntityHttpException::class);
