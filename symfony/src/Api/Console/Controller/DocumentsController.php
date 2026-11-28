@@ -7,7 +7,6 @@ use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Document\CheckpointCollabInput;
 use App\Api\Console\Input\Document\GetDocumentForPostInput;
-use App\Api\Console\Input\Document\GetDocumentForVariantInput;
 use App\Api\Console\Input\Document\SubmitCollabCursorInput;
 use App\Api\Console\Input\Document\SubmitCollabStepsInput;
 use App\Api\Console\Object\PostObjectFactory;
@@ -40,7 +39,7 @@ class DocumentsController
 
     #[Route('/documents/post', requirements: ['id' => Requirement::DIGITS], methods: ['GET'])]
     #[ScopeRequired(Scope::POSTS_READ)]
-    public function getDocumentForPost(
+    public function getForPost(
         #[MapQueryString] GetDocumentForPostInput $input,
     ): JsonResponse
     {

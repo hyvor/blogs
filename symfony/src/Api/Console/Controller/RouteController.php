@@ -12,6 +12,8 @@ use App\Api\Console\Object\RouteObject;
 use App\Entity\Route as RouteEntity;
 use App\Service\Limit;
 use App\Service\Route\RouteService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -26,7 +28,16 @@ class RouteController
 
     #[Route('/routes', methods: ['GET'])]
     #[ScopeRequired(Scope::ROUTES_READ)]
-    public function getRoutes(): JsonResponse
+    #[OA\Get(
+        description: 'Returns the custom routes of the blog.',
+        summary: 'List routes',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of routes.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: RouteObject::class))),
+    )]
+    public function list(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $routes = $this->routeService->getRoutes($blog);
@@ -36,7 +47,16 @@ class RouteController
 
     #[Route('/route', methods: ['POST'])]
     #[ScopeRequired(Scope::ROUTES_WRITE)]
-    public function createRoute(
+    #[OA\Post(
+        description: 'Creates a custom route that maps a path to a template.',
+        summary: 'Create a route',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created route.',
+        content: new Model(type: RouteObject::class),
+    )]
+    public function create(
         #[MapRequestPayload] CreateRouteInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -61,7 +81,16 @@ class RouteController
 
     #[Route('/route/{id}', methods: ['PATCH'])]
     #[ScopeRequired(Scope::ROUTES_WRITE)]
-    public function updateRoute(
+    #[OA\Patch(
+        description: 'Updates a custom route.',
+        summary: 'Update a route',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated route.',
+        content: new Model(type: RouteObject::class),
+    )]
+    public function update(
         #[MapBlogEntity] RouteEntity $route,
         #[MapRequestPayload] UpdateRouteInput $input,
     ): JsonResponse {
@@ -72,7 +101,12 @@ class RouteController
 
     #[Route('/route/{id}', methods: ['DELETE'])]
     #[ScopeRequired(Scope::ROUTES_WRITE)]
-    public function deleteRoute(#[MapBlogEntity] RouteEntity $route): JsonResponse
+    #[OA\Delete(
+        description: 'Deletes a custom route.',
+        summary: 'Delete a route',
+    )]
+    #[OA\Response(response: 200, description: 'The route was deleted.')]
+    public function delete(#[MapBlogEntity] RouteEntity $route): JsonResponse
     {
         $this->routeService->deleteRoute($route);
 

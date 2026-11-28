@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SortNavigationsInput
 {
-    /** @var int[] $ids */
+    /** @var list<int> $ids */
     #[Assert\NotBlank]
     #[Assert\All(new Assert\Type('int'))]
     public array $ids;

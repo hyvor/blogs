@@ -23,12 +23,12 @@ class TagObject
     public ?string $code_foot;
 
     /**
-     * @var TagVariantObject[]
+     * @var list<TagVariantObject>
      */
     public array $variants;
 
     /**
-     * @param TagVariantObject[] $variants
+     * @param list<TagVariantObject> $variants
      */
     public function __construct(Tag $tag, array $variants)
     {

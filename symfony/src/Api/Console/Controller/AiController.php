@@ -7,11 +7,11 @@ use App\Api\Console\Authorization\MapBlogEntity;
 use App\Api\Console\Authorization\Scope;
 use App\Api\Console\Authorization\ScopeRequired;
 use App\Api\Console\Input\Ai\AgentPromptInput;
+use App\Api\Console\Input\Ai\ApplyDocumentChangeInput;
 use App\Api\Console\Input\Ai\GetAiConversationsInput;
 use App\Api\Console\Input\Ai\TranslatePostInput;
 use App\Api\Console\Object\Ai\AiConversationObject;
 use App\Api\Console\Object\Ai\AiMessageObject;
-use App\Api\Console\Object\Ai\ApplyDocumentChangeInput;
 use App\Entity\AiConversation;
 use App\Entity\Enum\AiMessageEventDocumentChangeStatus;
 use App\Entity\Enum\AiMessageEventType;
@@ -20,8 +20,6 @@ use App\Service\Ai\Agent\AiConversationService;
 use App\Service\Ai\Translate\AiPostTranslator;
 use App\Service\Ai\Translate\TranslateException;
 use App\Service\Post\Document\DocumentService;
-use App\Service\Post\Document\Exception\CheckpointClientAheadException;
-use App\Service\Post\Document\Exception\CheckpointClientBehindException;
 use App\Service\Post\Document\Exception\SetContentUnsavedVersionMismatchException;
 use App\Service\Post\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -108,7 +106,7 @@ class AiController extends AbstractController
 
     #[Route('/ai/conversations', methods: ['GET'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function getConversations(
+    public function listConversations(
         #[MapQueryString] GetAiConversationsInput $input,
     ): JsonResponse
     {
@@ -141,7 +139,7 @@ class AiController extends AbstractController
 
     #[Route('/ai/translate/post', methods: ['POST'])]
     #[ScopeRequired(Scope::AI_USE)]
-    public function translate(
+    public function translatePost(
         #[MapRequestPayload] TranslatePostInput $input
     ): JsonResponse
     {

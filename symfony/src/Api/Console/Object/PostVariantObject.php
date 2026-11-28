@@ -19,7 +19,7 @@ class PostVariantObject
     public ?int $content_updated_at;
     public ?int $published_at;
     public ?string $seo_primary_keyword;
-    /** @var string[] */
+    /** @var list<string> */
     public array $seo_secondary_keywords;
     /** @var array<string, mixed> */
     public array $link_analysis;

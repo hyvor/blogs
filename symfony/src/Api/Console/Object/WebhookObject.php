@@ -9,7 +9,7 @@ class WebhookObject
 {
     public int $id;
     public string $url;
-    /** @var string[] */
+    /** @var list<string> */
     public array $events;
     public string $secret;
 

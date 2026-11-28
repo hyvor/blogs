@@ -9,7 +9,7 @@ class GetPostSuggestionsInput
     #[Assert\NotNull]
     public int $language_id;
 
-    /** @var string[] */
+    /** @var list<string> */
     #[Assert\NotNull]
     #[Assert\Count(max: 200)]
     #[Assert\All([new Assert\Length(max: 64)])]

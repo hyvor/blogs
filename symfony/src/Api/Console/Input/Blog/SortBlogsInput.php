@@ -8,7 +8,7 @@ class SortBlogsInput
 {
 
     /**
-     * @var int[]
+     * @var list<int>
      */
     #[Assert\NotBlank]
     #[Assert\All(new Assert\Type('int'))]

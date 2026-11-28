@@ -10,6 +10,7 @@ use App\Api\Console\Input\Media\GetMediaInput;
 use App\Api\Console\Input\Media\SearchUnsplashInput;
 use App\Api\Console\Input\Media\UpdateMediaInput;
 use App\Api\Console\Input\Media\UploadMediaFromUrlInput;
+use App\Api\Console\Object\MediaObject;
 use App\Api\Console\Object\MediaObjectFactory;
 use App\Api\Console\Object\UnsplashImageObject;
 use App\Entity\Media;
@@ -17,8 +18,10 @@ use App\Service\Billing\UsageService;
 use App\Service\Integration\Unsplash\UnsplashSearchException;
 use App\Service\Integration\Unsplash\UnsplashService;
 use App\Service\Limit;
-use App\Service\Media\MediaService;
 use App\Service\Media\MediaException;
+use App\Service\Media\MediaService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +42,16 @@ class MediaController
 
     #[Route('/media', methods: ['GET'])]
     #[ScopeRequired(Scope::MEDIA_MANAGE)]
-    public function getMedia(
+    #[OA\Get(
+        description: 'Returns the media files of the blog.',
+        summary: 'List media',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of media.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: MediaObject::class))),
+    )]
+    public function list(
         #[MapQueryString] GetMediaInput $input = new GetMediaInput(),
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -65,7 +77,17 @@ class MediaController
 
     #[Route('/media', methods: ['POST'])]
     #[ScopeRequired(Scope::MEDIA_UPLOAD)]
-    public function uploadFile(Request $request): JsonResponse
+    #[OA\Post(
+        description: 'Uploads a file to the blog media library. Send the request as `multipart/form-data` with the `file` field, and optionally `post_id` and `name`.',
+        summary: 'Upload a file',
+    )]
+    #[OA\RequestBody(required: true, content: new OA\MediaType(mediaType: 'multipart/form-data', schema: new OA\Schema(required: ['file'], properties: [new OA\Property(property: 'file', type: 'string', format: 'binary'), new OA\Property(property: 'post_id', type: 'integer'), new OA\Property(property: 'name', type: 'string')])))]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the uploaded media.',
+        content: new Model(type: MediaObject::class),
+    )]
+    public function upload(Request $request): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
 
@@ -102,7 +124,16 @@ class MediaController
 
     #[Route('/media/from-url', methods: ['POST'])]
     #[ScopeRequired(Scope::MEDIA_UPLOAD)]
-    public function uploadFileFromUrl(
+    #[OA\Post(
+        description: 'Downloads a file from the given URL and adds it to the blog media library.',
+        summary: 'Upload a file from a URL',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the uploaded media.',
+        content: new Model(type: MediaObject::class),
+    )]
+    public function uploadFromUrl(
         #[MapRequestPayload] UploadMediaFromUrlInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -122,7 +153,16 @@ class MediaController
 
     #[Route('/media/{id}', methods: ['PATCH'])]
     #[ScopeRequired(Scope::MEDIA_MANAGE)]
-    public function updateMedia(
+    #[OA\Patch(
+        description: 'Updates the details of a media file, such as its name.',
+        summary: 'Update media',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated media.',
+        content: new Model(type: MediaObject::class),
+    )]
+    public function update(
         #[MapBlogEntity] Media $media,
         #[MapRequestPayload] UpdateMediaInput $input,
     ): JsonResponse {
@@ -141,7 +181,12 @@ class MediaController
 
     #[Route('/media/{id}', methods: ['DELETE'])]
     #[ScopeRequired(Scope::MEDIA_MANAGE)]
-    public function deleteFile(#[MapBlogEntity] Media $media): JsonResponse
+    #[OA\Delete(
+        description: 'Permanently deletes a media file.',
+        summary: 'Delete media',
+    )]
+    #[OA\Response(response: 200, description: 'The media was deleted.')]
+    public function delete(#[MapBlogEntity] Media $media): JsonResponse
     {
         $this->mediaService->deleteMedia($media);
 

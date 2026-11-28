@@ -25,6 +25,8 @@ use App\Service\Hosting\CustomDomain\InternalCustomDomainVerificationService;
 use App\Service\Hosting\Exception\PendingHostingChangeException;
 use App\Service\Hosting\HostingChangeService;
 use Hyvor\Internal\Bundle\Api\DataCarryingHttpException;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -47,7 +49,16 @@ class HostingController extends AbstractController
 
     #[Route('/hosting', methods: 'GET')]
     #[ScopeRequired(Scope::BLOG_READ)]
-    public function getHostingInfo(): JsonResponse
+    #[OA\Get(
+        description: 'Returns where the blog is hosted, its custom domain (or pending custom domain setup), and any pending hosting change.',
+        summary: 'Get hosting information',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the hosting information.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'delivery_url', type: 'string'), new OA\Property(property: 'hosting_at', type: 'string'), new OA\Property(property: 'hosting_url', type: 'string', nullable: true), new OA\Property(property: 'custom_domain', ref: new Model(type: CustomDomainObject::class), nullable: true), new OA\Property(property: 'custom_domain_intent', ref: new Model(type: CustomDomainIntentObject::class), nullable: true), new OA\Property(property: 'change', ref: new Model(type: HostingChangeObject::class), nullable: true)]),
+    )]
+    public function get(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
         return new JsonResponse($this->getHostingInfoData($blog));
@@ -55,7 +66,16 @@ class HostingController extends AbstractController
 
     #[Route('/hosting/history', methods: 'GET')]
     #[ScopeRequired(Scope::BLOG_READ)]
-    public function getHostingHistory(
+    #[OA\Get(
+        description: 'Returns the history of hosting changes of the blog.',
+        summary: 'List hosting changes',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of hosting changes.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: HostingChangeObject::class))),
+    )]
+    public function listHistory(
         #[MapQueryString] GetHostingHistoryInput $input = new GetHostingHistoryInput(),
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
@@ -91,7 +111,16 @@ class HostingController extends AbstractController
 
     #[Route('/hosting', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
-    public function changeHostingAt(
+    #[OA\Post(
+        description: 'Changes where the blog is hosted. The change may be applied asynchronously.',
+        summary: 'Change the hosting location',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the hosting information.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'delivery_url', type: 'string'), new OA\Property(property: 'hosting_at', type: 'string'), new OA\Property(property: 'hosting_url', type: 'string', nullable: true), new OA\Property(property: 'custom_domain', ref: new Model(type: CustomDomainObject::class), nullable: true), new OA\Property(property: 'custom_domain_intent', ref: new Model(type: CustomDomainIntentObject::class), nullable: true), new OA\Property(property: 'change', ref: new Model(type: HostingChangeObject::class), nullable: true)]),
+    )]
+    public function update(
         #[MapRequestPayload] UpdateHostingInput $input
     ): JsonResponse {
         $blog = $this->authorizationListener->getBlog();
@@ -156,6 +185,15 @@ class HostingController extends AbstractController
 
     #[Route('/hosting/custom-domain', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
+    #[OA\Post(
+        description: 'Starts setting up a custom domain for the blog. The domain becomes active after the DNS records are verified.',
+        summary: 'Set up a custom domain',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the hosting information.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'delivery_url', type: 'string'), new OA\Property(property: 'hosting_at', type: 'string'), new OA\Property(property: 'hosting_url', type: 'string', nullable: true), new OA\Property(property: 'custom_domain', ref: new Model(type: CustomDomainObject::class), nullable: true), new OA\Property(property: 'custom_domain_intent', ref: new Model(type: CustomDomainIntentObject::class), nullable: true), new OA\Property(property: 'change', ref: new Model(type: HostingChangeObject::class), nullable: true)]),
+    )]
     public function createCustomDomain(
         #[MapRequestPayload] CreateCustomDomainInput $input
     ): JsonResponse {
@@ -197,6 +235,11 @@ class HostingController extends AbstractController
 
     #[Route('/hosting/custom-domain', methods: 'DELETE')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
+    #[OA\Delete(
+        description: 'Cancels the pending custom domain setup of the blog.',
+        summary: 'Cancel the custom domain setup',
+    )]
+    #[OA\Response(response: 200, description: 'The custom domain setup was cancelled.')]
     public function deleteCustomDomainIntent(): JsonResponse
     {
         $blog = $this->authorizationListener->getBlog();
@@ -213,6 +256,15 @@ class HostingController extends AbstractController
 
     #[Route('/hosting/custom-domain/verify', methods: 'POST')]
     #[ScopeRequired(Scope::BLOG_WRITE)]
+    #[OA\Post(
+        description: 'Verifies the DNS records of the pending custom domain and activates it when they are correct.',
+        summary: 'Verify the custom domain',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the hosting information.',
+        content: new OA\JsonContent(properties: [new OA\Property(property: 'delivery_url', type: 'string'), new OA\Property(property: 'hosting_at', type: 'string'), new OA\Property(property: 'hosting_url', type: 'string', nullable: true), new OA\Property(property: 'custom_domain', ref: new Model(type: CustomDomainObject::class), nullable: true), new OA\Property(property: 'custom_domain_intent', ref: new Model(type: CustomDomainIntentObject::class), nullable: true), new OA\Property(property: 'change', ref: new Model(type: HostingChangeObject::class), nullable: true)]),
+    )]
     public function verifyCustomDomainIntent(): JsonResponse
     {
         set_time_limit(300); // 5 minutes

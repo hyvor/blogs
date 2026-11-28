@@ -21,7 +21,7 @@ class UpdatePostVariantInput
     #[Assert\Length(max: 255)]
     public null|string|false $seo_primary_keyword = false;
 
-    /** @var string[]|null */
+    /** @var list<string>|null */
     #[Assert\All([new Assert\Length(max: 255)])]
     public ?array $seo_secondary_keywords = null;
 

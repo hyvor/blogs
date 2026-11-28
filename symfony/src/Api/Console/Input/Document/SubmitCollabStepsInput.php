@@ -12,7 +12,7 @@ class SubmitCollabStepsInput
     #[Assert\GreaterThanOrEqual(0)]
     public int $version;
 
-    /** @var array<int, array<string, mixed>> */
+    /** @var list<array<string, mixed>> */
     #[Assert\NotNull]
     public array $steps;
 

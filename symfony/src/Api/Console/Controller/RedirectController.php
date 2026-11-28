@@ -12,6 +12,8 @@ use App\Api\Console\Input\Redirect\UpdateRedirectInput;
 use App\Api\Console\Object\RedirectObject;
 use App\Entity\Redirect;
 use App\Service\Redirect\RedirectService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -27,7 +29,16 @@ class RedirectController
 
     #[Route('/redirects', methods: ['GET'])]
     #[ScopeRequired(Scope::REDIRECTS_READ)]
-    public function getRedirects(
+    #[OA\Get(
+        description: 'Returns the redirects of the blog.',
+        summary: 'List redirects',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of redirects.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: RedirectObject::class))),
+    )]
+    public function list(
         #[MapQueryString] GetRedirectsInput $input = new GetRedirectsInput(),
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -43,7 +54,16 @@ class RedirectController
 
     #[Route('/redirect', methods: ['POST'])]
     #[ScopeRequired(Scope::REDIRECTS_WRITE)]
-    public function createRedirect(
+    #[OA\Post(
+        description: 'Creates a redirect from one path to another.',
+        summary: 'Create a redirect',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created redirect.',
+        content: new Model(type: RedirectObject::class),
+    )]
+    public function create(
         #[MapRequestPayload] CreateRedirectInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -74,7 +94,16 @@ class RedirectController
 
     #[Route('/redirect/{id}', methods: ['PATCH'])]
     #[ScopeRequired(Scope::REDIRECTS_WRITE)]
-    public function updateRedirect(
+    #[OA\Patch(
+        description: 'Updates a redirect.',
+        summary: 'Update a redirect',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated redirect.',
+        content: new Model(type: RedirectObject::class),
+    )]
+    public function update(
         #[MapBlogEntity] Redirect $redirect,
         #[MapRequestPayload] UpdateRedirectInput $input,
     ): JsonResponse {
@@ -111,7 +140,12 @@ class RedirectController
 
     #[Route('/redirect/{id}', methods: ['DELETE'])]
     #[ScopeRequired(Scope::REDIRECTS_WRITE)]
-    public function deleteRedirect(#[MapBlogEntity] Redirect $redirect): JsonResponse
+    #[OA\Delete(
+        description: 'Deletes a redirect.',
+        summary: 'Delete a redirect',
+    )]
+    #[OA\Response(response: 200, description: 'The redirect was deleted.')]
+    public function delete(#[MapBlogEntity] Redirect $redirect): JsonResponse
     {
         $this->redirectService->deleteRedirect($redirect);
 

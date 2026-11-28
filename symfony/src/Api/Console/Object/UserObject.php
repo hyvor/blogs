@@ -39,12 +39,12 @@ class UserObject
     public ?string $social_github;
 
     /**
-     * @var UserVariantObject[]
+     * @var list<UserVariantObject>
      */
     public array $variants;
 
     /**
-     * @param UserVariantObject[] $variants
+     * @param list<UserVariantObject> $variants
      */
     public function __construct(User $user, array $variants)
     {

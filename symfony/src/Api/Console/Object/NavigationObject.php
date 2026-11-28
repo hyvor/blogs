@@ -13,7 +13,7 @@ class NavigationObject
     public string $url;
     public NavigationType $type;
     public int $sort;
-    /** @var NavigationVariantObject[] */
+    /** @var list<NavigationVariantObject> */
     public array $variants;
 
     public function __construct(Navigation $navigation)

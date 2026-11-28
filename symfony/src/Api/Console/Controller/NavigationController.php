@@ -18,6 +18,8 @@ use App\Entity\Navigation;
 use App\Service\Language\LanguageService;
 use App\Service\Limit;
 use App\Service\Navigation\NavigationService;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -34,7 +36,16 @@ class NavigationController
 
     #[Route('/navigations', methods: ['GET'])]
     #[ScopeRequired(Scope::NAVIGATIONS_READ)]
-    public function getNavigations(): JsonResponse
+    #[OA\Get(
+        description: 'Returns the navigation items of the blog.',
+        summary: 'List navigations',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of navigations.',
+        content: new OA\JsonContent(type: 'array', items: new OA\Items(ref: new Model(type: NavigationObject::class))),
+    )]
+    public function list(): JsonResponse
     {
         $blog = $this->blogAuthListener->getBlog();
         $navigations = $this->navigationService->getNavigations($blog);
@@ -44,6 +55,11 @@ class NavigationController
 
     #[Route('/navigations/sort', methods: ['PATCH'])]
     #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
+    #[OA\Patch(
+        description: 'Sets the order of navigation items using the given list of navigation IDs.',
+        summary: 'Sort navigations',
+    )]
+    #[OA\Response(response: 200, description: 'The navigations were sorted.')]
     public function sort(
         #[MapRequestPayload] SortNavigationsInput $input,
     ): JsonResponse {
@@ -55,7 +71,16 @@ class NavigationController
 
     #[Route('/navigation', methods: ['POST'])]
     #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
-    public function createNavigation(
+    #[OA\Post(
+        description: 'Creates a navigation item.',
+        summary: 'Create a navigation',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created navigation.',
+        content: new Model(type: NavigationObject::class),
+    )]
+    public function create(
         #[MapRequestPayload] CreateNavigationInput $input,
     ): JsonResponse {
         $blog = $this->blogAuthListener->getBlog();
@@ -78,7 +103,16 @@ class NavigationController
 
     #[Route('/navigation/{id}', methods: ['PATCH'])]
     #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
-    public function updateNavigation(
+    #[OA\Patch(
+        description: 'Updates a navigation item.',
+        summary: 'Update a navigation',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated navigation.',
+        content: new Model(type: NavigationObject::class),
+    )]
+    public function update(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] UpdateNavigationInput $input,
     ): JsonResponse {
@@ -89,7 +123,12 @@ class NavigationController
 
     #[Route('/navigation/{id}', methods: ['DELETE'])]
     #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
-    public function deleteNavigation(#[MapBlogEntity] Navigation $navigation): JsonResponse
+    #[OA\Delete(
+        description: 'Deletes a navigation item and its variants.',
+        summary: 'Delete a navigation',
+    )]
+    #[OA\Response(response: 200, description: 'The navigation was deleted.')]
+    public function delete(#[MapBlogEntity] Navigation $navigation): JsonResponse
     {
         $this->navigationService->deleteNavigation($navigation);
 
@@ -98,6 +137,15 @@ class NavigationController
 
     #[Route('/navigation/{id}/variant', methods: ['POST'])]
     #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
+    #[OA\Post(
+        description: 'Creates the translation (variant) of a navigation item for a language.',
+        summary: 'Create a navigation variant',
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Returns the created variant.',
+        content: new Model(type: NavigationVariantObject::class),
+    )]
     public function createVariant(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] CreateNavigationVariantInput $input,
@@ -116,6 +164,15 @@ class NavigationController
 
     #[Route('/navigation/{id}/variant', methods: ['PATCH'])]
     #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
+    #[OA\Patch(
+        description: 'Updates the translation (variant) of a navigation item for a language.',
+        summary: 'Update a navigation variant',
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the updated variant.',
+        content: new Model(type: NavigationVariantObject::class),
+    )]
     public function updateVariant(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] UpdateNavigationVariantInput $input,
@@ -139,6 +196,11 @@ class NavigationController
 
     #[Route('/navigation/{id}/variant', methods: ['DELETE'])]
     #[ScopeRequired(Scope::NAVIGATIONS_WRITE)]
+    #[OA\Delete(
+        description: 'Deletes the translation (variant) of a navigation item for a language.',
+        summary: 'Delete a navigation variant',
+    )]
+    #[OA\Response(response: 200, description: 'The variant was deleted.')]
     public function deleteVariant(
         #[MapBlogEntity] Navigation $navigation,
         #[MapRequestPayload] DeleteNavigationVariantInput $input,
